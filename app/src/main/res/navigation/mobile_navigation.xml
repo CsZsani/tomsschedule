@@ -12,14 +12,19 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="hu.janny.tomsschedule.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_statistics"
+        android:name="hu.janny.tomsschedule.ui.statistics.StatisticsFragment"
+        android:label="@string/menu_statistics"
+        tools:layout="@layout/fragment_statistics" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="hu.janny.tomsschedule.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_settings"
+        android:name="hu.janny.tomsschedule.ui.settings.SettingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/nav_account"
+        android:name="hu.janny.tomsschedule.ui.account.AccountFragment"
+        android:label="@string/menu_account"
+        tools:layout="@layout/fragment_account" />
 </navigation>

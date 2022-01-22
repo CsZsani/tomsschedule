@@ -1,4 +1,4 @@
-package hu.janny.tomsschedule.ui.slideshow;
+package hu.janny.tomsschedule.ui.statistics;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,24 +12,23 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import hu.janny.tomsschedule.R;
-import hu.janny.tomsschedule.databinding.FragmentSlideshowBinding;
+import hu.janny.tomsschedule.databinding.FragmentStatisticsBinding;
 
-public class SlideshowFragment extends Fragment {
+public class StatisticsFragment extends Fragment {
 
-    private SlideshowViewModel slideshowViewModel;
-    private FragmentSlideshowBinding binding;
+    private StatisticsViewModel statisticsViewModel;
+    private FragmentStatisticsBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        slideshowViewModel =
-                new ViewModelProvider(this).get(SlideshowViewModel.class);
+        statisticsViewModel =
+                new ViewModelProvider(this).get(StatisticsViewModel.class);
 
-        binding = FragmentSlideshowBinding.inflate(inflater, container, false);
+        binding = FragmentStatisticsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textSlideshow;
-        slideshowViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        final TextView textView = binding.textGallery;
+        statisticsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

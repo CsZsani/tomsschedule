@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_home">Tevékenységek</string>
+    <string name="menu_statistics">Statisztika</string>
+    <string name="menu_settings">Beállítások</string>
+    <string name="menu_account">Profil</string>
+    <string name="navigation_drawer_open">Menü megnyitása</string>
+    <string name="navigation_drawer_close">Menü bezárása</string>
+    <string name="nav_header_title">Teljes név (felhasználónév)</string>
+    <string name="nav_header_subtitle">example@email.com</string>
+    <string name="nav_header_desc">Navigációs fejléc</string>
+    <string name="action_settings">Beallitasok</string>
+</resources>
