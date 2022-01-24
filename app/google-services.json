@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "341542220922",
+    "project_id": "toms-schedule-2022",
+    "storage_bucket": "toms-schedule-2022.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341542220922:android:f937122ed97da46f49f7c3",
+        "android_client_info": {
+          "package_name": "hu.janny.tomsschedule"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "341542220922-crtnk1n9oqrj3ltnfgg8eqa7qhd4rgi4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAE9F9dMg0BHaJGpS6bPVK2hR9iM89bzg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "341542220922-crtnk1n9oqrj3ltnfgg8eqa7qhd4rgi4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
