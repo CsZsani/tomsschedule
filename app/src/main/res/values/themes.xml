@@ -30,4 +30,13 @@
         <item name="colorAccent">@color/toms_500</item>
         <item name="android:statusBarColor">@color/toms_500</item>
     </style>
+
+    <style name="LoginRegisterTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/toms_400</item>
+        <item name="colorPrimaryVariant">@color/toms_700</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/toms_700</item>
+        <item name="colorAccent">@color/toms_500</item>
+        <item name="android:statusBarColor">@color/toms_500</item>
+    </style>
 </resources>
