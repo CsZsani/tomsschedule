@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.Calendar;
 
 import hu.janny.tomsschedule.databinding.ActivityRegisterBinding;
+import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
 
 public class RegisterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -91,9 +92,9 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
-                            User user = new User(email, name, birthDate, gender);
+                            User user = new User(email, name, DateConverter.dateMillisToString(DateConverter.stringFromSimpleDateDialogToMillis(birthDate)), gender);
 
-                            FirebaseDatabase.getInstance().getReference("users")
+                            FirebaseDatabase.getInstance("https://toms-schedule-2022-default-rtdb.europe-west1.firebasedatabase.app").getReference("users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -133,22 +134,14 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         datePickerDialog.show();
     }
 
-    private String getTodayDate() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        month = month + 1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        return makeDateString(day, month, year);
-    }
 
     private void initDatePicker() {
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
-                String date = makeDateString(day, month, year);
+                String date = DateConverter.makeDateStringForSimpleDateDialog(day, month, year);
                 binding.registerBirthDate.setText(date);
             }
         };
@@ -164,48 +157,5 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
     }
 
-    private String makeDateString(int day, int month, int year) {
-        return getMonthFormat(month) + " " + day + " " + year;
-    }
 
-    private String getMonthFormat(int month) {
-        if(month == 1) {
-            return "JAN";
-        }
-        if(month == 2) {
-            return "FEB";
-        }
-        if(month == 3) {
-            return "MAR";
-        }
-        if(month == 4) {
-            return "APR";
-        }
-        if(month == 5) {
-            return "MAY";
-        }
-        if(month == 6) {
-            return "JUN";
-        }
-        if(month == 7) {
-            return "JUL";
-        }
-        if(month == 8) {
-            return "AUG";
-        }
-        if(month == 9) {
-            return "SEP";
-        }
-        if(month == 10) {
-            return "OKT";
-        }
-        if(month == 11) {
-            return "NOV";
-        }
-        if(month == 12) {
-            return "DEC";
-        }
-
-        return "JAN";
-    }
 }

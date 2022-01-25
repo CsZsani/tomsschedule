@@ -3,6 +3,7 @@ package hu.janny.tomsschedule.ui.account;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
+import hu.janny.tomsschedule.LoginActivity;
+import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentAccountBinding;
 import hu.janny.tomsschedule.ui.account.AccountViewModel;
@@ -46,6 +51,8 @@ public class AccountFragment extends Fragment {
         });
         return root;
     }
+
+
 
     /*@Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
