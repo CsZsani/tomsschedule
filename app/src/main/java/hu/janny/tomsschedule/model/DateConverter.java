@@ -36,17 +36,19 @@ public final class DateConverter {
 
     public static long stringFromSimpleDateDialogToLongMillis(String date) {
         Calendar cal = Calendar.getInstance();
-        cal.set((int) Integer.parseInt(date.split(" ")[2]), (int) Integer.parseInt(date.split(" ")[1]),
-                getMonthIntFromMonthFormat(date.split(" ")[0]));
+        cal.set((int) Integer.parseInt(date.split(" ")[2]), getMonthIntFromMonthFormat(date.split(" ")[0]),
+                (int) Integer.parseInt(date.split(" ")[1]));
         return cal.getTimeInMillis();
     }
 
-    public static String dateMillisToString(Date inMillis) {
-        return inMillis.toString();
+    public static String dateMillisToString(Date inMillisDate) {
+        return inMillisDate.toString();
     }
 
-    public static long stringMillisToLong(String millis) {
-        return Long.parseLong(millis);
+    public static String longToString(long inMillisLong) {return Long.toString(inMillisLong);}
+
+    public static long stringMillisToLong(String inMillisString) {
+        return Long.parseLong(inMillisString);
     }
 
     public static String longMillisToStringForSimpleDateDialog(long millis) {
@@ -56,6 +58,23 @@ public final class DateConverter {
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
         return makeDateStringForSimpleDateDialog(day, month, year);
+    }
+
+    public static int birthDateFromSimpleDateDialogToAgeGroupInt(String birthDateString) {
+        Calendar birthDateCal = Calendar.getInstance();
+        birthDateCal.set(Integer.parseInt(birthDateString.split(" ")[2]), getMonthIntFromMonthFormat(birthDateString.split(" ")[0]),
+                Integer.parseInt(birthDateString.split(" ")[1]));
+
+        Calendar today = Calendar.getInstance();
+        today.setTimeInMillis(System.currentTimeMillis());
+
+        today.add(Calendar.YEAR, -20);
+        int group = 0;
+        while(!birthDateCal.after(today) && group <= 5) {
+            today.add(Calendar.YEAR, -10);
+            group++;
+        }
+        return group;
     }
 
     public static String getMonthStringFromMonthFormat(String s) {

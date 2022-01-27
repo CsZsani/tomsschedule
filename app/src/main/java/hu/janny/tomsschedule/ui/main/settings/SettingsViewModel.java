@@ -1,17 +1,16 @@
-package hu.janny.tomsschedule.ui.account;
+package hu.janny.tomsschedule.ui.main.settings;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class AccountViewModel extends ViewModel {
-    // TODO: Implement the ViewModel
+public class SettingsViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public AccountViewModel() {
+    public SettingsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is account fragment");
+        mText.setValue("This is slideshow fragment");
     }
 
     public LiveData<String> getText() {

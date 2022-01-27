@@ -8,16 +8,17 @@ import android.os.Bundle;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class SplashScreenActivity extends AppCompatActivity {
+import hu.janny.tomsschedule.model.UserState;
+import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 
-    private FirebaseAuth mAuth;
+public class SplashScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
+        FirebaseManager.onStart();
+        if(FirebaseManager.isUserLoggedIn()){
+            UserState.setUser();
             startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
         } else {
             startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));

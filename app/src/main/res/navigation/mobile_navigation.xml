@@ -7,24 +7,24 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="hu.janny.tomsschedule.ui.home.HomeFragment"
+        android:name="hu.janny.tomsschedule.ui.main.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_statistics"
-        android:name="hu.janny.tomsschedule.ui.statistics.StatisticsFragment"
+        android:name="hu.janny.tomsschedule.ui.main.statistics.StatisticsFragment"
         android:label="@string/menu_statistics"
         tools:layout="@layout/fragment_statistics" />
 
     <fragment
         android:id="@+id/nav_settings"
-        android:name="hu.janny.tomsschedule.ui.settings.SettingsFragment"
+        android:name="hu.janny.tomsschedule.ui.main.settings.SettingsFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/nav_account"
-        android:name="hu.janny.tomsschedule.ui.account.AccountFragment"
+        android:name="hu.janny.tomsschedule.ui.main.account.AccountFragment"
         android:label="@string/menu_account"
         tools:layout="@layout/fragment_account" />
 </navigation>

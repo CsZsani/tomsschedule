@@ -1,4 +1,4 @@
-package hu.janny.tomsschedule.ui.settings;
+package hu.janny.tomsschedule.ui.main.settings;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

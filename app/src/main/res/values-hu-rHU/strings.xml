@@ -10,4 +10,22 @@
     <string name="nav_header_subtitle">example@email.com</string>
     <string name="nav_header_desc">Navigációs fejléc</string>
     <string name="action_settings">Beallitasok</string>
+    <string name="email">Email</string>
+    <string name="password">Jelszó</string>
+    <string name="login">Bejelentkezés</string>
+    <string name="register">Regisztráció</string>
+    <string name="forgot_password">Elfelejtett jelszó?</string>
+    <string name="name_required">Név megadása kötelező!</string>
+    <string name="birth_date">Születési dátum</string>
+    <string name="user_registration_successful">Regisztráció sikeres!</string>
+    <string name="user_registration_failure">Nem sikerült a regisztráció! Próbáld újra!</string>
+    <string name="user_login_failure">Nem sikerült bejelentkezni! Ellenőrizd az adatokat!</string>
+    <string name="email_verification">Erősítsd meg előbb az email címedet!</string>
+    <string name="logout">Kijelentkezés</string>
+    <string name="age_group">Korosztály</string>
+    <string name="user_name">Név</string>
+    <string name="gender">Nem</string>
+    <string name="contact">Kapcsolat</string>
+    <string name="female">Nő</string>
+    <string name="male">Férfi</string>
 </resources>

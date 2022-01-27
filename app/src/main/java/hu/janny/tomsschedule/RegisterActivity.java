@@ -24,11 +24,11 @@ import java.util.Calendar;
 import hu.janny.tomsschedule.databinding.ActivityRegisterBinding;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 
 public class RegisterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private ActivityRegisterBinding binding;
-    private FirebaseAuth mAuth;
     private DatePickerDialog datePickerDialog;
 
     @Override
@@ -37,7 +37,6 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        mAuth = FirebaseAuth.getInstance();
         binding.registerGender.setOnItemSelectedListener(this);
         initDatePicker();
         binding.registerBirthDate.setHint(R.string.birth_date);
@@ -87,14 +86,16 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         }
 
         binding.registerProgressBar.setVisibility(View.VISIBLE);
-        mAuth.createUserWithEmailAndPassword(email, password)
+        FirebaseManager.auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
-                            User user = new User(email, name, DateConverter.dateMillisToString(DateConverter.stringFromSimpleDateDialogToMillis(birthDate)), gender);
+                            User user = new User(email, name,
+                                    DateConverter.longToString(DateConverter.stringFromSimpleDateDialogToLongMillis(birthDate)),
+                                    Integer.toString(DateConverter.birthDateFromSimpleDateDialogToAgeGroupInt(birthDate)), gender);
 
-                            FirebaseDatabase.getInstance("https://toms-schedule-2022-default-rtdb.europe-west1.firebasedatabase.app").getReference("users")
+                            FirebaseManager.database.getReference("users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
