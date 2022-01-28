@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.addcustomactivity.AddCustomActivityFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/activityNameText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/activity_name" />
+
+            <EditText
+                android:id="@+id/activityName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/name_of_activity"
+                android:inputType="textPersonName"
+                android:minHeight="48dp" />
+
+            <TextView
+                android:id="@+id/activityColorText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/color" />
+
+            <ImageButton
+                android:id="@+id/activityColor"
+                android:layout_width="72dp"
+                android:layout_height="48dp"
+                android:background="@color/toms_400"
+                android:contentDescription="@string/select_color" />
+
+            <TextView
+                android:id="@+id/activityNoteText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/note" />
+
+            <EditText
+                android:id="@+id/activityNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:gravity="start|top"
+                android:hint="@string/note"
+                android:inputType="textMultiLine"
+                android:minHeight="48dp"/>
+
+            <TextView
+                android:id="@+id/activityPriorityText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/priority" />
+
+            <Spinner
+                android:id="@+id/activityPriority"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:entries="@array/activity_priorities"
+                android:spinnerMode="dialog"
+                android:theme="@style/LoginRegisterTheme" />
+
+            <TextView
+                android:id="@+id/activityRegularityText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/dates_type" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="16dp">
+
+                <RadioButton
+                    android:id="@+id/activityHasDeadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/has_deadline" />
+
+                <RadioButton
+                    android:id="@+id/acivityRegularity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/regularity" />
+
+                <RadioButton
+                    android:id="@+id/activityIsInterval"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/just_interval" />
+
+                <RadioButton
+                    android:id="@+id/activityCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/just_time_measure" />
+            </RadioGroup>
+
+            <Switch
+                android:id="@+id/activityIsTimeMeasured"
+                style="@style/Theme.TomsSchedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:paddingTop="16dp"
+                android:text="@string/is_time_measured"
+                android:textSize="14sp" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="16dp">
+
+                <RadioButton
+                    android:id="@+id/activityIsSumTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sum_time" />
+
+                <RadioButton
+                    android:id="@+id/activityIsTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/simple_time" />
+
+                <RadioButton
+                    android:id="@+id/activityCustomTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/custom_time" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/activityDeadlineText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/deadline"
+                android:visibility="visible" />
+
+            <EditText
+                android:id="@+id/activityDeadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="@string/deadline"
+                android:minHeight="48dp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/activityRegularityTypeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/dates_type"
+                android:visibility="visible" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="16dp"
+                android:paddingEnd="0dp"
+                android:visibility="visible">
+
+                <RadioButton
+                    android:id="@+id/activityDaily"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/daily" />
+
+                <RadioButton
+                    android:id="@+id/activityWeekly"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/weekly" />
+
+                <RadioButton
+                    android:id="@+id/activityMonthly"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/monthly" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/activityWeeklyDays"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/weekly_days"
+                android:visibility="visible" />
+
+            <RadioButton
+                android:id="@+id/monday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/monday"
+                android:visibility="visible" />
+
+            <RadioButton
+                android:id="@+id/tuesday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tuesday"
+                android:visibility="visible" />
+
+            <RadioButton
+                android:id="@+id/wednesday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/wednesday"
+                android:visibility="visible" />
+
+            <RadioButton
+                android:id="@+id/thursday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/thursday"
+                android:visibility="visible" />
+
+            <RadioButton
+                android:id="@+id/friday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/friday"
+                android:visibility="visible" />
+
+            <RadioButton
+                android:id="@+id/saturday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/saturday"
+                android:visibility="visible" />
+
+            <RadioButton
+                android:id="@+id/sunday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sunday"
+                android:visibility="visible" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

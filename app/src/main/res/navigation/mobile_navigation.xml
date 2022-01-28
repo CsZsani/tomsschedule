@@ -9,7 +9,11 @@
         android:id="@+id/nav_home"
         android:name="hu.janny.tomsschedule.ui.main.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_add_custom_activity"
+            app:destination="@id/add_custom_activity" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_statistics"
@@ -27,4 +31,9 @@
         android:name="hu.janny.tomsschedule.ui.main.account.AccountFragment"
         android:label="@string/menu_account"
         tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/add_custom_activity"
+        android:name="hu.janny.tomsschedule.ui.main.addcustomactivity.AddCustomActivityFragment"
+        android:label="@string/add_new_activity_fragment_label"
+        tools:layout="@layout/fragment_add_custom_activity" />
 </navigation>

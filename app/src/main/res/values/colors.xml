@@ -12,4 +12,7 @@
     <color name="toms_700">#FF6518</color>
     <color name="toms_100">#FFF2EC</color>
     <color name="toms_200">#FFEADF</color>
+    <color name="brown_200">#c28c55</color>
+    <color name="brown_400">#a86b2c</color>
+    <color name="brown_700">#7a440b</color>
 </resources>

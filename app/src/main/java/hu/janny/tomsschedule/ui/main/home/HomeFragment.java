@@ -41,7 +41,6 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        System.out.println("haho tortenik itt valami?111111111");
         homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
@@ -62,34 +61,6 @@ public class HomeFragment extends Fragment {
                 binding.activitiesListRecyclerView.setAdapter(new CustomActivityRecyclerAdapter(customActivities));
             }
         });
-
-        /*binding.addCustomActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String key = FirebaseManager.database.getReference("customactivities")
-                        .child(FirebaseManager.user.getUid()).push().getKey();
-                CustomActivity activity = new CustomActivity("name", "#FF00FF", "note", 5, false, false, false);
-                System.out.println("haho tortenik itt valami?");
-
-                Map<String, Object> activityValues = activity.toMap();
-                FirebaseManager.database.getReference().child("customactivities").child(FirebaseManager.auth.getUid()).child(key).setValue(activityValues)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(getActivity(),"Added to db!",Toast.LENGTH_LONG).show();
-                        }
-                    })
-                            .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getActivity(),"Failed adding to db!",Toast.LENGTH_LONG).show();
-                        }
-                    });
-
-            }
-        });*/
-        System.out.println("haho tortenik itt valami?2222222222");
         return root;
     }
 

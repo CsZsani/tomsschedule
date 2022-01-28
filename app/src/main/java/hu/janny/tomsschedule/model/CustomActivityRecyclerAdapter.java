@@ -1,9 +1,13 @@
 package hu.janny.tomsschedule.model;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.ColorInt;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -22,10 +26,14 @@ public class CustomActivityRecyclerAdapter
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView activityName;
         TextView detailsText;
+        View divider;
+        Button beginActivity;
         ViewHolder(View itemView) {
             super(itemView);
             activityName = itemView.findViewById(R.id.activityNameInList);
             detailsText = itemView.findViewById(R.id.activityBasicInfosInList);
+            divider = itemView.findViewById(R.id.divider);
+            beginActivity = itemView.findViewById(R.id.beginActivityInList);
         }
     }
 
@@ -40,6 +48,8 @@ public class CustomActivityRecyclerAdapter
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         viewHolder.activityName.setText(activityList.get(i).name);
         viewHolder.detailsText.setText("Ide jon majd a fancy reszlet");
+        viewHolder.divider.setBackgroundColor(Color.parseColor(activityList.get(i).color));
+        viewHolder.beginActivity.setBackgroundColor(darkenColor(Color.parseColor(activityList.get(i).color)));
     }
 
     @Override
@@ -48,5 +58,13 @@ public class CustomActivityRecyclerAdapter
             return 0;
         }
         return activityList.size();
+    }
+
+    @ColorInt
+    int darkenColor(@ColorInt int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.8f;
+        return Color.HSVToColor(hsv);
     }
 }

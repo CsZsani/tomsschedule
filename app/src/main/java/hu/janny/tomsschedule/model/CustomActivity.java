@@ -14,12 +14,14 @@ public class CustomActivity {
 
     public Boolean isTimeMeasured, isSumTime = false, isTime = false, isCustomTime = false;
     public long sumTime = 0, time = 0;
-    public Map<Long, Long> customTime = new HashMap<>();
+    public Map<String, Object> customTime = new HashMap<>();  // Long, Long
 
-    public Boolean hasDeadline, regularity, daily = false, weekly = false, monthly = false, custom = false, isInterval = false, areSingleDays = false;
+    public Boolean hasDeadline, regularity, daily = false, weekly = false, monthly = false, custom = false, isInterval = false /*areSingleDays = false*/;
     public long deadline = 0, customIntervalFrom = 0, customIntervalTo = 0;
-    public List<String> weeklyDays = new ArrayList<>(), monthlyDays = new ArrayList<>();
-    public List<Long> customDays = new ArrayList<>();
+    public List<Object> weeklyDays = new ArrayList<>(), monthlyDays = new ArrayList<>(); // String
+    /*public List<Object> customDays = new ArrayList<>();*/ // Long
+
+    public Map<String, Object> lastTenTime = new HashMap<>(); // Long, Long
 
     public CustomActivity() {}
 
@@ -32,6 +34,10 @@ public class CustomActivity {
         this.isTimeMeasured = isTimeMeasured;
         this.hasDeadline = hasDeadline;
         this.regularity = regularity;
+        weeklyDays.add("MONDAY");
+        weeklyDays.add("FRIDAY");
+        lastTenTime.put(String.valueOf(System.currentTimeMillis()), 1200L);
+        lastTenTime.put(String.valueOf(System.currentTimeMillis()), 60L);
     }
 
     @Exclude
@@ -55,15 +61,20 @@ public class CustomActivity {
         result.put("monthly", monthly);
         result.put("custom", custom);
         result.put("isInterval", isInterval);
-        result.put("areSingleDays", areSingleDays);
+        //result.put("areSingleDays", areSingleDays);
         result.put("deadline", deadline);
         result.put("customIntervalFrom", customIntervalFrom);
         result.put("customIntervalTo", customIntervalTo);
         result.put("weeklyDays", weeklyDays);
         result.put("monthlyDays", monthlyDays);
-        result.put("customDays", customDays);
+        //result.put("customDays", customDays);
+        result.put("lastTenTime", lastTenTime);
 
         return result;
+    }
+
+    public void setLastTenTime(Map<String, Object> lastTenTime) {
+        this.lastTenTime = lastTenTime;
     }
 
     public void setIsSumTime(Boolean isSumTime) {
@@ -86,7 +97,7 @@ public class CustomActivity {
         this.time = time;
     }
 
-    public void setCustomTime(Map<Long, Long> customTime) {
+    public void setCustomTime(Map<String, Object> customTime) {
         this.customTime = customTime;
     }
 
@@ -110,9 +121,9 @@ public class CustomActivity {
         isInterval = interval;
     }
 
-    public void setAreSingleDays(Boolean areSingleDays) {
+    /*public void setAreSingleDays(Boolean areSingleDays) {
         this.areSingleDays = areSingleDays;
-    }
+    }*/
 
     public void setDeadline(long deadline) {
         this.deadline = deadline;
@@ -126,15 +137,15 @@ public class CustomActivity {
         this.customIntervalTo = customIntervalTo;
     }
 
-    public void setWeeklyDays(List<String> weeklyDays) {
+    public void setWeeklyDays(List<Object> weeklyDays) {
         this.weeklyDays = weeklyDays;
     }
 
-    public void setMonthlyDays(List<String> monthlyDays) {
+    public void setMonthlyDays(List<Object> monthlyDays) {
         this.monthlyDays = monthlyDays;
     }
 
-    public void setCustomDays(List<Long> customDays) {
+    /*public void setCustomDays(List<Object> customDays) {
         this.customDays = customDays;
-    }
+    }*/
 }

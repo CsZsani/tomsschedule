@@ -16,7 +16,8 @@
 
     <include
         android:id="@+id/fragmentHome"
-        layout="@layout/fragment_home" />
+        layout="@layout/fragment_home"
+        android:visibility="gone"/>
 
 
     <com.google.android.material.navigation.NavigationView

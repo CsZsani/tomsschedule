@@ -1,6 +1,7 @@
 package hu.janny.tomsschedule;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
@@ -34,8 +35,9 @@ import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.model.UserState;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 import hu.janny.tomsschedule.ui.main.account.AccountViewModel;
+import hu.janny.tomsschedule.ui.main.addcustomactivity.AddCustomActivityFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AddCustomActivityFragment.OnFragmentInteractionListener {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -63,10 +65,12 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        binding.fragmentHome.addCustomActivity.setOnClickListener(new View.OnClickListener() {
+        /*binding.fragmentHome.addCustomActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String key = FirebaseManager.database.getReference("customactivities")
+                Navigation.findNavController(view).navigate(
+                        R.id.action_nav_home_to_add_custom_activity);
+                *//*String key = FirebaseManager.database.getReference("customactivities")
                         .child(FirebaseManager.user.getUid()).push().getKey();
                 CustomActivity activity = new CustomActivity("name", "#FF00FF", "note", 5, false, false, false);
 
@@ -85,9 +89,14 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this,"Failed adding to db!",Toast.LENGTH_LONG).show();
                             }
                         });
-
+*//*
             }
-        });
+        });*/
+    }
+
+    public void addNewCustomActivity(View view) {
+        Navigation.findNavController(this, R.id.nav_host_fragment_content_main).navigate(
+                R.id.action_nav_home_to_add_custom_activity);
     }
 
     public void logoutUser(View view) {
@@ -107,5 +116,9 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
     }
 }

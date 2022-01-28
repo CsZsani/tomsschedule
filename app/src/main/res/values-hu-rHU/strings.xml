@@ -28,4 +28,8 @@
     <string name="contact">Kapcsolat</string>
     <string name="female">Nő</string>
     <string name="male">Férfi</string>
+    <string name="add_new_activity_fragment_label">Új tevékenység</string>
+    <string name="confirm">Választ</string>
+    <string name="cancel">Bezár</string>
+    <string name="color_pick">Válassz egy színt</string>
 </resources>

@@ -22,12 +22,13 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
+        android:contentDescription="Add activity"
+        android:onClick="addNewCustomActivity"
         android:src="@drawable/ic_add_entry"
         android:tint="@color/toms_400"
         app:backgroundTint="@color/toms_400"
         app:fabSize="auto"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="@color/toms_400"
-        android:contentDescription="Add activity" />
+        app:rippleColor="@color/toms_400" />
 </androidx.constraintlayout.widget.ConstraintLayout>
