@@ -91,9 +91,9 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
-                            User user = new User(email, name,
-                                    DateConverter.longToString(DateConverter.stringFromSimpleDateDialogToLongMillis(birthDate)),
-                                    Integer.toString(DateConverter.birthDateFromSimpleDateDialogToAgeGroupInt(birthDate)), gender);
+                            User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(),email, name,
+                                    DateConverter.stringFromSimpleDateDialogToLongMillis(birthDate),
+                                    DateConverter.birthDateFromSimpleDateDialogToAgeGroupInt(birthDate), gender);
 
                             FirebaseManager.database.getReference("users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

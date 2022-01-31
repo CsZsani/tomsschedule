@@ -1,5 +1,13 @@
 package hu.janny.tomsschedule.model;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
+
 import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
@@ -7,145 +15,196 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//@Entity(foreignKeys = {@ForeignKey(entity = User.class,
+//    parentColumns = "userId", childColumns = "userId", onDelete = ForeignKey.NO_ACTION, onUpdate = ForeignKey.RESTRICT)})
+@Entity(tableName = "customactivities")
 public class CustomActivity {
 
-    public String name, color, note;
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    @ColumnInfo(name = "activityId")
+    public int id;
+
+    @NonNull
+    @ColumnInfo(name = "userId")
+    public String userId;
+
+    @NonNull
+    @ColumnInfo(name = "name")
+    public String name;
+    @ColumnInfo(name = "color")
+    public int color;
+
+    @ColumnInfo(name = "note")
+    public String note;
+
+    @ColumnInfo(name = "priority")
     public int priority;
 
-    public Boolean isTimeMeasured, isSumTime = false, isTime = false, isCustomTime = false;
-    public long sumTime = 0, time = 0;
-    public Map<String, Object> customTime = new HashMap<>();  // Long, Long
+    @ColumnInfo(name = "time")
+    public int time = 0;
 
-    public Boolean hasDeadline, regularity, daily = false, weekly = false, monthly = false, custom = false, isInterval = false /*areSingleDays = false*/;
-    public long deadline = 0, customIntervalFrom = 0, customIntervalTo = 0;
-    public List<Object> weeklyDays = new ArrayList<>(), monthlyDays = new ArrayList<>(); // String
-    /*public List<Object> customDays = new ArrayList<>();*/ // Long
+    @ColumnInfo(name = "deadline")
+    public long deadline = 0L;
 
-    public Map<String, Object> lastTenTime = new HashMap<>(); // Long, Long
+    @ColumnInfo(name = "regularity")
+    public int regularity = 0;
+
+    @ColumnInfo(name = "hasFixedDays")
+    public boolean hasFixedDays = false;
+
+    @ColumnInfo(name = "startDay")
+    public long startDay = 0L;
+
+    @ColumnInfo(name = "endDay")
+    public long endDay = 0L;
+
+    @ColumnInfo(name = "notification")
+    public boolean turnOffNotification = false;
+
+    @Embedded public CustomWeekTime customWeekTime = new CustomWeekTime();
 
     public CustomActivity() {}
 
-    public CustomActivity(String name, String color, String note, int priority, Boolean isTimeMeasured,
-                          Boolean hasDeadline, Boolean regularity) {
+    public CustomActivity(@NonNull String userId,@NonNull String name, int color, String note, int priority) {
+        this.userId = userId;
         this.name = name;
         this.color = color;
         this.note = note;
         this.priority = priority;
-        this.isTimeMeasured = isTimeMeasured;
-        this.hasDeadline = hasDeadline;
-        this.regularity = regularity;
-        weeklyDays.add("MONDAY");
-        weeklyDays.add("FRIDAY");
-        lastTenTime.put(String.valueOf(System.currentTimeMillis()), 1200L);
-        lastTenTime.put(String.valueOf(System.currentTimeMillis()), 60L);
     }
 
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("name", name);
-        result.put("color", color);
-        result.put("priority", priority);
-        result.put("note", note);
-        result.put("isTimeMeasured", isTimeMeasured);
-        result.put("isSumTime", isSumTime);
-        result.put("isTime", isTime);
-        result.put("isCustomTime", isCustomTime);
-        result.put("sumTime", sumTime);
-        result.put("time", time);
-        result.put("customTime", customTime);
-        result.put("hasDeadline", hasDeadline);
-        result.put("regularity", regularity);
-        result.put("daily", daily);
-        result.put("weekly", weekly);
-        result.put("monthly", monthly);
-        result.put("custom", custom);
-        result.put("isInterval", isInterval);
-        //result.put("areSingleDays", areSingleDays);
-        result.put("deadline", deadline);
-        result.put("customIntervalFrom", customIntervalFrom);
-        result.put("customIntervalTo", customIntervalTo);
-        result.put("weeklyDays", weeklyDays);
-        result.put("monthlyDays", monthlyDays);
-        //result.put("customDays", customDays);
-        result.put("lastTenTime", lastTenTime);
-
-        return result;
+    public CustomWeekTime getCustomWeekTime() {
+        return customWeekTime;
     }
 
-    public void setLastTenTime(Map<String, Object> lastTenTime) {
-        this.lastTenTime = lastTenTime;
+    public void setCustomWeekTime(CustomWeekTime customWeekTime) {
+        this.customWeekTime = customWeekTime;
     }
 
-    public void setIsSumTime(Boolean isSumTime) {
-        this.isSumTime = isSumTime;
+    public void setCustomWeekTime(long mon, long tue, long wed, long thu, long fri, long sat, long sun) {
+        this.customWeekTime.setMon(mon);
+        this.customWeekTime.setTue(tue);
+        this.customWeekTime.setWed(wed);
+        this.customWeekTime.setThu(thu);
+        this.customWeekTime.setFri(fri);
+        this.customWeekTime.setSat(sat);
+        this.customWeekTime.setSun(sun);
     }
 
-    public void setIsTime(Boolean isTime) {
-        this.isTime = isTime;
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
-    public void setIsCustomTime(Boolean isCustomTime) {
-        this.isCustomTime = isCustomTime;
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return super.equals(obj);
     }
 
-    public void setSumTime(long sumTime) {
-        this.sumTime = sumTime;
+    public int getId() {
+        return id;
     }
 
-    public void setTime(long time) {
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @NonNull
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(@NonNull String userId) {
+        this.userId = userId;
+    }
+
+    @NonNull
+    public String getName() {
+        return name;
+    }
+
+    public void setName(@NonNull String name) {
+        this.name = name;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
         this.time = time;
     }
 
-    public void setCustomTime(Map<String, Object> customTime) {
-        this.customTime = customTime;
+    public long getDeadline() {
+        return deadline;
     }
-
-    public void setDaily(Boolean daily) {
-        this.daily = daily;
-    }
-
-    public void setWeekly(Boolean weekly) {
-        this.weekly = weekly;
-    }
-
-    public void setMonthly(Boolean monthly) {
-        this.monthly = monthly;
-    }
-
-    public void setCustom(Boolean custom) {
-        this.custom = custom;
-    }
-
-    public void setInterval(Boolean interval) {
-        isInterval = interval;
-    }
-
-    /*public void setAreSingleDays(Boolean areSingleDays) {
-        this.areSingleDays = areSingleDays;
-    }*/
 
     public void setDeadline(long deadline) {
         this.deadline = deadline;
     }
 
-    public void setCustomIntervalFrom(long customIntervalFrom) {
-        this.customIntervalFrom = customIntervalFrom;
+    public int getRegularity() {
+        return regularity;
     }
 
-    public void setCustomIntervalTo(long customIntervalTo) {
-        this.customIntervalTo = customIntervalTo;
+    public void setRegularity(int regularity) {
+        this.regularity = regularity;
     }
 
-    public void setWeeklyDays(List<Object> weeklyDays) {
-        this.weeklyDays = weeklyDays;
+    public boolean isHasFixedDays() {
+        return hasFixedDays;
     }
 
-    public void setMonthlyDays(List<Object> monthlyDays) {
-        this.monthlyDays = monthlyDays;
+    public void setHasFixedDays(boolean hasFixedDays) {
+        this.hasFixedDays = hasFixedDays;
     }
 
-    /*public void setCustomDays(List<Object> customDays) {
-        this.customDays = customDays;
-    }*/
+    public long getStartDay() {
+        return startDay;
+    }
+
+    public void setStartDay(long startDay) {
+        this.startDay = startDay;
+    }
+
+    public long getEndDay() {
+        return endDay;
+    }
+
+    public void setEndDay(long endDay) {
+        this.endDay = endDay;
+    }
+
+    public boolean isTurnOffNotification() {
+        return turnOffNotification;
+    }
+
+    public void setTurnOffNotification(boolean turnOffNotification) {
+        this.turnOffNotification = turnOffNotification;
+    }
 }

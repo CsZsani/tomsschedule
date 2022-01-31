@@ -29,10 +29,12 @@ import hu.janny.tomsschedule.databinding.FragmentHomeBinding;
 import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.CustomActivityRecyclerAdapter;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
+import hu.janny.tomsschedule.ui.main.MainViewModel;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
+    private MainViewModel mainViewModel;
     private FragmentHomeBinding binding;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -43,6 +45,7 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -53,7 +56,15 @@ public class HomeFragment extends Fragment {
         binding.activitiesListRecyclerView.setLayoutManager(layoutManager);
         binding.activitiesListRecyclerView.setAdapter(new CustomActivityRecyclerAdapter(new ArrayList<>()));
 
-        LiveData<List<CustomActivity>> customActivities = homeViewModel.getCustomActivitiesLiveData();
+        /*LiveData<List<CustomActivity>> customActivities = homeViewModel.getCustomActivitiesLiveData();
+        customActivities.observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
+            @Override
+            public void onChanged(List<CustomActivity> customActivities) {
+                // TODO: update custom activities list on UI
+                binding.activitiesListRecyclerView.setAdapter(new CustomActivityRecyclerAdapter(customActivities));
+            }
+        });*/
+        LiveData<List<CustomActivity>> customActivities = mainViewModel.getAllActivitiesWithTimesInList();
         customActivities.observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
             @Override
             public void onChanged(List<CustomActivity> customActivities) {

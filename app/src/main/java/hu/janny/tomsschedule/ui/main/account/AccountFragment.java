@@ -42,7 +42,8 @@ public class AccountFragment extends Fragment {
             public void onChanged(@Nullable User u) {
                 if(u != null) {
                     binding.accountEmail.setText(u.email);
-                    binding.accountBirthDate.setText(DateConverter.longMillisToStringForSimpleDateDialog(DateConverter.stringMillisToLong(u.birthDate)));
+                    //binding.accountBirthDate.setText(DateConverter.longMillisToStringForSimpleDateDialog(DateConverter.stringMillisToLong(u.birthDate)));
+                    binding.accountBirthDate.setText(DateConverter.longMillisToStringForSimpleDateDialog(u.birthDate));
                     binding.accountAgeGroup.setText(u.ageGroup());
                     binding.accountName.setText(u.name);
                     binding.accountGender.setText(u.getGender());

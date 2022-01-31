@@ -33,6 +33,7 @@ import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentAddCustomActivityBinding;
 import hu.janny.tomsschedule.databinding.FragmentHomeBinding;
 import hu.janny.tomsschedule.model.DateConverter;
+import hu.janny.tomsschedule.ui.main.MainViewModel;
 
 public class AddCustomActivityFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 
