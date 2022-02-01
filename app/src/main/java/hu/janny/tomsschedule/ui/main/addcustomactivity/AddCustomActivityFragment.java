@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.ColorPickerDialog;
@@ -32,15 +34,20 @@ import java.util.Locale;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentAddCustomActivityBinding;
 import hu.janny.tomsschedule.databinding.FragmentHomeBinding;
+import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.ui.main.MainViewModel;
 
 public class AddCustomActivityFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 
     private AddCustomActivityViewModel mViewModel;
+    private MainViewModel mainViewModel;
     private FragmentAddCustomActivityBinding binding;
     private AlertDialog colorPickerDialog;
-    final Calendar myCalendar= Calendar.getInstance();
+    final Calendar calDeadline= Calendar.getInstance();
+    final Calendar calStartDay= Calendar.getInstance();
+    final Calendar calEndDay= Calendar.getInstance();
+    private CustomActivity customActivity;
 
     public static AddCustomActivityFragment newInstance() {
         return new AddCustomActivityFragment();
@@ -55,6 +62,8 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         intiColorPicker();
         binding.activityPriority.setOnItemSelectedListener(this);
 
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
         binding.activityColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,33 +71,14 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             }
         });
 
-        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int day) {
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH,month + 1);
-                myCalendar.set(Calendar.DAY_OF_MONTH,day);
-                updateLabel();
-            }
-        };
 
-        binding.activityDeadline.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new DatePickerDialog(getActivity(),date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
+        customActivity = new CustomActivity();
 
+        initCalendars();
+        initOnClickListenersOnRadioGroups();
         return root;
     }
 
-    private void updateLabel(){
-        //String myFormat="MM/dd/yy";
-        //SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.US);
-        //binding.activityDeadline.setText(dateFormat.format(myCalendar.getTime()));
-        binding.activityDeadline.setText(DateConverter.makeDateStringForSimpleDateDialog(
-                myCalendar.get(Calendar.DATE), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.YEAR)));
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -137,5 +127,138 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     }
 
 
+    private void initOnClickListenersOnRadioGroups() {
+        binding.selectActivityNameRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
+                    case R.id.selectFixActivityOption:
+                        binding.selectFixActivitySpinner.setVisibility(View.VISIBLE);
+                        binding.activityName.setVisibility(View.GONE);
+                        break;
+                    case R.id.selectCustomActivityOption:
+                        binding.selectFixActivitySpinner.setVisibility(View.GONE);
+                        binding.activityName.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
+
+        binding.selectNotifTypeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
+                    case R.id.activityHasDeadline:
+                        setDeadlineVisible();
+                        setIntervalGone();
+                        binding.activityRegularityText.setVisibility(View.GONE);
+                        binding.selectExactRegularity.setVisibility(View.GONE);
+                        break;
+                    case R.id.activityRegularity:
+
+                        break;
+                    case R.id.activityIsInterval:
+                        setIntervalVisible();
+                        setDeadlineGone();
+                        binding.activityRegularityText.setVisibility(View.GONE);
+                        binding.selectExactRegularity.setVisibility(View.GONE);
+                        break;
+                    case R.id.activityCustom:
+
+                        break;
+                }
+            }
+        });
+    }
+
+    private void initCalendars() {
+        DatePickerDialog.OnDateSetListener dateDeadline = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                calDeadline.set(Calendar.YEAR, year);
+                calDeadline.set(Calendar.MONTH,month);
+                calDeadline.set(Calendar.DAY_OF_MONTH,day);
+                updateLabelDeadline();
+            }
+        };
+
+        DatePickerDialog.OnDateSetListener dateStartday = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                calStartDay.set(Calendar.YEAR, year);
+                calStartDay.set(Calendar.MONTH,month);
+                calStartDay.set(Calendar.DAY_OF_MONTH,day);
+                updateLabelStartDay();
+            }
+        };
+
+        DatePickerDialog.OnDateSetListener dateEndDay = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                calEndDay.set(Calendar.YEAR, year);
+                calEndDay.set(Calendar.MONTH,month);
+                calEndDay.set(Calendar.DAY_OF_MONTH,day);
+                updateLabelEndDay();
+            }
+        };
+
+        binding.activityDeadline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(getActivity(),dateDeadline,calDeadline.get(Calendar.YEAR),calDeadline.get(Calendar.MONTH),calDeadline.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+        binding.activityStartDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(getActivity(),dateStartday,calStartDay.get(Calendar.YEAR),calStartDay.get(Calendar.MONTH),calStartDay.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+        binding.activityEndDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(getActivity(),dateEndDay,calEndDay.get(Calendar.YEAR),calEndDay.get(Calendar.MONTH),calEndDay.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+    }
+
+    private void updateLabelDeadline(){
+        binding.activityDeadline.setText(DateConverter.makeDateStringForSimpleDateDialog(
+                calDeadline.get(Calendar.DATE), calDeadline.get(Calendar.MONTH) + 1, calDeadline.get(Calendar.YEAR)));
+    }
+
+    private void updateLabelStartDay(){
+        binding.activityStartDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
+                calStartDay.get(Calendar.DATE), calStartDay.get(Calendar.MONTH) + 1, calStartDay.get(Calendar.YEAR)));
+    }
+
+    private void updateLabelEndDay(){
+        binding.activityEndDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
+                calEndDay.get(Calendar.DATE), calEndDay.get(Calendar.MONTH) + 1, calEndDay.get(Calendar.YEAR)));
+    }
+
+    private void setDeadlineGone() {
+        binding.activityDeadlineText.setVisibility(View.GONE);
+        binding.activityDeadline.setVisibility(View.GONE);
+    }
+
+    private void setDeadlineVisible() {
+        binding.activityDeadlineText.setVisibility(View.VISIBLE);
+        binding.activityDeadline.setVisibility(View.VISIBLE);
+    }
+
+    private void setIntervalGone() {
+        binding.startDayText.setVisibility(View.GONE);
+        binding.activityStartDay.setVisibility(View.GONE);
+        binding.endDayText.setVisibility(View.GONE);
+        binding.activityEndDay.setVisibility(View.GONE);
+    }
+
+    private void setIntervalVisible() {
+        binding.startDayText.setVisibility(View.VISIBLE);
+        binding.activityStartDay.setVisibility(View.VISIBLE);
+        binding.endDayText.setVisibility(View.VISIBLE);
+        binding.activityEndDay.setVisibility(View.VISIBLE);
+    }
 
 }

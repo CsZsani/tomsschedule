@@ -6,6 +6,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.firebase.database.Exclude;
@@ -62,9 +63,13 @@ public class CustomActivity {
     @ColumnInfo(name = "notification")
     public boolean turnOffNotification = false;
 
-    @Embedded public CustomWeekTime customWeekTime = new CustomWeekTime();
+    @Embedded(prefix = "wd")
+    public CustomWeekTime customWeekTime = new CustomWeekTime();
 
-    public CustomActivity() {}
+    @Ignore
+    public CustomActivity() {
+
+    }
 
     public CustomActivity(@NonNull String userId,@NonNull String name, int color, String note, int priority) {
         this.userId = userId;
@@ -72,6 +77,7 @@ public class CustomActivity {
         this.color = color;
         this.note = note;
         this.priority = priority;
+
     }
 
     public CustomWeekTime getCustomWeekTime() {

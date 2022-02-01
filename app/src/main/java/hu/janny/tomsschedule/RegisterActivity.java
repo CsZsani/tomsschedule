@@ -2,6 +2,7 @@ package hu.janny.tomsschedule;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -20,22 +21,27 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import hu.janny.tomsschedule.databinding.ActivityRegisterBinding;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
+import hu.janny.tomsschedule.ui.main.account.AccountViewModel;
 
 public class RegisterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private ActivityRegisterBinding binding;
     private DatePickerDialog datePickerDialog;
+    private LoginRegisterViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        viewModel = new ViewModelProvider(this).get(LoginRegisterViewModel.class);
 
         binding.registerGender.setOnItemSelectedListener(this);
         initDatePicker();
@@ -47,7 +53,12 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         String password = binding.registerPassword.getText().toString().trim();
         String name = binding.registerName.getText().toString().trim();
         String birthDate = binding.registerBirthDate.getText().toString().trim();
-        String gender = binding.registerGender.getSelectedItem().toString().trim();
+        String gender;
+        if(Integer.parseInt(binding.registerGender.getSelectedItem().toString()) == R.string.female) {
+            gender = "female";
+        } else {
+            gender = "male";
+        }
 
         if(email.isEmpty()) {
             binding.registerEmail.setError("Email is required!");
@@ -104,6 +115,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
                                         Toast.makeText(RegisterActivity.this, R.string.user_registration_successful, Toast.LENGTH_LONG).show();
                                         binding.registerProgressBar.setVisibility(View.GONE);
 
+                                        viewModel.insertUser(user);
                                         startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                                     } else {
                                         Toast.makeText(RegisterActivity.this, R.string.user_registration_failure, Toast.LENGTH_LONG).show();

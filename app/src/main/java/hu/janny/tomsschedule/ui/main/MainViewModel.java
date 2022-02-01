@@ -18,22 +18,27 @@ import java.util.Map;
 
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.CustomActivity;
+import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.model.repository.Repository;
+import hu.janny.tomsschedule.model.repository.UserRepository;
 
 public class MainViewModel extends AndroidViewModel {
 
-    private Repository repository;
-    private LiveData<Map<CustomActivity, List<ActivityTime>>> allActivitiesWithTimes;
-    private LiveData<List<CustomActivity>> allActivitiesList;
-    private MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityWithTimes;
+    private final Repository repository;
+    private final UserRepository userRepository;
+    private final LiveData<Map<CustomActivity, List<ActivityTime>>> allActivitiesWithTimes;
+    private final LiveData<List<CustomActivity>> allActivitiesList;
+    private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityWithTimes;
+    private final LiveData<User> user;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         repository = new Repository(application);
+        userRepository = new UserRepository(application);
         allActivitiesWithTimes = repository.getAllActivitiesWithTimes();
         activityWithTimes = repository.getActivitiesWithTimesData();
         allActivitiesList = Transformations.map(repository.getAllActivitiesWithTimes(), new Deserializer());
-
+        user = userRepository.getCurrentUser();
     }
 
     private GenericTypeIndicator<List<CustomActivity>> typeIndicator = new GenericTypeIndicator<List<CustomActivity>>() {};
@@ -44,6 +49,10 @@ public class MainViewModel extends AndroidViewModel {
             List<CustomActivity> list = new ArrayList<>(liveData.keySet());
             return list;
         }
+    }
+
+    public void logoutUserInDb(User user) {
+        userRepository.updateUser(user);
     }
 
     public LiveData<Map<CustomActivity, List<ActivityTime>>> getAllActivitiesWithTimes() {
@@ -60,5 +69,9 @@ public class MainViewModel extends AndroidViewModel {
 
     public void insertActivity(CustomActivity customActivity) {
         repository.insertActivity(customActivity);
+    }
+
+    public LiveData<User> getUser() {
+        return user;
     }
 }

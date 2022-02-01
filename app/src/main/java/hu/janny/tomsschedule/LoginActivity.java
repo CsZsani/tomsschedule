@@ -2,6 +2,7 @@ package hu.janny.tomsschedule;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,22 +13,23 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import hu.janny.tomsschedule.databinding.ActivityLoginBinding;
-import hu.janny.tomsschedule.model.UserState;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
+    private LoginRegisterViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        viewModel = new ViewModelProvider(this).get(LoginRegisterViewModel.class);
 
         binding.registerButtonLogin.setOnClickListener(
                 new View.OnClickListener() {
@@ -87,7 +89,9 @@ public class LoginActivity extends AppCompatActivity {
 
                     // Temporary login - for test phase - you don't need to verify your account
                     FirebaseManager.setUserLoggedIn(user);
-                    UserState.setUser();
+                    if(user != null) {
+                        viewModel.loginUser(user.getUid());
+                    }
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 } else {
                     Toast.makeText(LoginActivity.this, R.string.user_login_failure, Toast.LENGTH_LONG).show();

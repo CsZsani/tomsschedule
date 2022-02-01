@@ -3,6 +3,7 @@ package hu.janny.tomsschedule.model;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.text.ParseException;
@@ -43,6 +44,7 @@ public class User {
     @ColumnInfo(name = "isLoggedIn")
     public boolean isLoggedIn = false;
 
+    @Ignore
     public User() {
 
     }
@@ -57,7 +59,7 @@ public class User {
     }
 
     private Gender stringToGender(String gender) {
-        if(gender == "Female") {
+        if(gender.equals("female")) {
             return Gender.FEMALE;
         }
         return Gender.MALE;
@@ -76,7 +78,7 @@ public class User {
     }
 
     public int getGender() {
-        if(gender.equals("Female")) {
+        if(gender.equals("female")) {
             return R.string.female;
         } else {
             return R.string.male;

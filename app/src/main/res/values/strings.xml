@@ -44,13 +44,16 @@
     <string name="weekly">Weekly</string>
     <string name="monthly">Monthly</string>
     <string name="weekly_days">Select days of week</string>
-    <string name="monthly_days">Select days of month</string>
     <string name="custom_interval_from">Start of interval</string>
     <string name="custom_interval_to">End of interval</string>
     <string name="is_time_measured">Has a duration?</string>
+    <string name="start_day">Start day</string>
+    <string name="end_day">End day</string>
     <string name="sum_time">One (long) duration for all days</string>
     <string name="simple_time">The same duration for each day</string>
     <string name="custom_time">Different duration for each day</string>
+    <string name="is_weekly_time">The same duration for each week</string>
+    <string name="has_fixed_days">Has fixed days in every week?</string>
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>
@@ -62,6 +65,27 @@
     <string name="name_of_activity">Name</string>
     <string name="color">Color</string>
     <string name="note">Note</string>
-    <string name="priority">Priority</string>
     <string name="select_color">Select color</string>
+    <string name="add_custom_name">Do you want to add custom activity?</string>
+    <string name="fix_activities">No, I want global statistics</string>
+    <string name="custom_activity">Yes</string>
+    <string name="fa_workout">Workout</string>
+    <string name="fa_sleeping">Sleeping</string>
+    <string name="fa_housework">Housework</string>
+    <string name="fa_cooking">Cooking</string>
+    <string name="fa_shopping">Shopping</string>
+    <string name="fa_work">Work</string>
+    <string name="fa_school">School</string>
+    <string name="fa_learning">Learning</string>
+    <string name="fa_travelling">Travelling</string>
+    <string name="fa_hobby">Hobby</string>
+    <string name="fa_relaxation">Relaxation</string>
+    <string name="fa_reading">Reading</string>
+    <string name="notification_type">Select notification type</string>
+    <string name="days">Days (>=0)</string>
+    <string name="hours">Hours (0-23)</string>
+    <string name="minutes">Minutes (0-59)</string>
+    <string name="days_hint">Days</string>
+    <string name="hours_hint">Hours</string>
+    <string name="minutes_hint">Minutes</string>
 </resources>

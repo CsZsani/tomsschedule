@@ -1,5 +1,6 @@
 package hu.janny.tomsschedule.model.repository;
 
+import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -9,6 +10,7 @@ import java.util.List;
 
 import hu.janny.tomsschedule.model.ActivityTime;
 
+@Dao
 public interface ActivityTimeDao {
 
     @Insert

@@ -17,11 +17,13 @@ import android.widget.TextView;
 import hu.janny.tomsschedule.databinding.FragmentAccountBinding;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.ui.main.MainViewModel;
 
 public class AccountFragment extends Fragment {
 
     private AccountViewModel accountViewModel;
     private FragmentAccountBinding binding;
+    private MainViewModel mainViewModel;
 
     public static AccountFragment newInstance() {
         return new AccountFragment();
@@ -33,11 +35,12 @@ public class AccountFragment extends Fragment {
         //return inflater.inflate(R.layout.account_fragment, container, false);
         accountViewModel =
                 new ViewModelProvider(this).get(AccountViewModel.class);
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         binding = FragmentAccountBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        accountViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+        mainViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
             public void onChanged(@Nullable User u) {
                 if(u != null) {

@@ -5,18 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -25,31 +16,24 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Map;
-
 import hu.janny.tomsschedule.databinding.ActivityMainBinding;
-import hu.janny.tomsschedule.databinding.NavHeaderMainBinding;
-import hu.janny.tomsschedule.model.CustomActivity;
-import hu.janny.tomsschedule.model.DateConverter;
-import hu.janny.tomsschedule.model.User;
-import hu.janny.tomsschedule.model.UserState;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
-import hu.janny.tomsschedule.ui.main.account.AccountViewModel;
 import hu.janny.tomsschedule.ui.main.addcustomactivity.AddCustomActivityFragment;
 
 public class MainActivity extends AppCompatActivity implements AddCustomActivityFragment.OnFragmentInteractionListener {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
+    private LoginRegisterViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        UserState.setUser();
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        viewModel = new ViewModelProvider(this).get(LoginRegisterViewModel.class);
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
@@ -100,7 +84,9 @@ public class MainActivity extends AppCompatActivity implements AddCustomActivity
     }
 
     public void logoutUser(View view) {
+        viewModel.logoutUser(FirebaseManager.user.getUid());
         FirebaseManager.logoutUser();
+
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 //@Entity(foreignKeys = {@ForeignKey(entity = CustomActivity.class,
@@ -23,6 +24,7 @@ public class ActivityTime {
     @ColumnInfo(name = "time")
     public long time = 0L;
 
+    @Ignore
     public ActivityTime() {}
 
     public ActivityTime(@NonNull int activityId,@NonNull long date, long time) {

@@ -4,14 +4,20 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
 
 //@Entity(foreignKeys = {@ForeignKey(entity = CustomActivity.class,
 //parentColumns = "activityId", childColumns = "activityId", onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.RESTRICT)})
+@Entity(tableName = "customweektime")
 public class CustomWeekTime {
 
     /*@NonNull
     @ColumnInfo(name = "activityId")
-    public int activityId;*/
+    public int activityId;
+    */
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    public int id;
 
     @ColumnInfo(name = "monday")
     public long mon = -1L;
@@ -29,6 +35,9 @@ public class CustomWeekTime {
     public long sun = -1L;
 
     public CustomWeekTime() {}
+    /*public CustomWeekTime(int activityId) {
+        this.activityId = activityId;
+    }*/
 
     /*public CustomWeekTime(@NonNull int activityId) {
         this.activityId = activityId;
