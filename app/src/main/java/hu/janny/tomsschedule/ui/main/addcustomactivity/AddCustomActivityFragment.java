@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -47,6 +48,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     final Calendar calDeadline= Calendar.getInstance();
     final Calendar calStartDay= Calendar.getInstance();
     final Calendar calEndDay= Calendar.getInstance();
+    final Calendar calEndDate= Calendar.getInstance();
     private CustomActivity customActivity;
 
     public static AddCustomActivityFragment newInstance() {
@@ -151,20 +153,45 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                     case R.id.activityHasDeadline:
                         setDeadlineVisible();
                         setIntervalGone();
-                        binding.activityRegularityText.setVisibility(View.GONE);
-                        binding.selectExactRegularity.setVisibility(View.GONE);
+                        setRegularityGone();
+                        setEndDateGone();
                         break;
                     case R.id.activityRegularity:
-
+                        setIntervalGone();
+                        setDeadlineGone();
+                        setEndDateGone();
+                        binding.activityRegularityTypeText.setVisibility(View.VISIBLE);
+                        binding.selectExactRegularity.setVisibility(View.VISIBLE);
                         break;
                     case R.id.activityIsInterval:
                         setIntervalVisible();
                         setDeadlineGone();
-                        binding.activityRegularityText.setVisibility(View.GONE);
-                        binding.selectExactRegularity.setVisibility(View.GONE);
+                        setEndDateGone();
+                        setRegularityGone();
                         break;
                     case R.id.activityCustom:
+                        setIntervalGone();
+                        setDeadlineGone();
+                        setEndDateGone();
+                        setRegularityGone();
+                        break;
+                }
+            }
+        });
 
+        binding.selectExactRegularity.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i) {
+                    case R.id.activityDaily:
+                        setWeeklyStuffGone();
+                        setEndDateGone();
+                        break;
+                    case R.id.activityWeekly:
+                        break;
+                    case R.id.activityMonthly:
+                        setWeeklyStuffGone();
+                        binding.activityHasAnEndDate.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -202,6 +229,16 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             }
         };
 
+        DatePickerDialog.OnDateSetListener dateEndDate = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                calEndDate.set(Calendar.YEAR, year);
+                calEndDate.set(Calendar.MONTH,month);
+                calEndDate.set(Calendar.DAY_OF_MONTH,day);
+                updateLabelEndDate();
+            }
+        };
+
         binding.activityDeadline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -220,6 +257,12 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                 new DatePickerDialog(getActivity(),dateEndDay,calEndDay.get(Calendar.YEAR),calEndDay.get(Calendar.MONTH),calEndDay.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+        binding.activityEndDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(getActivity(),dateEndDate,calEndDate.get(Calendar.YEAR),calEndDate.get(Calendar.MONTH),calEndDate.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
     }
 
     private void updateLabelDeadline(){
@@ -235,6 +278,11 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     private void updateLabelEndDay(){
         binding.activityEndDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 calEndDay.get(Calendar.DATE), calEndDay.get(Calendar.MONTH) + 1, calEndDay.get(Calendar.YEAR)));
+    }
+
+    private void updateLabelEndDate(){
+        binding.activityEndDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
+                calEndDate.get(Calendar.DATE), calEndDate.get(Calendar.MONTH) + 1, calEndDate.get(Calendar.YEAR)));
     }
 
     private void setDeadlineGone() {
@@ -259,6 +307,25 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         binding.activityStartDay.setVisibility(View.VISIBLE);
         binding.endDayText.setVisibility(View.VISIBLE);
         binding.activityEndDay.setVisibility(View.VISIBLE);
+    }
+
+    private void setRegularityGone() {
+        binding.activityRegularityTypeText.setVisibility(View.GONE);
+        binding.selectExactRegularity.setVisibility(View.GONE);
+        binding.activityHasFixedWeeks.setVisibility(View.GONE);
+        binding.activityWeeklyDays.setVisibility(View.GONE);
+        binding.allDaysOfWeek.setVisibility(View.GONE);
+    }
+
+    private void setEndDateGone() {
+        binding.activityHasAnEndDate.setVisibility(View.GONE);
+        binding.activityEndDate.setVisibility(View.GONE);
+    }
+
+    private void setWeeklyStuffGone() {
+        binding.activityHasFixedWeeks.setVisibility(View.GONE);
+        binding.activityWeeklyDays.setVisibility(View.GONE);
+        binding.allDaysOfWeek.setVisibility(View.GONE);
     }
 
 }

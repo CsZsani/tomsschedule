@@ -49,11 +49,14 @@
     <string name="is_time_measured">Has a duration?</string>
     <string name="start_day">Start day</string>
     <string name="end_day">End day</string>
+    <string name="has_an_end_date">Has an end date?</string>
+    <string name="end_date">End date</string>
     <string name="sum_time">One (long) duration for all days</string>
     <string name="simple_time">The same duration for each day</string>
     <string name="custom_time">Different duration for each day</string>
     <string name="is_weekly_time">The same duration for each week</string>
     <string name="has_fixed_days">Has fixed days in every week?</string>
+    <string name="select_fixed_days_times">Set the times for each day</string>
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>
