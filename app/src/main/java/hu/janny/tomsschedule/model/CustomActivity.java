@@ -34,34 +34,34 @@ public class CustomActivity {
     @ColumnInfo(name = "name")
     public String name;
     @ColumnInfo(name = "color")
-    public int color;
+    public int col;
 
     @ColumnInfo(name = "note")
     public String note;
 
     @ColumnInfo(name = "priority")
-    public int priority;
+    public int pr;
 
     @ColumnInfo(name = "time")
     public int time = 0;
 
     @ColumnInfo(name = "deadline")
-    public long deadline = 0L;
+    public long dl = 0L;
 
     @ColumnInfo(name = "regularity")
-    public int regularity = 0;
+    public int reg = 0;
 
     @ColumnInfo(name = "hasFixedDays")
-    public boolean hasFixedDays = false;
+    public boolean hFD = false;
 
     @ColumnInfo(name = "startDay")
-    public long startDay = 0L;
+    public long sD = 0L;
 
     @ColumnInfo(name = "endDay")
-    public long endDay = 0L;
+    public long eD = 0L;
 
     @ColumnInfo(name = "notification")
-    public boolean turnOffNotification = false;
+    public boolean notif = false;
 
     @Embedded(prefix = "wd")
     public CustomWeekTime customWeekTime = new CustomWeekTime();
@@ -71,12 +71,12 @@ public class CustomActivity {
 
     }
 
-    public CustomActivity(@NonNull String userId,@NonNull String name, int color, String note, int priority) {
+    public CustomActivity(@NonNull String userId,@NonNull String name, int col, String note, int pr) {
         this.userId = userId;
         this.name = name;
-        this.color = color;
+        this.col = col;
         this.note = note;
-        this.priority = priority;
+        this.pr = pr;
 
     }
 
@@ -134,12 +134,12 @@ public class CustomActivity {
         this.name = name;
     }
 
-    public int getColor() {
-        return color;
+    public int getCol() {
+        return col;
     }
 
-    public void setColor(int color) {
-        this.color = color;
+    public void setCol(int col) {
+        this.col = col;
     }
 
     public String getNote() {
@@ -150,12 +150,12 @@ public class CustomActivity {
         this.note = note;
     }
 
-    public int getPriority() {
-        return priority;
+    public int getPr() {
+        return pr;
     }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
+    public void setPr(int pr) {
+        this.pr = pr;
     }
 
     public int getTime() {
@@ -166,51 +166,51 @@ public class CustomActivity {
         this.time = time;
     }
 
-    public long getDeadline() {
-        return deadline;
+    public long getDl() {
+        return dl;
     }
 
-    public void setDeadline(long deadline) {
-        this.deadline = deadline;
+    public void setDl(long dl) {
+        this.dl = dl;
     }
 
-    public int getRegularity() {
-        return regularity;
+    public int getReg() {
+        return reg;
     }
 
-    public void setRegularity(int regularity) {
-        this.regularity = regularity;
+    public void setReg(int reg) {
+        this.reg = reg;
     }
 
-    public boolean isHasFixedDays() {
-        return hasFixedDays;
+    public boolean ishFD() {
+        return hFD;
     }
 
-    public void setHasFixedDays(boolean hasFixedDays) {
-        this.hasFixedDays = hasFixedDays;
+    public void sethFD(boolean hFD) {
+        this.hFD = hFD;
     }
 
-    public long getStartDay() {
-        return startDay;
+    public long getsD() {
+        return sD;
     }
 
-    public void setStartDay(long startDay) {
-        this.startDay = startDay;
+    public void setsD(long sD) {
+        this.sD = sD;
     }
 
-    public long getEndDay() {
-        return endDay;
+    public long geteD() {
+        return eD;
     }
 
-    public void setEndDay(long endDay) {
-        this.endDay = endDay;
+    public void seteD(long eD) {
+        this.eD = eD;
     }
 
-    public boolean isTurnOffNotification() {
-        return turnOffNotification;
+    public boolean isNotif() {
+        return notif;
     }
 
-    public void setTurnOffNotification(boolean turnOffNotification) {
-        this.turnOffNotification = turnOffNotification;
+    public void setNotif(boolean notif) {
+        this.notif = notif;
     }
 }

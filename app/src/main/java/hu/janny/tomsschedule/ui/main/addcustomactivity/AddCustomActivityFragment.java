@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -186,16 +187,101 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                     case R.id.activityDaily:
                         setWeeklyStuffGone();
                         setEndDateGone();
+                        binding.activityIsTimeMeasured.setChecked(false);
                         break;
                     case R.id.activityWeekly:
+                        binding.activityHasFixedWeeks.setVisibility(View.VISIBLE);
+                        binding.activityHasAnEndDate.setVisibility(View.VISIBLE);
+                        binding.activityIsTimeMeasured.setChecked(false);
                         break;
                     case R.id.activityMonthly:
                         setWeeklyStuffGone();
                         binding.activityHasAnEndDate.setVisibility(View.VISIBLE);
+                        binding.activityIsTimeMeasured.setChecked(false);
                         break;
                 }
             }
         });
+
+        binding.activityHasFixedWeeks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(((CompoundButton) view).isChecked()) {
+                    binding.activityWeeklyDays.setVisibility(View.VISIBLE);
+                    binding.allDaysOfWeek.setVisibility(View.VISIBLE);
+                    binding.activityHasAnEndDate.setChecked(false);
+                } else {
+                    binding.activityWeeklyDays.setVisibility(View.GONE);
+                    binding.allDaysOfWeek.setVisibility(View.GONE);
+                    binding.activityHasAnEndDate.setChecked(false);
+                }
+            }
+        });
+
+        binding.activityHasAnEndDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    binding.activityEndDate.setVisibility(View.VISIBLE);
+                } else {
+                    binding.activityEndDate.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        binding.activityIsTimeMeasured.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    if(binding.activityHasDeadline.isChecked()) {
+                        binding.durationText.setText(R.string.choose_sum_time_for_deadline);
+                        binding.durationText.setVisibility(View.VISIBLE);
+                        setSumTimePickerDefault();
+                    } else if(binding.activityCustom.isChecked()) {
+                        binding.durationText.setText(R.string.choose_sum_time_for_neither);
+                        binding.durationText.setVisibility(View.VISIBLE);
+                        setSumTimePickerDefault();
+                    } else if(binding.activityIsInterval.isChecked()) {
+                        binding.selectDurationType.setVisibility(View.VISIBLE);
+                        binding.activityIsSumTime.setVisibility(View.VISIBLE);
+                        binding.activityIsTime.setVisibility(View.VISIBLE);
+                        binding.activityCustomTime.setVisibility(View.GONE);
+                        binding.activityIsWeeklyTime.setVisibility(View.GONE);
+                    } else if(binding.activityDaily.isChecked()) {
+                        binding.durationText.setText(R.string.choose_monthly_time);
+                        binding.durationText.setVisibility(View.VISIBLE);
+                        setSumTimePickerDefault();
+                        binding.activitySumTimePicker.days.setClickable(false);
+                        binding.activitySumTimePicker.days.setBackgroundColor(Color.LTGRAY);
+                    } else if(binding.activityWeekly.isChecked()) {
+                        if (binding.activityHasFixedWeeks.isChecked()) {
+                            // sok minden
+                        } else {
+                            binding.durationText.setText(R.string.choose_one_weekly_time);
+                            binding.durationText.setVisibility(View.VISIBLE);
+                            setSumTimePickerDefault();
+                        }
+                    } else if(binding.activityMonthly.isChecked()) {
+                        binding.durationText.setText(R.string.choose_monthly_time);
+                        binding.durationText.setVisibility(View.VISIBLE);
+                        setSumTimePickerDefault();
+                    }
+                } else {
+                    binding.durationText.setVisibility(View.GONE);
+                    binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                    binding.selectDurationType.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    private  void setSumTimePickerDefault() {
+        binding.activitySumTimePicker.getRoot().setVisibility(View.VISIBLE);
+        binding.activitySumTimePicker.days.setText("0");
+        binding.activitySumTimePicker.hours.setText("0");
+        binding.activitySumTimePicker.minutes.setText("0");
+        binding.activitySumTimePicker.days.setClickable(true);
+        binding.activitySumTimePicker.days.setBackgroundColor(Color.WHITE);
     }
 
     private void initCalendars() {
@@ -281,7 +367,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     }
 
     private void updateLabelEndDate(){
-        binding.activityEndDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
+        binding.activityEndDate.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 calEndDate.get(Calendar.DATE), calEndDate.get(Calendar.MONTH) + 1, calEndDate.get(Calendar.YEAR)));
     }
 
@@ -318,6 +404,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     }
 
     private void setEndDateGone() {
+        binding.activityHasAnEndDate.setChecked(false);
         binding.activityHasAnEndDate.setVisibility(View.GONE);
         binding.activityEndDate.setVisibility(View.GONE);
     }

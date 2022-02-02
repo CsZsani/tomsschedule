@@ -48,8 +48,8 @@ public class CustomActivityRecyclerAdapter
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         viewHolder.activityName.setText(activityList.get(i).name);
         viewHolder.detailsText.setText("Ide jon majd a fancy reszlet");
-        viewHolder.divider.setBackgroundColor(activityList.get(i).color);
-        viewHolder.beginActivity.setBackgroundColor(darkenColor(activityList.get(i).color));
+        viewHolder.divider.setBackgroundColor(activityList.get(i).getCol());
+        viewHolder.beginActivity.setBackgroundColor(darkenColor(activityList.get(i).getCol()));
     }
 
     @Override

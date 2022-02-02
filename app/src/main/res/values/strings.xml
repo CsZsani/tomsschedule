@@ -91,4 +91,8 @@
     <string name="days_hint">Days</string>
     <string name="hours_hint">Hours</string>
     <string name="minutes_hint">Minutes</string>
+    <string name="choose_one_weekly_time">Set how much time you want weekly</string>
+    <string name="choose_sum_time_for_deadline">Set how much time you want altogether</string>
+    <string name="choose_sum_time_for_neither">Set how much time you want altogether</string>
+    <string name="choose_monthly_time">Set how much time you want monthly</string>
 </resources>

@@ -14,46 +14,46 @@ public class ActivityTime {
 
     @NonNull
     @ColumnInfo(name = "activityId")
-    public int activityId;
+    public int aId;
 
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "date")
-    public long date;
+    public long d;
 
     @ColumnInfo(name = "time")
-    public long time = 0L;
+    public long t = 0L;
 
     @Ignore
     public ActivityTime() {}
 
-    public ActivityTime(@NonNull int activityId,@NonNull long date, long time) {
-        this.activityId = activityId;
-        this.date = date;
-        this.time = time;
+    public ActivityTime(@NonNull int aId,@NonNull long d, long t) {
+        this.aId = aId;
+        this.d = d;
+        this.t = t;
     }
 
-    public int getActivityId() {
-        return activityId;
+    public int getaId() {
+        return aId;
     }
 
-    public void setActivityId(int activityId) {
-        this.activityId = activityId;
+    public void setaId(int aId) {
+        this.aId = aId;
     }
 
-    public long getDate() {
-        return date;
+    public long getD() {
+        return d;
     }
 
-    public void setDate(long date) {
-        this.date = date;
+    public void setD(long d) {
+        this.d = d;
     }
 
-    public long getTime() {
-        return time;
+    public long getT() {
+        return t;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public void setT(long t) {
+        this.t = t;
     }
 }
