@@ -67,7 +67,7 @@
     <string name="activity_name">Activity name</string>
     <string name="name_of_activity">Name</string>
     <string name="color">Color</string>
-    <string name="note">Note</string>
+    <string name="note">Note (optional)</string>
     <string name="select_color">Select color</string>
     <string name="add_custom_name">Do you want to add custom activity?</string>
     <string name="fix_activities">No, I want global statistics</string>
@@ -92,7 +92,12 @@
     <string name="hours_hint">Hours</string>
     <string name="minutes_hint">Minutes</string>
     <string name="choose_one_weekly_time">Set how much time you want weekly</string>
-    <string name="choose_sum_time_for_deadline">Set how much time you want altogether</string>
+    <string name="choose_sum_time_for_deadline">Set how much time you want till deadline</string>
     <string name="choose_sum_time_for_neither">Set how much time you want altogether</string>
     <string name="choose_monthly_time">Set how much time you want monthly</string>
+    <string name="choose_sum_time_for_interval">Set how much time you want till end day</string>
+    <string name="choose_sum_time_for_fixed_week_days">Set how much time you want till end date</string>
+    <string name="choose_daily_time_for_interval">Set how much time you want daily till end day</string>
+    <string name="choose_daily_time">Set how much time you want daily</string>
+    <string name="save">Save</string>
 </resources>

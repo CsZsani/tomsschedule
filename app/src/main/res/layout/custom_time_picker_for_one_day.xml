@@ -38,7 +38,7 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/editTextNumberDecimal"
+            android:id="@+id/oneDayHours"
             android:layout_height="wrap_content"
             android:layout_weight=".45"
             android:hint="@string/hours_hint"
@@ -47,7 +47,7 @@
             android:textAlignment="center" />
 
         <TextView
-            android:id="@+id/textView14"
+            android:id="@+id/placeholder5"
             android:layout_height="wrap_content"
             android:layout_weight=".10"
             android:text=":"
@@ -55,7 +55,7 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/editTextNumberDecimal2"
+            android:id="@+id/oneDayMinutes"
             android:layout_height="wrap_content"
             android:layout_weight=".45"
             android:hint="@string/minutes_hint"

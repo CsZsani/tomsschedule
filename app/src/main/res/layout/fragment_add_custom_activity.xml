@@ -54,6 +54,7 @@
                 android:layout_height="wrap_content"
                 android:entries="@array/fixActivities"
                 android:minHeight="48dp"
+                android:spinnerMode="dialog"
                 android:visibility="visible"
                 tools:visibility="visible" />
 
@@ -63,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/name_of_activity"
-                android:inputType="textPersonName"
+                android:inputType="text"
                 android:minHeight="48dp"
                 android:visibility="gone"
                 tools:visibility="visible" />
@@ -418,6 +419,7 @@
                 tools:visibility="visible" />
 
             <LinearLayout
+                android:id="@+id/fixedDaysTimes"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -536,6 +538,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/saveActivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

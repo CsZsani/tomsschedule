@@ -65,7 +65,7 @@
     <string name="activity_name">Tevékenység neve</string>
     <string name="name_of_activity">Név</string>
     <string name="color">Szín (a téma színe)</string>
-    <string name="note">Jegyzet</string>
+    <string name="note">Jegyzet (nem kötelező)</string>
     <string name="select_color">Válassz egy színt!</string>
     <string name="add_custom_name">Egyedi tevékenységet akarsz hozzáadni?</string>
     <string name="fix_activities">Nem, szeretném látni a globális statisztikában</string>
@@ -90,4 +90,13 @@
     <string name="hours_hint">Óra</string>
     <string name="minutes_hint">Perc</string>
     <string name="select_fixed_days_times">Adj meg időt minden kiválsztott naphoz!</string>
+    <string name="choose_one_weekly_time">Mennyi időt szeretnél vele tölteni hetente?</string>
+    <string name="choose_sum_time_for_deadline">Mennyi időt szeretnél tölteni vele a határdőig?</string>
+    <string name="choose_sum_time_for_neither">Mennyi időt szeretnél tölteni vele összesen?</string>
+    <string name="choose_monthly_time">Mennyi időt szeretnél tölteni vele havonta?</string>
+    <string name="choose_sum_time_for_interval">Mennyi időt szeretnél tölteni vele az utolsó napig?</string>
+    <string name="choose_sum_time_for_fixed_week_days">Mennyi időt szeretnél tölteni vele összesen?</string>
+    <string name="choose_daily_time_for_interval">Mennyi időt szeretnél tölteni vele naponta?</string>
+    <string name="choose_daily_time">Mennyi időt szeretnél tölteni vele naponta?</string>
+    <string name="save">Mentés</string>
 </resources>

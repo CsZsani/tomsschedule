@@ -35,5 +35,9 @@
         android:id="@+id/add_custom_activity"
         android:name="hu.janny.tomsschedule.ui.main.addcustomactivity.AddCustomActivityFragment"
         android:label="@string/add_new_activity_fragment_label"
-        tools:layout="@layout/fragment_add_custom_activity" />
+        tools:layout="@layout/fragment_add_custom_activity" >
+        <action
+            android:id="@+id/action_add_custom_activity_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 </navigation>

@@ -53,12 +53,13 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         String password = binding.registerPassword.getText().toString().trim();
         String name = binding.registerName.getText().toString().trim();
         String birthDate = binding.registerBirthDate.getText().toString().trim();
-        String gender = "female";
-        /*if(Integer.parseInt(binding.registerGender.getSelectedItem().toString()) == R.string.female) {
+        String gender;
+        if(binding.registerGender.getSelectedItem().toString().equals("Female") ||
+                binding.registerGender.getSelectedItem().toString().equals("Nő")) {
             gender = "female";
         } else {
             gender = "male";
-        }*/
+        }
 
         if(email.isEmpty()) {
             binding.registerEmail.setError("Email is required!");

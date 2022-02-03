@@ -42,8 +42,11 @@ public class CustomActivity {
     @ColumnInfo(name = "priority")
     public int pr;
 
+    @ColumnInfo(name = "timeType")
+    public int tT = 0;
+
     @ColumnInfo(name = "time")
-    public int time = 0;
+    public long time = 0;
 
     @ColumnInfo(name = "deadline")
     public long dl = 0L;
@@ -158,11 +161,19 @@ public class CustomActivity {
         this.pr = pr;
     }
 
-    public int getTime() {
+    public int gettT() {
+        return tT;
+    }
+
+    public void settT(int tT) {
+        this.tT = tT;
+    }
+
+    public long getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
