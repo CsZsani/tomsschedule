@@ -77,6 +77,38 @@ public final class DateConverter {
         return group;
     }
 
+    public static long durationTimeConverterFromIntToLong(int days, int hours, int minutes) {
+        long dayMillis = days * 24L * 60L * 60L * 1000L;
+        long hourMillis = hours * 60L * 60L * 1000L;
+        long minMillis = minutes * 60L * 1000L;
+        return dayMillis + hourMillis + minMillis;
+    }
+
+    public static long durationTimeConverterFromIntToLongForDays(int hours, int minutes) {
+        long hourMillis = hours * 60L * 60L * 1000L;
+        long minMillis = minutes * 60L * 1000L;
+        return hourMillis + minMillis;
+    }
+
+    public static long durationTimeConverterFromStringToLong(String days, String hours, String minutes) {
+        long dayMillis = Long.parseLong(days) * 24L * 60L * 60L * 1000L;
+        long hourMillis = Long.parseLong(hours) * 60L * 60L * 1000L;
+        long minMillis = Long.parseLong(minutes) * 60L * 1000L;
+        return dayMillis + hourMillis + minMillis;
+    }
+
+    public static long durationTimeConverterFromStringToLongForDays(String hours, String minutes) {
+        long hourMillis = Long.parseLong(hours) * 60L * 60L * 1000L;
+        long minMillis = Long.parseLong(minutes) * 60L * 1000L;
+        return hourMillis + minMillis;
+    }
+
+    public static void exampleLongToTime(long millis) {
+        int h = (int) ((millis / 1000) / 3600);
+        int m = (int) (((millis / 1000) / 60) % 60);
+        int s = (int) ((millis / 1000) % 60);
+    }
+
     public static String getMonthStringFromMonthFormat(String s) {
         if(s.equals("JAN")) {
             return "01";

@@ -1,5 +1,6 @@
 package hu.janny.tomsschedule.ui.main.addcustomactivity;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import androidx.appcompat.app.AlertDialog;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +37,10 @@ import java.util.Calendar;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.CustomTimePickerForOneDayBinding;
 import hu.janny.tomsschedule.databinding.FragmentAddCustomActivityBinding;
+import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.DateConverter;
+import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.ui.main.MainViewModel;
 
 public class AddCustomActivityFragment extends Fragment implements AdapterView.OnItemSelectedListener{
@@ -51,6 +55,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     final Calendar calEndDate= Calendar.getInstance();
     private CustomActivity customActivity;
     int color = Color.rgb(255, 164, 119);
+    private User currentUser;
 
     public static AddCustomActivityFragment newInstance() {
         return new AddCustomActivityFragment();
@@ -67,6 +72,13 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         fixActivitySpinnerListener();
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        mainViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                currentUser = user;
+            }
+        });
 
         binding.activityColor.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,9 +181,9 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         int priority = Integer.parseInt(binding.activityPriority.getSelectedItem().toString());
 
         if(mainViewModel.getUser().getValue() != null) {
-            customActivity = new CustomActivity(mainViewModel.getUser().getValue().uid, name, col, note, priority);
+            customActivity = new CustomActivity(currentUser.uid, name, col, note, priority);
         } else {
-            Toast.makeText(getActivity(), "Error is saving activity, no user detected!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Error in saving activity, no user detected!", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -186,7 +198,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                 binding.activityDeadline.requestFocus();
                 return;
             }
-            setDeadline(dl);
+            if(!setDeadline(dl)) {return;}
         } else if(binding.activityIsInterval.isChecked()) {
             String from = binding.activityStartDay.getText().toString().trim();
             String to = binding.activityEndDay.getText().toString().trim();
@@ -200,34 +212,252 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                 binding.activityEndDay.requestFocus();
                 return;
             }
-            setInterval(from, to);
+            if(!setInterval(from, to)) {return;}
         } else if(binding.activityCustom.isChecked()) {
-            setNeither();
+            if(!setNeither()) {return;}
         } else {
-            setRegularity();
+            if(!setRegularity()) {return;}
         }
         addActivityToDb();
     }
 
-    private void setDeadline(String date) {
+    private boolean setDeadline(String date) {
         customActivity.setDl(DateConverter.stringFromSimpleDateDialogToLongMillis(date));
+        if(binding.activityIsTimeMeasured.isChecked()) {
+            customActivity.settT(1);
+            if(setTimeFromSumTime()) {return false;}
+        }
+        return true;
     }
 
-    private void setInterval(String from, String to) {
+    private boolean setInterval(String from, String to) {
         customActivity.setsD(DateConverter.stringFromSimpleDateDialogToLongMillis(from));
         customActivity.seteD(DateConverter.stringFromSimpleDateDialogToLongMillis(to));
+        if(binding.activityIsTimeMeasured.isChecked()) {
+            if(!setIntervalMeasuredTime()) {return false;}
+        }
+        return true;
     }
 
-    private void setNeither() {
-
+    private boolean setIntervalMeasuredTime() {
+        if(binding.activityIsSumTime.isChecked()) {
+            customActivity.settT(1);
+        } else {
+            customActivity.settT(2);
+        }
+        return !setTimeFromSumTime();
     }
 
-    private void setRegularity() {
+    /**
+     * Sets time duration for activity.
+     * @return true if something went wrong, there are empty fields, false if set time happened
+     */
+    private boolean setTimeFromSumTime() {
+        String days = binding.activitySumTimePicker.days.getText().toString().trim();
+        String hours = binding.activitySumTimePicker.hours.getText().toString().trim();
+        String minutes = binding.activitySumTimePicker.minutes.getText().toString().trim();
+        if(days.isEmpty() || hours.isEmpty() || minutes.isEmpty()) {
+            binding.activitySumTimePicker.minutes.setError("You must add days, hours and minutes (however it can be 0)!");
+            binding.activitySumTimePicker.minutes.requestFocus();
+            return true;
+        }
+        int day = Integer.parseInt(days);
+        int hour = Integer.parseInt(hours);
+        int minute = Integer.parseInt(minutes);
+        if(day < 0 || hour > 23 || hour < 0 || minute > 59 || minute < 0) {
+            binding.activitySumTimePicker.minutes.setError("Hours must be whole number between 0-23, minutes 0-59 and days >=0!");
+            binding.activitySumTimePicker.minutes.requestFocus();
+        }
+        customActivity.setTime(DateConverter.durationTimeConverterFromStringToLong(days, hours, minutes));
+        return false;
+    }
 
+    private boolean setNeither() {
+        if(binding.activityIsTimeMeasured.isChecked()) {
+            customActivity.settT(1);
+            if(setTimeFromSumTime()) {return false;}
+        }
+        return true;
+    }
+
+    private boolean setRegularity() {
+        if(binding.activityDaily.isChecked()) {
+            if(!setDaily()) {return false;}
+        } else if(binding.activityWeekly.isChecked()) {
+            if(!setWeekly()) {return false;}
+        } else if(binding.activityMonthly.isChecked()) {
+            if(!setMonthly()) {return false;}
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean setDaily() {
+        customActivity.setReg(1);
+        if(binding.activityIsTimeMeasured.isChecked()) {
+            customActivity.settT(1);
+            if(setTimeFromSumTime()) {return false;}
+        }
+        return true;
+    }
+
+    private boolean setWeekly() {
+        customActivity.setReg(2);
+        if(binding.activityHasFixedWeeks.isChecked()) {
+            if(!setFixedWeeks()) {return false;}
+        } else {
+            if(!setWeeklyWithoutFixedDays()) {return false;}
+        }
+        return true;
+    }
+
+    private boolean setWeeklyWithoutFixedDays() {
+        if(!setAnEndDate()) {return false;}
+        customActivity.settT(3);
+        return !setTimeFromSumTime();
+    }
+
+    private boolean setFixedWeeks() {
+        if(!setAnEndDate()) {return false;}
+        if(!setFixedDays()) {return false;}
+        if(binding.activityIsTimeMeasured.isChecked()) {
+            if(binding.activityCustomTime.isChecked()) {
+                customActivity.settT(5);
+                if(!setTimeForFixedDays()) {return false;}
+            } else {
+                if(binding.activityIsSumTime.isChecked()) {
+                    customActivity.settT(1);
+                } else if(binding.activityDaily.isChecked()) {
+                    customActivity.settT(2);
+                } else if(binding.activityWeekly.isChecked()) {
+                    customActivity.settT(3);
+                }
+                if(!setTimeFromSumTime()) {return false;}
+            }
+        }
+        return true;
+    }
+
+    private boolean setFixedDays() {
+        if(binding.monday.isChecked()) {
+            customActivity.getCustomWeekTime().setMon(0);
+        }
+        if(binding.tuesday.isChecked()) {
+            customActivity.getCustomWeekTime().setTue(0);
+        }
+        if(binding.wednesday.isChecked()) {
+            customActivity.getCustomWeekTime().setWed(0);
+        }
+        if(binding.thursday.isChecked()) {
+            customActivity.getCustomWeekTime().setThu(0);
+        }
+        if(binding.friday.isChecked()) {
+            customActivity.getCustomWeekTime().setFri(0);
+        }
+        if(binding.saturday.isChecked()) {
+            customActivity.getCustomWeekTime().setSat(0);
+        }
+        if(binding.sunday.isChecked()) {
+            customActivity.getCustomWeekTime().setSun(0);
+        }
+        if(customActivity.getCustomWeekTime().nothingSet()) {
+            binding.monday.setError("You must set at least one day!");
+            binding.monday.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean setTimeForFixedDays() {
+        long i;
+        if(binding.monday.isChecked()) {
+            i = setTimeForDay(binding.activityMondayPicker);
+            if(i != -1L) {
+                customActivity.getCustomWeekTime().setMon(i);
+            }
+        }
+        if(binding.tuesday.isChecked()) {
+            i = setTimeForDay(binding.activityTuesdayPicker);
+            if(i != -1L) {
+                customActivity.getCustomWeekTime().setTue(i);
+            }
+        }
+        if(binding.wednesday.isChecked()) {
+            i = setTimeForDay(binding.activityWednesdayPicker);
+            if(i != -1L) {
+                customActivity.getCustomWeekTime().setWed(i);
+            }
+        }
+        if(binding.thursday.isChecked()) {
+            i = setTimeForDay(binding.activityThursdayPicker);
+            if(i != -1L) {
+                customActivity.getCustomWeekTime().setThu(i);
+            }
+        }
+        if(binding.friday.isChecked()) {
+            i = setTimeForDay(binding.activityFridayPicker);
+            if(i != -1L) {
+                customActivity.getCustomWeekTime().setFri(i);
+            }
+        }
+        if(binding.saturday.isChecked()) {
+            i = setTimeForDay(binding.activitySaturdayPicker);
+            if(i != -1L) {
+                customActivity.getCustomWeekTime().setSat(i);
+            }
+        }
+        if(binding.sunday.isChecked()) {
+            i = setTimeForDay(binding.activitySundayPicker);
+            if(i != -1L) {
+                customActivity.getCustomWeekTime().setSun(i);
+            }
+        }
+        return true;
+    }
+
+    private long setTimeForDay(CustomTimePickerForOneDayBinding tp) {
+        String hours = tp.oneDayHours.toString().trim();
+        String minutes = tp.oneDayMinutes.toString().trim();
+        if(hours.isEmpty() || minutes.isEmpty()) {
+            tp.oneDayHours.setError("Setting hours and minutes is required (it can be 0)!");
+            tp.oneDayHours.requestFocus();
+            return -1L;
+        }
+        int hour = Integer.parseInt(hours);
+        int minute = Integer.parseInt(minutes);
+        if(hour > 23 || hour < 0 || minute > 59 || minute < 0) {
+            tp.oneDayHours.setError("Hours must be whole number between 0-23 and minutes 0-59!");
+            tp.oneDayHours.requestFocus();
+            return -1L;
+        }
+        return DateConverter.durationTimeConverterFromIntToLongForDays(hour, minute);
+    }
+
+    private boolean setMonthly() {
+        customActivity.setReg(3);
+        if(!setAnEndDate()) {return false;}
+        customActivity.settT(4);
+        return !setTimeFromSumTime();
+    }
+
+    private boolean setAnEndDate() {
+        if(binding.activityHasAnEndDate.isChecked()) {
+            String ed = binding.activityEndDate.getText().toString().trim();
+            if(ed.isEmpty()) {
+                binding.activityEndDate.setError("End date is required!");
+                binding.activityEndDate.requestFocus();
+                return false;
+            }
+            customActivity.seteD(DateConverter.stringFromSimpleDateDialogToLongMillis(ed));
+        }
+        return true;
     }
 
     private void addActivityToDb() {
-
+        long id = mainViewModel.insertActivity(customActivity);
+        System.out.println(customActivity);
+        Navigation.findNavController(this.getView()).navigate(R.id.action_add_custom_activity_to_nav_home);
     }
 
     private String getSelectedFixActivityName() {

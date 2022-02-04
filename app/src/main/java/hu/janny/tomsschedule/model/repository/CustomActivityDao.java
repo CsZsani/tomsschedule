@@ -17,7 +17,7 @@ import hu.janny.tomsschedule.model.CustomActivity;
 public interface CustomActivityDao {
 
     @Insert
-    void insertActivity(CustomActivity customActivity);
+    long insertActivity(CustomActivity customActivity);
 
     @Update
     void updateActivity(CustomActivity customActivity);
@@ -31,8 +31,10 @@ public interface CustomActivityDao {
     @Query("DELETE FROM customactivities WHERE activityId = :id")
     void deleteActivityById(int id);
 
-    @Query("SELECT * FROM customactivities JOIN activitytimes ON customactivities.activityId = activitytimes.activityId " +
-            "")
+    @Query("SELECT * FROM customactivities")
+    LiveData<List<CustomActivity>> getActivitiesList();
+
+    @Query("SELECT * FROM customactivities JOIN activitytimes ON customactivities.activityId = activitytimes.activityId")
     LiveData<Map<CustomActivity, List<ActivityTime>>> getAllActivitiesWithTimes();
 
     @Query("SELECT * FROM customactivities JOIN activitytimes ON customactivities.activityId = activitytimes.activityId " +
@@ -48,4 +50,7 @@ public interface CustomActivityDao {
 
     @Query("SELECT * FROM customactivities WHERE customactivities.activityId = :id")
     CustomActivity getActivityById(int id);
+
+    @Query("SELECT activityId FROM customactivities WHERE customactivities.name = :name")
+    int getIdByName(String name);
 }

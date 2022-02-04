@@ -6,6 +6,8 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import com.google.firebase.database.Exclude;
+
 //@Entity(foreignKeys = {@ForeignKey(entity = CustomActivity.class,
 //parentColumns = "activityId", childColumns = "activityId", onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.RESTRICT)})
 @Entity(tableName = "customweektime")
@@ -105,5 +107,10 @@ public class CustomWeekTime {
 
     public void setSun(long sun) {
         this.sun = sun;
+    }
+
+    @Exclude
+    public boolean nothingSet() {
+        return mon == -1 && tue == -1 && wed == -1 && thu == -1 && fri == -1 && sat == -1 && sun == -1;
     }
 }

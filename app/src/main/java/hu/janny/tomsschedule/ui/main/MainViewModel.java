@@ -30,6 +30,7 @@ public class MainViewModel extends AndroidViewModel {
     private final LiveData<List<CustomActivity>> allActivitiesList;
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityWithTimes;
     private final LiveData<User> user;
+    private final LiveData<List<CustomActivity>> activitiesList;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -37,15 +38,15 @@ public class MainViewModel extends AndroidViewModel {
         userRepository = new UserRepository(application);
         allActivitiesWithTimes = repository.getAllActivitiesWithTimes();
         activityWithTimes = repository.getActivitiesWithTimesData();
+        activitiesList = repository.getActivities();
         allActivitiesList = Transformations.map(repository.getAllActivitiesWithTimes(), new Deserializer());
         user = userRepository.getCurrentUser();
     }
 
-    private GenericTypeIndicator<List<CustomActivity>> typeIndicator = new GenericTypeIndicator<List<CustomActivity>>() {};
-
     private class Deserializer implements Function<Map<CustomActivity, List<ActivityTime>>, List<CustomActivity>> {
         @Override
         public List<CustomActivity> apply(Map<CustomActivity, List<ActivityTime>> liveData) {
+            System.out.println(liveData.entrySet().toString());
             List<CustomActivity> list = new ArrayList<>(liveData.keySet());
             return list;
         }
@@ -59,7 +60,7 @@ public class MainViewModel extends AndroidViewModel {
         return allActivitiesWithTimes;
     }
 
-    public LiveData<List<CustomActivity>> getAllActivitiesWithTimesInList() {
+    public LiveData<List<CustomActivity>> getAllActivitiesInList() {
         return allActivitiesList;
     }
 
@@ -67,11 +68,23 @@ public class MainViewModel extends AndroidViewModel {
         return activityWithTimes;
     }
 
-    public void insertActivity(CustomActivity customActivity) {
-        repository.insertActivity(customActivity);
+    public long insertActivity(CustomActivity customActivity) {
+        return repository.insertActivity(customActivity);
+    }
+
+    public void insertActivityTime(ActivityTime activityTime) {
+        repository.insertTime(activityTime);
     }
 
     public LiveData<User> getUser() {
         return user;
+    }
+
+    public LiveData<List<CustomActivity>> getActivitiesList() {
+        return activitiesList;
+    }
+
+    public int getIdByName(String name) {
+        return repository.getActivityIdByName(name);
     }
 }

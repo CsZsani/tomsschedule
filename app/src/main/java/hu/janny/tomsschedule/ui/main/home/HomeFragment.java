@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import hu.janny.tomsschedule.MainActivity;
+import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentHomeBinding;
 import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.CustomActivityRecyclerAdapter;
@@ -33,18 +34,16 @@ import hu.janny.tomsschedule.ui.main.MainViewModel;
 
 public class HomeFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+//    private HomeViewModel homeViewModel;
     private MainViewModel mainViewModel;
     private FragmentHomeBinding binding;
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
-    private RecyclerView.Adapter adapter;
+    private CustomActivityRecyclerAdapter adapter;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        /*homeViewModel =
+                new ViewModelProvider(this).get(HomeViewModel.class);*/
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -52,9 +51,7 @@ public class HomeFragment extends Fragment {
 
         binding.addCustomActivity.setVisibility(View.VISIBLE);
 
-        layoutManager = new LinearLayoutManager(getActivity());
-        binding.activitiesListRecyclerView.setLayoutManager(layoutManager);
-        binding.activitiesListRecyclerView.setAdapter(new CustomActivityRecyclerAdapter(new ArrayList<>()));
+        recyclerSetup();
 
         /*LiveData<List<CustomActivity>> customActivities = homeViewModel.getCustomActivitiesLiveData();
         customActivities.observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
@@ -64,15 +61,25 @@ public class HomeFragment extends Fragment {
                 binding.activitiesListRecyclerView.setAdapter(new CustomActivityRecyclerAdapter(customActivities));
             }
         });*/
-        LiveData<List<CustomActivity>> customActivities = mainViewModel.getAllActivitiesWithTimesInList();
-        customActivities.observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
+        //LiveData<List<CustomActivity>> customActivities = mainViewModel.getAllActivitiesInList();
+        mainViewModel.getActivitiesList().observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
             @Override
             public void onChanged(List<CustomActivity> customActivities) {
                 // TODO: update custom activities list on UI
-                binding.activitiesListRecyclerView.setAdapter(new CustomActivityRecyclerAdapter(customActivities));
+                if(customActivities.isEmpty()) {
+                    Toast.makeText(getActivity(), "Empty list!!! WHHY", Toast.LENGTH_LONG).show();
+                }
+                adapter.setActivityList(customActivities);
             }
         });
         return root;
+    }
+
+    private void recyclerSetup() {
+        adapter = new CustomActivityRecyclerAdapter(R.layout.custom_activity_list_item);
+        binding.activitiesListRecyclerView.setLayoutManager(
+                new LinearLayoutManager(getContext()));
+        binding.activitiesListRecyclerView.setAdapter(adapter);
     }
 
     @Override

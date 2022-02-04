@@ -14,8 +14,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 
 import hu.janny.tomsschedule.databinding.ActivityLoginBinding;
+import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 
 public class LoginActivity extends AppCompatActivity {
@@ -88,16 +90,39 @@ public class LoginActivity extends AppCompatActivity {
                     }*/
 
                     // Temporary login - for test phase - you don't need to verify your account
-                    FirebaseManager.setUserLoggedIn(user);
-                    if(user != null) {
-                        viewModel.loginUser(user.getUid());
-                    }
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+                    manageLogin(user);
+
                 } else {
                     Toast.makeText(LoginActivity.this, R.string.user_login_failure, Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+
+    private void manageLogin(FirebaseUser user) {
+        if(user != null) {
+            if(viewModel.isInDatabase(user.getUid()) == null){
+                FirebaseManager.database.getReference("users").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        if(!task.isSuccessful()){
+                            Toast.makeText(LoginActivity.this, "Can't login! Check your internet connection!", Toast.LENGTH_LONG).show();
+                        } else {
+                            User newUser = task.getResult().getValue(User.class);
+                            newUser.setLoggedIn(true);
+                            viewModel.insertUser(newUser);
+                            FirebaseManager.setUserLoggedIn(user);
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        }
+                    }
+                });
+            } else {
+                viewModel.loginUser(user.getUid());
+                FirebaseManager.setUserLoggedIn(user);
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            }
+        }
     }
 
     @Override

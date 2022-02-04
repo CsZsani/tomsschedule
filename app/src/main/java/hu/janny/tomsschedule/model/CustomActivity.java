@@ -224,4 +224,25 @@ public class CustomActivity {
     public void setNotif(boolean notif) {
         this.notif = notif;
     }
+
+    @Override
+    public String toString() {
+        return "CustomActivity{" +
+                "id=" + id +
+                ", userId='" + userId + '\'' +
+                ", name='" + name + '\'' +
+                ", col=" + col +
+                ", note='" + note + '\'' +
+                ", pr=" + pr +
+                ", tT=" + tT +
+                ", time=" + time +
+                ", dl=" + dl +
+                ", reg=" + reg +
+                ", hFD=" + hFD +
+                ", sD=" + sD +
+                ", eD=" + eD +
+                ", notif=" + notif +
+                ", customWeekTime=" + customWeekTime +
+                '}';
+    }
 }

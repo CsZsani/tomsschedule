@@ -8,6 +8,7 @@ import android.os.Message;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +23,7 @@ public class Repository {
     private final MutableLiveData<CustomActivity> activitiesData = new MutableLiveData<>();
     private Map<CustomActivity, List<ActivityTime>> activitiesWithTimes;
     private final LiveData<Map<CustomActivity, List<ActivityTime>>> allActivitiesWithTimes;
+    private final LiveData<List<CustomActivity>> activities;
     private CustomActivity activity;
 
     private final MutableLiveData<List<ActivityTime>> allActivitiesTime = new MutableLiveData<>();
@@ -39,6 +41,7 @@ public class Repository {
         activityTimeDao = db.activityTimeDao();
 
         allActivitiesWithTimes = customActivityDao.getAllActivitiesWithTimes();
+        activities = customActivityDao.getActivitiesList();
     }
 
     Handler handler = new Handler(Looper.getMainLooper()) {
@@ -69,12 +72,22 @@ public class Repository {
         }
     };
 
-    public void insertActivity(CustomActivity customActivity) {
+    public long insertActivity(CustomActivity customActivity) {
+        final long[] id = new long[1];
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
-            customActivityDao.insertActivity(customActivity);
+            id[0] = customActivityDao.insertActivity(customActivity);
+            Calendar cal = Calendar.getInstance();
+            int year  = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int date  = cal.get(Calendar.DATE);
+            cal.clear();
+            cal.set(year, month, date);
+            long todayMillis = cal.getTimeInMillis();
+            activityTimeDao.insertActivityTime(new ActivityTime((int) id[0], todayMillis, 0L));
         });
         executor.shutdown();
+        return id[0];
     }
 
     public void deleteActivity(CustomActivity customActivity) {
@@ -126,6 +139,16 @@ public class Repository {
             handlerSingleActivity.sendEmptyMessage(0);
         });
         executor.shutdown();
+    }
+
+    public int getActivityIdByName(String name) {
+        final int[] id = new int[1];
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            id[0] = customActivityDao.getIdByName(name);
+        });
+        executor.shutdown();
+        return id[0];
     }
 
     public void getActivityByName(int id) {
@@ -220,5 +243,7 @@ public class Repository {
         return oneActivitiesTime;
     }
 
-
+    public LiveData<List<CustomActivity>> getActivities() {
+        return activities;
+    }
 }

@@ -30,6 +30,8 @@ public class LoginRegisterViewModel extends AndroidViewModel {
         return repository.getUserByIdForUpdate(id);
     }
 
+    public User isInDatabase(String id) {return repository.isInDatabase(id);}
+
     public void loginUser(String id) {
         repository.loginUser(id);
     }

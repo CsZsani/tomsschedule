@@ -82,6 +82,15 @@ public class UserRepository {
         executor.shutdown();
     }
 
+    public User isInDatabase(String id) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            user = userDao.getUserById(id);
+        });
+        executor.shutdown();
+        return user;
+    }
+
     public void getUserByIdForUpd(String id) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
