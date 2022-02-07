@@ -23,6 +23,9 @@ public interface UserDao {
     @Query("SELECT * FROM users WHERE users.isLoggedIn = 1 ")
     LiveData<User> getCurrentUser();
 
+    @Query("SELECT * FROM users WHERE users.isLoggedIn = 1 ")
+    User getCurrentUserNoLiveData();
+
     @Query("UPDATE users set isLoggedIn = 1 where users.userId = :id")
     void logIn(String id);
 

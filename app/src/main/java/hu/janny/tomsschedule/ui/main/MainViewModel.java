@@ -15,10 +15,12 @@ import com.google.firebase.database.GenericTypeIndicator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 import hu.janny.tomsschedule.model.repository.Repository;
 import hu.janny.tomsschedule.model.repository.UserRepository;
 
@@ -31,24 +33,27 @@ public class MainViewModel extends AndroidViewModel {
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityWithTimes;
     private final LiveData<User> user;
     private final LiveData<List<CustomActivity>> activitiesList;
+    private User currentUser;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         repository = new Repository(application);
         userRepository = new UserRepository(application);
+        user = userRepository.getCurrentUser();
+        currentUser = userRepository.getCurrentUserNoLiveData();
         allActivitiesWithTimes = repository.getAllActivitiesWithTimes();
         activityWithTimes = repository.getActivitiesWithTimesData();
         activitiesList = repository.getActivities();
         allActivitiesList = Transformations.map(repository.getAllActivitiesWithTimes(), new Deserializer());
-        user = userRepository.getCurrentUser();
     }
 
     private class Deserializer implements Function<Map<CustomActivity, List<ActivityTime>>, List<CustomActivity>> {
         @Override
         public List<CustomActivity> apply(Map<CustomActivity, List<ActivityTime>> liveData) {
-            System.out.println(liveData.entrySet().toString());
+            //System.out.println(liveData.entrySet().toString());
             List<CustomActivity> list = new ArrayList<>(liveData.keySet());
-            return list;
+            List<CustomActivity> filter = list.stream().filter(ca -> ca.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
+            return filter;
         }
     }
 
@@ -74,6 +79,10 @@ public class MainViewModel extends AndroidViewModel {
 
     public void insertActivityTime(ActivityTime activityTime) {
         repository.insertTime(activityTime);
+    }
+
+    public void insertFirstActivityTime(long activityId) {
+        repository.insertFirstActivityTime(activityId);
     }
 
     public LiveData<User> getUser() {

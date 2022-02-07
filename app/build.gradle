@@ -54,4 +54,6 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation "androidx.fragment:fragment-ktx:1.4.1"
+    implementation 'com.github.jitpack:android-example:1.0.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

@@ -54,6 +54,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     final Calendar calEndDay= Calendar.getInstance();
     final Calendar calEndDate= Calendar.getInstance();
     private CustomActivity customActivity;
+    private long activityId;
     int color = Color.rgb(255, 164, 119);
     private User currentUser;
 
@@ -87,7 +88,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             }
         });
 
-        customActivity = new CustomActivity();
+        //customActivity = new CustomActivity();
 
         initCalendars();
         initNameChooserRadioButtonGroup();
@@ -181,7 +182,8 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         int priority = Integer.parseInt(binding.activityPriority.getSelectedItem().toString());
 
         if(mainViewModel.getUser().getValue() != null) {
-            customActivity = new CustomActivity(currentUser.uid, name, col, note, priority);
+            activityId = System.currentTimeMillis();
+            customActivity = new CustomActivity(activityId, currentUser.uid, name, col, note, priority);
         } else {
             Toast.makeText(getActivity(), "Error in saving activity, no user detected!", Toast.LENGTH_LONG).show();
             return;
@@ -455,7 +457,8 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     }
 
     private void addActivityToDb() {
-        long id = mainViewModel.insertActivity(customActivity);
+        mainViewModel.insertActivity(customActivity);
+        mainViewModel.insertFirstActivityTime(activityId);
         System.out.println(customActivity);
         Navigation.findNavController(this.getView()).navigate(R.id.action_add_custom_activity_to_nav_home);
     }

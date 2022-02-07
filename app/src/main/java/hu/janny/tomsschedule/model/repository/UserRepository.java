@@ -108,6 +108,16 @@ public class UserRepository {
         return currentUser;
     }
 
+    public User getCurrentUserNoLiveData() {
+        final User[] user = new User[1];
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            user[0] = userDao.getCurrentUserNoLiveData();
+        });
+        executor.shutdown();
+        return user[0];
+    }
+
     public MutableLiveData<User> getUserData() {
         return userData;
     }

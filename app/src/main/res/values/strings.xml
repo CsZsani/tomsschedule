@@ -34,6 +34,7 @@
     <string name="cancel">Cancel</string>
     <string name="color_pick">Choose a color</string>
     <string name="priority">Priority (1-10)</string>
+    <string name="priority_detail">Priority</string>
     <string name="has_deadline">It has just a deadline</string>
     <string name="regularity">It is a regular activity</string>
     <string name="just_interval">It is just a simple interval</string>
@@ -68,6 +69,7 @@
     <string name="name_of_activity">Name</string>
     <string name="color">Color</string>
     <string name="note">Note (optional)</string>
+    <string name="note_detail">Note</string>
     <string name="select_color">Select color</string>
     <string name="add_custom_name">Do you want to add custom activity?</string>
     <string name="fix_activities">No, I want global statistics</string>
@@ -100,4 +102,6 @@
     <string name="choose_daily_time_for_interval">Set how much time you want daily till end day</string>
     <string name="choose_daily_time">Set how much time you want daily</string>
     <string name="save">Save</string>
+    <string name="turn_off_notifications">Do you want...?</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

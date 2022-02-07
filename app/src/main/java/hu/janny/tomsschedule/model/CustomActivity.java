@@ -21,10 +21,10 @@ import java.util.Map;
 @Entity(tableName = "customactivities")
 public class CustomActivity {
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @NonNull
     @ColumnInfo(name = "activityId")
-    public int id;
+    public long id;
 
     @NonNull
     @ColumnInfo(name = "userId")
@@ -71,10 +71,10 @@ public class CustomActivity {
 
     @Ignore
     public CustomActivity() {
-
     }
 
-    public CustomActivity(@NonNull String userId,@NonNull String name, int col, String note, int pr) {
+    public CustomActivity(@NonNull long id, @NonNull String userId,@NonNull String name, int col, String note, int pr) {
+        this.id = id;
         this.userId = userId;
         this.name = name;
         this.col = col;
@@ -111,7 +111,7 @@ public class CustomActivity {
         return super.equals(obj);
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

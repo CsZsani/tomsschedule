@@ -77,17 +77,24 @@ public class Repository {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             id[0] = customActivityDao.insertActivity(customActivity);
-            Calendar cal = Calendar.getInstance();
-            int year  = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int date  = cal.get(Calendar.DATE);
-            cal.clear();
-            cal.set(year, month, date);
-            long todayMillis = cal.getTimeInMillis();
-            activityTimeDao.insertActivityTime(new ActivityTime((int) id[0], todayMillis, 0L));
         });
         executor.shutdown();
         return id[0];
+    }
+
+    public void insertFirstActivityTime(long id) {
+        Calendar cal = Calendar.getInstance();
+        int year  = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date  = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
+        long todayMillis = cal.getTimeInMillis();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            activityTimeDao.insertActivityTime(new ActivityTime(id, todayMillis, 0L));
+        });
+        executor.shutdown();
     }
 
     public void deleteActivity(CustomActivity customActivity) {

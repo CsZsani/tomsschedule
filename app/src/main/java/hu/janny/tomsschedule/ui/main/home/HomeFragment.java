@@ -62,7 +62,7 @@ public class HomeFragment extends Fragment {
             }
         });*/
         //LiveData<List<CustomActivity>> customActivities = mainViewModel.getAllActivitiesInList();
-        mainViewModel.getActivitiesList().observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
+        mainViewModel.getAllActivitiesInList().observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
             @Override
             public void onChanged(List<CustomActivity> customActivities) {
                 // TODO: update custom activities list on UI

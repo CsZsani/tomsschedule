@@ -12,11 +12,15 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "activitytimes")
 public class ActivityTime {
 
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    @ColumnInfo(name = "id")
+    public int id;
+
     @NonNull
     @ColumnInfo(name = "activityId")
-    public int aId;
+    public long aId;
 
-    @PrimaryKey
     @NonNull
     @ColumnInfo(name = "date")
     public long d;
@@ -27,13 +31,21 @@ public class ActivityTime {
     @Ignore
     public ActivityTime() {}
 
-    public ActivityTime(@NonNull int aId,@NonNull long d, long t) {
+    public ActivityTime(@NonNull long aId,@NonNull long d, long t) {
         this.aId = aId;
         this.d = d;
         this.t = t;
     }
 
-    public int getaId() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public long getaId() {
         return aId;
     }
 
