@@ -31,6 +31,7 @@ public class MainViewModel extends AndroidViewModel {
     private final LiveData<Map<CustomActivity, List<ActivityTime>>> allActivitiesWithTimes;
     private final LiveData<List<CustomActivity>> allActivitiesList;
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityWithTimes;
+    private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityByIdWithTimes;
     private final LiveData<User> user;
     private final LiveData<List<CustomActivity>> activitiesList;
     private User currentUser;
@@ -45,6 +46,7 @@ public class MainViewModel extends AndroidViewModel {
         activityWithTimes = repository.getActivitiesWithTimesData();
         activitiesList = repository.getActivities();
         allActivitiesList = Transformations.map(repository.getAllActivitiesWithTimes(), new Deserializer());
+        activityByIdWithTimes = repository.getActivityByIdWithTimesData();
     }
 
     private class Deserializer implements Function<Map<CustomActivity, List<ActivityTime>>, List<CustomActivity>> {
@@ -95,5 +97,13 @@ public class MainViewModel extends AndroidViewModel {
 
     public int getIdByName(String name) {
         return repository.getActivityIdByName(name);
+    }
+
+    public void findActivityById(long id) {
+        repository.getSingleActivityByIdWithTimes(id);
+    }
+
+    public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivityByIdWithTimes() {
+        return activityByIdWithTimes;
     }
 }

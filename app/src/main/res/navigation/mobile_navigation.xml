@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_nav_home_to_add_custom_activity"
             app:destination="@id/add_custom_activity" />
+        <action
+            android:id="@+id/action_nav_home_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
 
     <fragment
@@ -39,5 +42,14 @@
         <action
             android:id="@+id/action_add_custom_activity_to_nav_home"
             app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="hu.janny.tomsschedule.ui.main.details.DetailFragment"
+        android:label="@string/detail_fragment_label">
+        <argument
+            android:name="item_id"
+            android:defaultValue="0L"
+            app:argType="long" />
     </fragment>
 </navigation>

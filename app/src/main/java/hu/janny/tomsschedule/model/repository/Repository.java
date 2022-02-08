@@ -20,8 +20,10 @@ import hu.janny.tomsschedule.model.CustomActivity;
 public class Repository {
 
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activitiesWithTimesData = new MutableLiveData<>();
+    private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityByIdWithTimesData = new MutableLiveData<>();
     private final MutableLiveData<CustomActivity> activitiesData = new MutableLiveData<>();
     private Map<CustomActivity, List<ActivityTime>> activitiesWithTimes;
+    private Map<CustomActivity, List<ActivityTime>> activityByIdWithTimes;
     private final LiveData<Map<CustomActivity, List<ActivityTime>>> allActivitiesWithTimes;
     private final LiveData<List<CustomActivity>> activities;
     private CustomActivity activity;
@@ -55,6 +57,13 @@ public class Repository {
         @Override
         public void handleMessage(Message msg) {
             activitiesData.setValue(activity);
+        }
+    };
+
+    Handler handlerSingleActivityWithTimes = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            activityByIdWithTimesData.setValue(activityByIdWithTimes);
         }
     };
 
@@ -130,11 +139,20 @@ public class Repository {
         executor.shutdown();
     }
 
-    public void getActivityByNameWithTimes(int id) {
+    public void getActivityByIdWithTimes(long id) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             activitiesWithTimes = customActivityDao.getActivityByIdWithTimes(id);
             handler.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    public void getSingleActivityByIdWithTimes(long id) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            activityByIdWithTimes = customActivityDao.getActivityByIdWithTimes(id);
+            handlerSingleActivityWithTimes.sendEmptyMessage(0);
         });
         executor.shutdown();
     }
@@ -158,7 +176,7 @@ public class Repository {
         return id[0];
     }
 
-    public void getActivityByName(int id) {
+    public void getActivityById(int id) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             activity = customActivityDao.getActivityById(id);
@@ -166,8 +184,6 @@ public class Repository {
         });
         executor.shutdown();
     }
-
-
 
     public void insertTime(ActivityTime activityTime) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -241,7 +257,6 @@ public class Repository {
         return allActivitiesWithTimes;
     }
 
-
     public MutableLiveData<List<ActivityTime>> getAllActivitiesTime() {
         return allActivitiesTime;
     }
@@ -252,5 +267,9 @@ public class Repository {
 
     public LiveData<List<CustomActivity>> getActivities() {
         return activities;
+    }
+
+    public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivityByIdWithTimesData() {
+        return activityByIdWithTimesData;
     }
 }

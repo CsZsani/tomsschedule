@@ -37,6 +37,7 @@
     <string name="priority_detail">Priority</string>
     <string name="has_deadline">It has just a deadline</string>
     <string name="regularity">It is a regular activity</string>
+    <string name="regularity_detail">Regularity</string>
     <string name="just_interval">It is just a simple interval</string>
     <string name="just_time_measure">Neither of them</string>
     <string name="dates_type">Select the regularity type</string>
@@ -104,4 +105,11 @@
     <string name="save">Save</string>
     <string name="turn_off_notifications">Do you want...?</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="detail_fragment_label">Details</string>
+    <string name="details_daily">daily</string>
+    <string name="details_weekly">weekly</string>
+    <string name="details_monthly">monthly</string>
+    <string name="details_deadline">Deadline</string>
+    <string name="details_interval">Interval (from - to)</string>
+    <string name="details_end_date">The last day</string>
 </resources>

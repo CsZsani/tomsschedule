@@ -43,7 +43,7 @@ public interface CustomActivityDao {
 
     @Query("SELECT * FROM customactivities JOIN activitytimes ON customactivities.activityId = activitytimes.activityId " +
             "WHERE customactivities.activityId = :id")
-    Map<CustomActivity, List<ActivityTime>> getActivityByIdWithTimes(int id);
+    Map<CustomActivity, List<ActivityTime>> getActivityByIdWithTimes(long id);
 
     @Query("SELECT * FROM customactivities WHERE customactivities.name = :name")
     CustomActivity getActivityByName(String name);

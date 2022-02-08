@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +32,7 @@ import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.CustomActivityRecyclerAdapter;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 import hu.janny.tomsschedule.ui.main.MainViewModel;
+import hu.janny.tomsschedule.ui.main.details.DetailFragment;
 
 public class HomeFragment extends Fragment {
 
@@ -42,8 +44,7 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        /*homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);*/
+
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -53,15 +54,6 @@ public class HomeFragment extends Fragment {
 
         recyclerSetup();
 
-        /*LiveData<List<CustomActivity>> customActivities = homeViewModel.getCustomActivitiesLiveData();
-        customActivities.observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
-            @Override
-            public void onChanged(List<CustomActivity> customActivities) {
-                // TODO: update custom activities list on UI
-                binding.activitiesListRecyclerView.setAdapter(new CustomActivityRecyclerAdapter(customActivities));
-            }
-        });*/
-        //LiveData<List<CustomActivity>> customActivities = mainViewModel.getAllActivitiesInList();
         mainViewModel.getAllActivitiesInList().observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
             @Override
             public void onChanged(List<CustomActivity> customActivities) {
@@ -75,8 +67,23 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+
+    }
+
     private void recyclerSetup() {
-        adapter = new CustomActivityRecyclerAdapter(R.layout.custom_activity_list_item);
+        View.OnClickListener onClickListener = itemView -> {
+            CustomActivity item = (CustomActivity) itemView.getTag();
+            Bundle arguments = new Bundle();
+            arguments.putLong(DetailFragment.ARG_ITEM_ID, item.id);
+            Navigation.findNavController(itemView).navigate(R.id.action_nav_home_to_detailFragment, arguments);
+        };
+
+        adapter = new CustomActivityRecyclerAdapter(R.layout.custom_activity_list_item, onClickListener);
         binding.activitiesListRecyclerView.setLayoutManager(
                 new LinearLayoutManager(getContext()));
         binding.activitiesListRecyclerView.setAdapter(adapter);
