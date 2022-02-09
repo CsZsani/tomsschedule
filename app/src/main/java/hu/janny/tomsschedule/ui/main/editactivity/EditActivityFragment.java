@@ -1,12 +1,12 @@
-package hu.janny.tomsschedule.ui.main.addcustomactivity;
+package hu.janny.tomsschedule.ui.main.editactivity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import androidx.appcompat.app.AlertDialog;
-
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -33,46 +33,51 @@ import com.skydoves.colorpickerview.ColorPickerDialog;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.CustomTimePickerForOneDayBinding;
-import hu.janny.tomsschedule.databinding.FragmentAddCustomActivityBinding;
+import hu.janny.tomsschedule.databinding.DetailFragmentBinding;
+import hu.janny.tomsschedule.databinding.FragmentEditActivityBinding;
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.ui.main.MainViewModel;
+import hu.janny.tomsschedule.ui.main.details.DetailFragment;
 
-public class AddCustomActivityFragment extends Fragment implements AdapterView.OnItemSelectedListener{
+public class EditActivityFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 
-    private AddCustomActivityViewModel mViewModel;
+    public static final String ARG_ITEM_ID = "item_id";
+
     private MainViewModel mainViewModel;
-    private FragmentAddCustomActivityBinding binding;
+    private FragmentEditActivityBinding binding;
+    private CustomActivity customActivity;
     private AlertDialog colorPickerDialog;
     final Calendar calDeadline= Calendar.getInstance();
     final Calendar calStartDay= Calendar.getInstance();
     final Calendar calEndDay= Calendar.getInstance();
     final Calendar calEndDate= Calendar.getInstance();
-    private CustomActivity customActivity;
     private long activityId;
     int color = Color.rgb(255, 164, 119);
     private User currentUser;
 
-    public static AddCustomActivityFragment newInstance() {
-        return new AddCustomActivityFragment();
+    public static EditActivityFragment newInstance() {
+        return new EditActivityFragment();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = FragmentAddCustomActivityBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_add_custom_activity, container, false);
-        intiColorPicker();
-        prioritySpinnerListener();
-        fixActivitySpinnerListener();
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        binding = FragmentEditActivityBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        intiColorPicker();
+        prioritySpinnerListener();
 
         mainViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
@@ -102,25 +107,35 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
 
         saveOnClickListener();
 
+        if (getArguments().containsKey(ARG_ITEM_ID)) {
+            long id = getArguments().getLong(ARG_ITEM_ID);
+            mainViewModel.findActivityById(id);
+        }
+
+        mainViewModel.getActivityByIdWithTimes().observe(getViewLifecycleOwner(), new Observer<Map<CustomActivity, List<ActivityTime>>>() {
+            @Override
+            public void onChanged(Map<CustomActivity, List<ActivityTime>> customActivityListMap) {
+                CustomActivity activity = new CustomActivity();
+                Optional<CustomActivity> firstKey = customActivityListMap.keySet().stream().findFirst();
+                if (firstKey.isPresent()) {
+                    activity = firstKey.get();
+                } else {
+                    activity = null;
+                }
+                if(activity != null) {
+                    customActivity = activity;
+                } else {
+                    navigateBackHome();
+                    Toast.makeText(getActivity(), "I can't find this activity!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         return root;
     }
 
     private void prioritySpinnerListener() {
         binding.activityPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-    }
-
-    private void fixActivitySpinnerListener() {
-        binding.selectFixActivitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
@@ -140,14 +155,6 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                 saveActivity();
             }
         });
-    }
-
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(AddCustomActivityViewModel.class);
-        // TODO: Use the ViewModel
     }
 
     @Override
@@ -1027,6 +1034,22 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         setOnChangeListenersOnFixedDayTimePicker(binding.friday, binding.activityFridayPicker);
         setOnChangeListenersOnFixedDayTimePicker(binding.saturday, binding.activitySaturdayPicker);
         setOnChangeListenersOnFixedDayTimePicker(binding.sunday, binding.activitySundayPicker);
+    }
+
+    private void navigateBackHome() {
+        Navigation.findNavController(this.getView()).navigate(R.id.action_editActivityFragment_to_nav_home);
+    }
+
+    private void navigateBackToDetails() {
+        Bundle arguments = new Bundle();
+        arguments.putLong(DetailFragment.ARG_ITEM_ID, customActivity.getId());
+        Navigation.findNavController(this.getView()).navigate(R.id.action_editActivityFragment_to_detailFragment, arguments);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 
 }

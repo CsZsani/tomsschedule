@@ -4,6 +4,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import hu.janny.tomsschedule.R;
 
 public final class DateConverter {
     private DateConverter() {}
@@ -101,6 +104,24 @@ public final class DateConverter {
         long hourMillis = Long.parseLong(hours) * 60L * 60L * 1000L;
         long minMillis = Long.parseLong(minutes) * 60L * 1000L;
         return hourMillis + minMillis;
+    }
+
+    public static String durationConverterFromLongToString(long milliseconds) {
+        System.out.println(milliseconds);
+        long dy = TimeUnit.MILLISECONDS.toDays(milliseconds);
+        long hr = TimeUnit.MILLISECONDS.toHours(milliseconds)
+                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(milliseconds));
+        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
+                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
+        System.out.println(dy + "nap");
+        System.out.println(hr + "ora");
+        System.out.println(min + "perc");
+        if(dy == 0) {
+            return String.format("%dh %dmin", hr, min);
+        }else {
+            return String.format("%dd %dh %dmin", dy, hr, min);
+        }
+
     }
 
     public static void exampleLongToTime(long millis) {

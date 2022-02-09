@@ -45,8 +45,8 @@ public class CustomActivity {
     @ColumnInfo(name = "timeType")
     public int tT = 0;
 
-    @ColumnInfo(name = "time")
-    public long time = 0;
+    @ColumnInfo(name = "duration")
+    public long dur = 0L;
 
     @ColumnInfo(name = "deadline")
     public long dl = 0L;
@@ -169,12 +169,12 @@ public class CustomActivity {
         this.tT = tT;
     }
 
-    public long getTime() {
-        return time;
+    public long getDur() {
+        return dur;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public void setDur(long dur) {
+        this.dur = dur;
     }
 
     public long getDl() {
@@ -235,7 +235,7 @@ public class CustomActivity {
                 ", note='" + note + '\'' +
                 ", pr=" + pr +
                 ", tT=" + tT +
-                ", time=" + time +
+                ", dur=" + dur +
                 ", dl=" + dl +
                 ", reg=" + reg +
                 ", hFD=" + hFD +

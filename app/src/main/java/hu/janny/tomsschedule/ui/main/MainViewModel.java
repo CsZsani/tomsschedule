@@ -87,6 +87,14 @@ public class MainViewModel extends AndroidViewModel {
         repository.insertFirstActivityTime(activityId);
     }
 
+    public void deleteActivityById(long id) {
+        repository.deleteActivityById(id);
+    }
+
+    public void deleteActivityTimesByActivityId(long id) {
+        repository.deleteTimesByActivityId(id);
+    }
+
     public LiveData<User> getUser() {
         return user;
     }

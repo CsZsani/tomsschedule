@@ -56,6 +56,7 @@ public class CustomActivityRecyclerAdapter
         viewHolder.itemView.setOnClickListener(onClickListener);
         viewHolder.itemView.setTag(activityList.get(i));
         viewHolder.activityName.setText(activityList.get(i).name);
+        System.out.println(activityList.get(i).getDur() + " in adapter");
         viewHolder.detailsText.setText("Ide jon majd a fancy reszlet");
         viewHolder.divider.setBackgroundColor(activityList.get(i).getCol());
         viewHolder.beginActivity.setBackgroundColor(darkenColor(activityList.get(i).getCol()));

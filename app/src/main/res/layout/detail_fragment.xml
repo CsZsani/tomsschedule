@@ -21,22 +21,51 @@
             android:fitsSystemWindows="true"
             app:toolbarId="@+id/toolbar">
 
-            <androidx.appcompat.widget.Toolbar
+            <LinearLayout
                 android:id="@+id/detail_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                app:layout_collapseMode="pin" >
 
-            <TextView
-                android:id="@+id/activityDetailName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingTop="16dp"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/activityDetailName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/editActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|end"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:contentDescription="@string/fab_edit"
+                    app:srcCompat="@drawable/ic_edit"
+                    android:background="?android:attr/selectableItemBackground"
+                    app:tint="@color/black" />
+
+                <ImageButton
+                    android:id="@+id/deleteActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:contentDescription="@string/fab_delete"
+                    app:srcCompat="@drawable/ic_delete"
+                    android:background="?android:attr/selectableItemBackground"
+                    app:tint="@color/black" />
+            </LinearLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -135,7 +164,7 @@
                     tools:visibility="visible" />
 
                 <TextView
-                    android:id="@+id/deadlineDuration"
+                    android:id="@+id/detailDuration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
@@ -166,8 +195,10 @@
         android:layout_gravity="center_vertical|start"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
+        app:tint="@color/white"
         app:layout_anchor="@+id/activityDetailView"
         app:layout_anchorGravity="top|end"
+        android:contentDescription="@string/fab_start_timer"
         app:srcCompat="@drawable/ic_baseline_play_arrow_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -175,34 +206,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|end"
-        android:layout_marginStart="160dp"
+        android:layout_marginStart="88dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
+        android:contentDescription="@string/fab_plus_time"
         android:src="@drawable/ic_add_entry"
         app:layout_anchor="@+id/activityDetailView"
-        app:layout_anchorGravity="start|top" />
+        app:layout_anchorGravity="start|top"
+        app:tint="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/minusTimeFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|end"
-        android:layout_marginStart="88dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:src="@drawable/ic_minus"
-        app:layout_anchor="@+id/activityDetailView"
-        app:layout_anchorGravity="top" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/editActivityFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|end"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
-        android:src="@drawable/ic_edit"
+        android:contentDescription="@string/fab_minus_time"
+        android:src="@drawable/ic_minus"
         app:layout_anchor="@+id/activityDetailView"
-        app:layout_anchorGravity="start|top" />
+        app:layout_anchorGravity="top"
+        app:tint="@color/white" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

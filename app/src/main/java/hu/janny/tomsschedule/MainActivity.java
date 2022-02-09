@@ -88,6 +88,11 @@ public class MainActivity extends AppCompatActivity implements AddCustomActivity
                 R.id.action_add_custom_activity_to_nav_home);
     }
 
+    public void goBackToHomeAfterDelete(View view) {
+        Navigation.findNavController(this, R.id.nav_host_fragment_content_main).navigate(
+                R.id.action_detailFragment_to_nav_home);
+    }
+
     public void logoutUser(View view) {
         viewModel.logoutUser(FirebaseManager.user.getUid());
         FirebaseManager.logoutUser();

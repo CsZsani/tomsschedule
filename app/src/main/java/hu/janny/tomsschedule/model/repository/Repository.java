@@ -122,7 +122,7 @@ public class Repository {
         executor.shutdown();
     }
 
-    public void deleteActivityById(int id) {
+    public void deleteActivityById(long id) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             customActivityDao.deleteActivityById(id);
@@ -205,6 +205,14 @@ public class Repository {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             activityTimeDao.deleteActivityTime(activityTime);
+        });
+        executor.shutdown();
+    }
+
+    public void deleteTimesByActivityId(long id) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            activityTimeDao.deleteActivityTimeByActivityId(id);
         });
         executor.shutdown();
     }

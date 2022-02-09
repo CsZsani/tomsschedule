@@ -29,7 +29,7 @@
     <string name="female">Nő</string>
     <string name="male">Férfi</string>
     <string name="add_new_activity_fragment_label">Új tevékenység</string>
-    <string name="confirm">Választ</string>
+    <string name="confirm">Megerősít</string>
     <string name="cancel">Bezár</string>
     <string name="color_pick">Válassz egy színt</string>
     <string name="priority">Prioritás (0-10)</string>
@@ -99,4 +99,25 @@
     <string name="choose_daily_time_for_interval">Mennyi időt szeretnél tölteni vele naponta?</string>
     <string name="choose_daily_time">Mennyi időt szeretnél tölteni vele naponta?</string>
     <string name="save">Mentés</string>
+    <string name="turn_off_notifications">Akarod...?</string>
+    <string name="hello_blank_fragment">something</string>
+    <string name="detail_fragment_label">Részletek</string>
+    <string name="details_daily">Naponta</string>
+    <string name="details_weekly">Hetente</string>
+    <string name="details_weekly_days">Hetente ezeken a napokon</string>
+    <string name="details_monthly">Havonta</string>
+    <string name="details_deadline">Határidő</string>
+    <string name="details_interval">Intervallom (kezdete-vége)</string>
+    <string name="details_end_date">Az utolsó nap</string>
+    <string name="details_sum_time">Összesen ennyi időt szeretnél vele tölteni</string>
+    <string name="details_daily_time">Naponta ennyi időt szeretnél vele tölteni</string>
+    <string name="details_weekly_time">Hetente ennyi időt szeretnél vele tölteni</string>
+    <string name="details_monthly_time">Havonta ennyi időt szeretnél vele tölteni</string>
+    <string name="details_custom_time">A kijelölt napokon ennyi időt szeretnél vele tölteni</string>
+    <string name="detail_days">nap</string>
+    <string name="detail_hours">óra</string>
+    <string name="detail_minutes">perc</string>
+    <string name="priority_detail">Prioritás</string>
+    <string name="regularity_detail">Rendszeresség</string>
+    <string name="note_detail">Jegyzet</string>
 </resources>

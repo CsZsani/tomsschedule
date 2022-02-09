@@ -22,6 +22,9 @@ public interface ActivityTimeDao {
     @Delete
     void deleteActivityTime(ActivityTime activityTime);
 
+    @Query("DELETE FROM activitytimes WHERE activityId = :id")
+    void deleteActivityTimeByActivityId(long id);
+
     @Query("select * from activitytimes where activitytimes.date >= :from")
     List<ActivityTime> getAllLaterDates(long from);
 

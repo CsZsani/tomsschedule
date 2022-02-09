@@ -29,7 +29,7 @@ public interface CustomActivityDao {
     void deleteActivityByName(String name);
 
     @Query("DELETE FROM customactivities WHERE activityId = :id")
-    void deleteActivityById(int id);
+    void deleteActivityById(long id);
 
     @Query("SELECT * FROM customactivities")
     LiveData<List<CustomActivity>> getActivitiesList();
