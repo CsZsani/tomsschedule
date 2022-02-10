@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -43,6 +44,7 @@ import hu.janny.tomsschedule.databinding.DetailFragmentBinding;
 import hu.janny.tomsschedule.databinding.FragmentEditActivityBinding;
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.CustomActivity;
+import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.ui.main.MainViewModel;
@@ -61,8 +63,8 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
     final Calendar calEndDay= Calendar.getInstance();
     final Calendar calEndDate= Calendar.getInstance();
     private long activityId;
-    int color = Color.rgb(255, 164, 119);
-    private User currentUser;
+    int color;//Color.rgb(255, 164, 119);
+    private boolean setupFinished = false;
 
     public static EditActivityFragment newInstance() {
         return new EditActivityFragment();
@@ -79,13 +81,6 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         intiColorPicker();
         prioritySpinnerListener();
 
-        mainViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                currentUser = user;
-            }
-        });
-
         binding.activityColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,10 +88,29 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
             }
         });
 
-        //customActivity = new CustomActivity();
+        if (getArguments().containsKey(ARG_ITEM_ID)) {
+            long id = getArguments().getLong(ARG_ITEM_ID);
+            mainViewModel.findActivityById(id);
+        }
 
+        mainViewModel.getSingleActivity().observe(getViewLifecycleOwner(), new Observer<CustomActivity>() {
+            @Override
+            public void onChanged(CustomActivity activity) {
+                if(activity != null) {
+                    customActivity = activity;
+                    color = customActivity.getCol();
+                    binding.activityColor.setBackgroundColor(color);
+                    initNameChooser();
+
+                    initNoteAndPriority();
+                    initSelection();
+                } else {
+                    navigateBackHome();
+                    Toast.makeText(getActivity(), "I can't find this activity!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
         initCalendars();
-        initNameChooserRadioButtonGroup();
         initNotifyTypeRadioButtonGroup();
         initRegularityTypeRadioButtonGroup();
         initHasFixedDaysSwitch();
@@ -104,32 +118,7 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         initIsTimeMeasuredSwitch();
         initSelectDurationTypeRadioGroups();
         initFixedDaysTimePickerListeners();
-
         saveOnClickListener();
-
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            long id = getArguments().getLong(ARG_ITEM_ID);
-            mainViewModel.findActivityById(id);
-        }
-
-        mainViewModel.getActivityByIdWithTimes().observe(getViewLifecycleOwner(), new Observer<Map<CustomActivity, List<ActivityTime>>>() {
-            @Override
-            public void onChanged(Map<CustomActivity, List<ActivityTime>> customActivityListMap) {
-                CustomActivity activity = new CustomActivity();
-                Optional<CustomActivity> firstKey = customActivityListMap.keySet().stream().findFirst();
-                if (firstKey.isPresent()) {
-                    activity = firstKey.get();
-                } else {
-                    activity = null;
-                }
-                if(activity != null) {
-                    customActivity = activity;
-                } else {
-                    navigateBackHome();
-                    Toast.makeText(getActivity(), "I can't find this activity!", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
 
         return root;
     }
@@ -173,29 +162,20 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
     }
 
     private void saveActivity() {
-        String name;
-        if(binding.selectFixActivityOption.isChecked()) {
-            name = getSelectedFixActivityName();
-        } else {
-            name = binding.activityName.getText().toString().trim();
-        }
+        String name = binding.activityName.getText().toString().trim();
         if(name.isEmpty()) {
             binding.activityName.setError("Name is required");
             binding.activityName.requestFocus();
             return;
         }
-        int col = color;
-        String note = binding.activityNote.getText().toString().trim();
-        int priority = Integer.parseInt(binding.activityPriority.getSelectedItem().toString());
-
-        if(mainViewModel.getUser().getValue() != null) {
-            activityId = System.currentTimeMillis();
-            customActivity = new CustomActivity(activityId, currentUser.uid, name, col, note, priority);
-        } else {
-            Toast.makeText(getActivity(), "Error in saving activity, no user detected!", Toast.LENGTH_LONG).show();
-            return;
+        if(!CustomActivityHelper.isFixActivity(name)) {
+            customActivity.setName(name);
         }
 
+        customActivity.setCol(color);
+        customActivity.setNote(binding.activityNote.getText().toString().trim());
+        customActivity.setPr(Integer.parseInt(binding.activityPriority.getSelectedItem().toString()));
+        customActivity.setEverythingToDefault();
         decideWhichMainType();
     }
 
@@ -481,53 +461,10 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
     }
 
     private void addActivityToDb() {
-        mainViewModel.insertActivity(customActivity);
-        mainViewModel.insertFirstActivityTime(activityId);
+        mainViewModel.updateActivity(customActivity);
         System.out.println(customActivity);
-        Navigation.findNavController(this.getView()).navigate(R.id.action_add_custom_activity_to_nav_home);
-    }
-
-    private String getSelectedFixActivityName() {
-        String d = binding.selectFixActivitySpinner.getSelectedItem().toString().trim();
-        switch (d) {
-            case "Sleeping":
-            case "Alvás":
-                return "SLEEPING";
-            case "Cooking":
-            case "Főzés":
-                return "COOKING";
-            case "Workout":
-            case "Edzés":
-                return "WORKOUT";
-            case "Housework":
-            case "Házimunka":
-                return "HOUSEWORK";
-            case "Shopping":
-            case "Bevásárlás":
-                return "SHOPPING";
-            case "Work":
-            case "Munka":
-                return "WORK";
-            case "School":
-            case "Iskola":
-                return "SCHOOL";
-            case "Learning":
-            case "Tanulás":
-                return "LEARNING";
-            case "Travelling":
-            case "Utazás":
-                return "TRAVELLING";
-            case "Hobby":
-            case "Hobbi":
-                return "HOBBY";
-            case "Relaxation":
-            case "Kikapcsolódás":
-                return "RELAXATION";
-            case "Reading":
-            case "Olvasás":
-                return "READING";
-        }
-        return "ERROR";
+        //Navigation.findNavController(this.getView()).navigate(R.id.action_editActivityFragment_to_detailFragment);
+        navigateBackToDetails();
     }
 
     private void intiColorPicker() {
@@ -555,22 +492,15 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                 .create();
     }
 
-    private void initNameChooserRadioButtonGroup() {
-        binding.selectActivityNameRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i) {
-                    case R.id.selectFixActivityOption:
-                        binding.selectFixActivitySpinner.setVisibility(View.VISIBLE);
-                        binding.activityName.setVisibility(View.GONE);
-                        break;
-                    case R.id.selectCustomActivityOption:
-                        binding.selectFixActivitySpinner.setVisibility(View.GONE);
-                        binding.activityName.setVisibility(View.VISIBLE);
-                        break;
-                }
-            }
-        });
+    private void initNameChooser() {
+        if(CustomActivityHelper.isFixActivity(customActivity.getName())) {
+            binding.activityNameText.setText(R.string.global_activity_name_immutable);
+            binding.activityName.setEnabled(false);
+            binding.activityName.setText(CustomActivityHelper.getStringResourceOfFixActivity(customActivity.getName()));
+            binding.activityName.setTypeface(null, Typeface.ITALIC);
+        } else {
+            binding.activityName.setText(customActivity.getName());
+        }
     }
 
     private void initNotifyTypeRadioButtonGroup() {
@@ -586,6 +516,10 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                         setDurationGone();
                         setRegularityRadiosFalse();
                         binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                        binding.activityHasFixedWeeks.setVisibility(View.GONE);
+                        binding.activityHasAnEndDate.setVisibility(View.GONE);
+                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                        binding.durationText.setVisibility(View.GONE);
                         break;
                     case R.id.activityRegularity:
                         setIntervalGone();
@@ -606,6 +540,10 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                         setDurationGone();
                         setRegularityRadiosFalse();
                         binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                        binding.activityHasFixedWeeks.setVisibility(View.GONE);
+                        binding.activityHasAnEndDate.setVisibility(View.GONE);
+                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                        binding.durationText.setVisibility(View.GONE);
                         break;
                     case R.id.activityCustom:
                         setIntervalGone();
@@ -615,6 +553,10 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                         setDurationGone();
                         setRegularityRadiosFalse();
                         binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                        binding.activityHasFixedWeeks.setVisibility(View.GONE);
+                        binding.activityHasAnEndDate.setVisibility(View.GONE);
+                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                        binding.durationText.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -645,7 +587,11 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                         binding.activityIsTimeMeasured.setVisibility(View.GONE);
                         binding.durationText.setText(R.string.choose_one_weekly_time);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
+                        if(!setupFinished && customActivity.getDur() != 0L) {
+                            setSumTimePickerFromActivity();
+                        }else{
+                            setSumTimePickerDefault();
+                        }
                         break;
                     case R.id.activityMonthly:
                         setWeeklyStuffGone();
@@ -654,7 +600,11 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                         binding.activityIsTimeMeasured.setVisibility(View.GONE);
                         binding.durationText.setText(R.string.choose_monthly_time);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
+                        if(!setupFinished && customActivity.getDur() != 0L) {
+                            setSumTimePickerFromActivity();
+                        }else{
+                            setSumTimePickerDefault();
+                        }
                         break;
                 }
             }
@@ -668,6 +618,9 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                 if(b) {
                     binding.activityWeeklyDays.setVisibility(View.VISIBLE);
                     binding.allDaysOfWeek.setVisibility(View.VISIBLE);
+                    if(!setupFinished && !customActivity.getCustomWeekTime().nothingSet()) {
+                        setFixedDaysFromActivity();
+                    }
                     setDurationGone();
                     binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
                 } else {
@@ -678,7 +631,11 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                     //if(binding.activityWeekly.isChecked()) {
                     binding.durationText.setText(R.string.choose_one_weekly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
-                    setSumTimePickerDefault();
+                    if(!setupFinished && customActivity.getDur() != 0L) {
+                        setSumTimePickerFromActivity();
+                    }else{
+                        setSumTimePickerDefault();
+                    }
                     binding.activityIsTimeMeasured.setVisibility(View.GONE);
                     //}
                 }
@@ -702,12 +659,20 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                 if(binding.activityWeekly.isChecked() && !binding.activityHasFixedWeeks.isChecked()) {
                     binding.durationText.setText(R.string.choose_one_weekly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
-                    setSumTimePickerDefault();
+                    if(!setupFinished && customActivity.getDur() != 0L) {
+                        setSumTimePickerFromActivity();
+                    }else{
+                        setSumTimePickerDefault();
+                    }
                     binding.activityIsTimeMeasured.setVisibility(View.GONE);
                 } else if(binding.activityMonthly.isChecked()) {
                     binding.durationText.setText(R.string.choose_monthly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
-                    setSumTimePickerDefault();
+                    if(!setupFinished && customActivity.getDur() != 0L) {
+                        setSumTimePickerFromActivity();
+                    }else{
+                        setSumTimePickerDefault();
+                    }
                     binding.activityIsTimeMeasured.setVisibility(View.GONE);
                 }
             }
@@ -722,11 +687,19 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                     if(binding.activityHasDeadline.isChecked()) {
                         binding.durationText.setText(R.string.choose_sum_time_for_deadline);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
+                        if(!setupFinished && customActivity.getDur() != 0L) {
+                            setSumTimePickerFromActivity();
+                        }else{
+                            setSumTimePickerDefault();
+                        }
                     } else if(binding.activityCustom.isChecked()) {
                         binding.durationText.setText(R.string.choose_sum_time_for_neither);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
+                        if(!setupFinished && customActivity.getDur() != 0L) {
+                            setSumTimePickerFromActivity();
+                        }else{
+                            setSumTimePickerDefault();
+                        }
                     } else if(binding.activityIsInterval.isChecked()) {
                         binding.selectDurationType.setVisibility(View.VISIBLE);
                         binding.activityIsSumTime.setVisibility(View.VISIBLE);
@@ -736,7 +709,11 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                     } else if(binding.activityDaily.isChecked()) {
                         binding.durationText.setText(R.string.choose_daily_time);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
+                        if(!setupFinished && customActivity.getDur() != 0L) {
+                            setSumTimePickerFromActivity();
+                        }else{
+                            setSumTimePickerDefault();
+                        }
                         binding.activitySumTimePicker.days.setEnabled(false);
                         binding.activitySumTimePicker.days.setBackgroundColor(Color.LTGRAY);
                         binding.activitySumTimePicker.days.setTypeface(null, Typeface.ITALIC);
@@ -758,12 +735,20 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                         } else {
                             binding.durationText.setText(R.string.choose_one_weekly_time);
                             binding.durationText.setVisibility(View.VISIBLE);
-                            setSumTimePickerDefault();
+                            if(!setupFinished && customActivity.getDur() != 0L) {
+                                setSumTimePickerFromActivity();
+                            }else{
+                                setSumTimePickerDefault();
+                            }
                         }
                     } else if(binding.activityMonthly.isChecked()) {
                         binding.durationText.setText(R.string.choose_monthly_time);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
+                        if(!setupFinished && customActivity.getDur() != 0L) {
+                            setSumTimePickerFromActivity();
+                        }else{
+                            setSumTimePickerDefault();
+                        }
                     }
                 } else {
                     setDurationTypeRadiosToFalse();
@@ -790,11 +775,19 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                         if(binding.activityIsInterval.isChecked()) {
                             binding.durationText.setText(R.string.choose_sum_time_for_interval);
                             binding.durationText.setVisibility(View.VISIBLE);
-                            setSumTimePickerDefault();
+                            if(!setupFinished && customActivity.getDur() != 0L) {
+                                setSumTimePickerFromActivity();
+                            }else{
+                                setSumTimePickerDefault();
+                            }
                         } else {
                             binding.durationText.setText(R.string.choose_sum_time_for_fixed_week_days);
                             binding.durationText.setVisibility(View.VISIBLE);
-                            setSumTimePickerDefault();
+                            if(!setupFinished && customActivity.getDur() != 0L) {
+                                setSumTimePickerFromActivity();
+                            }else{
+                                setSumTimePickerDefault();
+                            }
                         }
                         break;
                     case R.id.activityIsTime:
@@ -805,7 +798,11 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                             binding.durationText.setText(R.string.choose_daily_time);
                         }
                         binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
+                        if(!setupFinished && customActivity.getDur() != 0L) {
+                            setSumTimePickerFromActivity();
+                        }else{
+                            setSumTimePickerDefault();
+                        }
                         binding.activitySumTimePicker.days.setEnabled(false);
                         binding.activitySumTimePicker.days.setBackgroundColor(Color.LTGRAY);
                         binding.activitySumTimePicker.days.setTypeface(null, Typeface.ITALIC);
@@ -813,14 +810,22 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                     case R.id.activityCustomTime:
                         binding.durationText.setVisibility(View.GONE);
                         binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
-                        resetFixedDaysTimePickers();
+                        if(!setupFinished && customActivity.ishFD()) {
+                            resetFixedDaysTimePickersFromActivity();
+                        } else {
+                            resetFixedDaysTimePickers();
+                        }
                         binding.fixedDaysTimes.setVisibility(View.VISIBLE);
                         break;
                     case R.id.activityIsWeeklyTime:
                         binding.fixedDaysTimes.setVisibility(View.GONE);
                         binding.durationText.setText(R.string.choose_one_weekly_time);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
+                        if(!setupFinished && customActivity.getDur() != 0L) {
+                            setSumTimePickerFromActivity();
+                        }else{
+                            setSumTimePickerDefault();
+                        }
                         break;
                 }
             }
@@ -832,6 +837,16 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         binding.activitySumTimePicker.days.setText("0");
         binding.activitySumTimePicker.hours.setText("0");
         binding.activitySumTimePicker.minutes.setText("0");
+        binding.activitySumTimePicker.days.setEnabled(true);
+        binding.activitySumTimePicker.days.setBackgroundColor(Color.WHITE);
+        binding.activitySumTimePicker.days.setTypeface(null, Typeface.NORMAL);
+    }
+
+    private  void setSumTimePickerFromActivity() {
+        binding.activitySumTimePicker.getRoot().setVisibility(View.VISIBLE);
+        binding.activitySumTimePicker.days.setText(String.valueOf(DateConverter.durationConverterFromLongToDays(customActivity.getDur())));
+        binding.activitySumTimePicker.hours.setText(String.valueOf(DateConverter.durationConverterFromLongToHours(customActivity.getDur())));
+        binding.activitySumTimePicker.minutes.setText(String.valueOf(DateConverter.durationConverterFromLongToMinutes(customActivity.getDur())));
         binding.activitySumTimePicker.days.setEnabled(true);
         binding.activitySumTimePicker.days.setBackgroundColor(Color.WHITE);
         binding.activitySumTimePicker.days.setTypeface(null, Typeface.NORMAL);
@@ -987,6 +1002,40 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         setFixedDayTimePicker(binding.sunday, binding.activitySundayPicker);
     }
 
+    private void resetFixedDaysTimePickersFromActivity() {
+        setFixedDayTimePickerFromActivity(binding.monday, binding.activityMondayPicker, customActivity.getCustomWeekTime().getMon());
+        setFixedDayTimePickerFromActivity(binding.tuesday, binding.activityTuesdayPicker, customActivity.getCustomWeekTime().getTue());
+        setFixedDayTimePickerFromActivity(binding.wednesday, binding.activityWednesdayPicker, customActivity.getCustomWeekTime().getWed());
+        setFixedDayTimePickerFromActivity(binding.thursday, binding.activityThursdayPicker, customActivity.getCustomWeekTime().getThu());
+        setFixedDayTimePickerFromActivity(binding.friday, binding.activityFridayPicker, customActivity.getCustomWeekTime().getFri());
+        setFixedDayTimePickerFromActivity(binding.saturday, binding.activitySaturdayPicker, customActivity.getCustomWeekTime().getSat());
+        setFixedDayTimePickerFromActivity(binding.sunday, binding.activitySundayPicker, customActivity.getCustomWeekTime().getSun());
+    }
+
+    private void setFixedDayTimePickerFromActivity(CheckBox rb, CustomTimePickerForOneDayBinding b, long time) {
+        if(rb.isChecked()) {
+            resetTimePickerFieldHourForPickingFromActivity(b.oneDayHours, time);
+            resetTimePickerFieldMinutesForPickingFromActivity(b.oneDayMinutes, time);
+        } else {
+            resetTimePickerFieldForNotPicking(b.oneDayHours);
+            resetTimePickerFieldForNotPicking(b.oneDayMinutes);
+        }
+    }
+
+    private void resetTimePickerFieldHourForPickingFromActivity(EditText et, long time) {
+        et.setText(String.valueOf(DateConverter.durationConverterFromLongToHours(time)));
+        et.setBackgroundColor(Color.WHITE);
+        et.setEnabled(true);
+        et.setTypeface(null, Typeface.NORMAL);
+    }
+
+    private void resetTimePickerFieldMinutesForPickingFromActivity(EditText et, long time) {
+        et.setText(String.valueOf(DateConverter.durationConverterFromLongToMinutes(time)));
+        et.setBackgroundColor(Color.WHITE);
+        et.setEnabled(true);
+        et.setTypeface(null, Typeface.NORMAL);
+    }
+
     private void resetTimePickerFieldForPicking(EditText et) {
         et.setText("0");
         et.setBackgroundColor(Color.WHITE);
@@ -1044,6 +1093,126 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         Bundle arguments = new Bundle();
         arguments.putLong(DetailFragment.ARG_ITEM_ID, customActivity.getId());
         Navigation.findNavController(this.getView()).navigate(R.id.action_editActivityFragment_to_detailFragment, arguments);
+    }
+
+    private void initNoteAndPriority() {
+        binding.activityNote.setText(customActivity.getNote());
+        binding.activityPriority.setSelection(((ArrayAdapter)binding.activityPriority.getAdapter()).getPosition(String.valueOf(customActivity.getPr())));
+    }
+
+    private void initSelection() {
+        if(customActivity.getDl() > 0L) {
+            initDeadline();
+        } else if(customActivity.getsD() > 0L && customActivity.geteD() > 0L) {
+            initInterval();
+        } else if(customActivity.getReg() > 0) {
+            initRegular();
+        } else {
+            initNeither();
+        }
+        setupFinished = true;
+    }
+
+    private void initDeadline() {
+        binding.activityHasDeadline.toggle();
+        calDeadline.setTimeInMillis(customActivity.getDl());
+        updateLabelDeadline();
+        if(customActivity.gettT() == 1) {
+            binding.activityIsTimeMeasured.toggle();
+        }
+    }
+
+    private void initInterval() {
+        binding.activityIsInterval.toggle();
+        calStartDay.setTimeInMillis(customActivity.getsD());
+        calEndDay.setTimeInMillis(customActivity.geteD());
+        updateLabelStartDay();
+        updateLabelEndDay();
+        if(customActivity.gettT() == 1) {
+            binding.activityIsTimeMeasured.toggle();
+            binding.activityIsSumTime.toggle();
+        } else if(customActivity.gettT() == 2) {
+            binding.activityIsTimeMeasured.toggle();
+            binding.activityIsTime.toggle();
+        }
+    }
+
+    private void initRegular() {
+        binding.activityRegularity.toggle();
+        switch (customActivity.getReg()) {
+            case 1:
+                binding.activityDaily.toggle();
+                if(customActivity.gettT() == 2) {
+                    binding.activityIsTimeMeasured.toggle();
+                }
+                break;
+            case 2:
+                binding.activityWeekly.toggle();
+                if(customActivity.ishFD()) {
+                    binding.activityHasFixedWeeks.toggle();
+                }
+                if(customActivity.getsD() == 0L && customActivity.geteD() > 0L) {
+                    binding.activityHasAnEndDate.toggle();
+                    calEndDate.setTimeInMillis(customActivity.geteD());
+                    updateLabelEndDate();
+                }
+                if(customActivity.gettT() == 1) {
+                    binding.activityIsTimeMeasured.toggle();
+                    binding.activityIsSumTime.toggle();
+                } else if(customActivity.gettT() == 2) {
+                    binding.activityIsTimeMeasured.toggle();
+                    binding.activityIsTime.toggle();
+                } else if(customActivity.gettT() == 3) {
+                    binding.activityIsTimeMeasured.toggle();
+                    binding.activityIsWeeklyTime.toggle();
+                } else if(customActivity.gettT() == 5) {
+                    binding.activityIsTimeMeasured.toggle();
+                    binding.activityCustomTime.toggle();
+                }
+                break;
+            case 3:
+                binding.activityMonthly.toggle();
+                if(customActivity.getsD() == 0L && customActivity.geteD() > 0L) {
+                    binding.activityHasAnEndDate.toggle();
+                    calEndDate.setTimeInMillis(customActivity.geteD());
+                    updateLabelEndDate();
+                }
+                if(customActivity.gettT() == 4) {
+                    binding.activityIsTimeMeasured.toggle();
+                }
+                break;
+        }
+    }
+
+    private void setFixedDaysFromActivity() {
+        if(customActivity.getCustomWeekTime().getMon() >= 0L) {
+            binding.monday.toggle();
+        }
+        if(customActivity.getCustomWeekTime().getTue() >= 0L) {
+            binding.tuesday.toggle();
+        }
+        if(customActivity.getCustomWeekTime().getWed() >= 0L) {
+            binding.wednesday.toggle();
+        }
+        if(customActivity.getCustomWeekTime().getThu() >= 0L) {
+            binding.thursday.toggle();
+        }
+        if(customActivity.getCustomWeekTime().getFri() >= 0L) {
+            binding.friday.toggle();
+        }
+        if(customActivity.getCustomWeekTime().getSat() >= 0L) {
+            binding.saturday.toggle();
+        }
+        if(customActivity.getCustomWeekTime().getSun() >= 0L) {
+            binding.sunday.toggle();
+        }
+    }
+
+    private void initNeither() {
+        binding.activityCustom.toggle();
+        if(customActivity.gettT() == 1) {
+            binding.activityIsTimeMeasured.toggle();
+        }
     }
 
     @Override

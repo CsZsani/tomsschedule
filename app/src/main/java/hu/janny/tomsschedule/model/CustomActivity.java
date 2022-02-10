@@ -245,4 +245,17 @@ public class CustomActivity {
                 ", customWeekTime=" + customWeekTime +
                 '}';
     }
+
+    @Exclude
+    public void setEverythingToDefault() {
+        tT = 0;
+        dur = 0;
+        dl = 0L;
+        reg = 0;
+        hFD = false;
+        sD = 0L;
+        eD = 0L;
+        notif = false;
+        customWeekTime.setEverythingToDefault();
+    }
 }

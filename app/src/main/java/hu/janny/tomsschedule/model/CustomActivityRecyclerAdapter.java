@@ -55,8 +55,11 @@ public class CustomActivityRecyclerAdapter
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         viewHolder.itemView.setOnClickListener(onClickListener);
         viewHolder.itemView.setTag(activityList.get(i));
-        viewHolder.activityName.setText(activityList.get(i).name);
-        System.out.println(activityList.get(i).getDur() + " in adapter");
+        if(CustomActivityHelper.isFixActivity(activityList.get(i).name)) {
+            viewHolder.activityName.setText(CustomActivityHelper.getStringResourceOfFixActivity(activityList.get(i).name));
+        } else {
+            viewHolder.activityName.setText(activityList.get(i).name);
+        }
         viewHolder.detailsText.setText("Ide jon majd a fancy reszlet");
         viewHolder.divider.setBackgroundColor(activityList.get(i).getCol());
         viewHolder.beginActivity.setBackgroundColor(darkenColor(activityList.get(i).getCol()));

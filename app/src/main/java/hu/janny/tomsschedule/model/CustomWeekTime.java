@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.firebase.database.Exclude;
@@ -113,4 +114,16 @@ public class CustomWeekTime {
     public boolean nothingSet() {
         return mon == -1 && tue == -1 && wed == -1 && thu == -1 && fri == -1 && sat == -1 && sun == -1;
     }
+
+    @Exclude
+    public void setEverythingToDefault() {
+        mon = -1L;
+        tue = -1L;
+        wed = -1L;
+        thu = -1L;
+        fri = -1L;
+        sat = -1L;
+        sun = -1L;
+    }
+
 }

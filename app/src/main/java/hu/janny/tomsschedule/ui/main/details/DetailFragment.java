@@ -28,10 +28,12 @@ import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.DetailFragmentBinding;
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.CustomActivity;
+import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.CustomWeekTime;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.ui.main.MainViewModel;
 import hu.janny.tomsschedule.ui.main.editactivity.EditActivityFragment;
+import hu.janny.tomsschedule.ui.main.timeadding.AddTimeFragment;
 
 public class DetailFragment extends Fragment {
 
@@ -56,7 +58,7 @@ public class DetailFragment extends Fragment {
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             long id = getArguments().getLong(ARG_ITEM_ID);
-            mainViewModel.findActivityById(id);
+            mainViewModel.findActivityByIdWithTimes(id);
         }
 
         mainViewModel.getActivityByIdWithTimes().observe(getViewLifecycleOwner(), new Observer<Map<CustomActivity, List<ActivityTime>>>() {
@@ -70,8 +72,11 @@ public class DetailFragment extends Fragment {
                     activity = null;
                 }
                 if(activity != null) {
-                    System.out.println(activity);
-                    binding.activityDetailName.setText(activity.getName());
+                    if(CustomActivityHelper.isFixActivity(activity.getName())) {
+                        binding.activityDetailName.setText(CustomActivityHelper.getStringResourceOfFixActivity(activity.getName()));
+                    } else {
+                        binding.activityDetailName.setText(activity.getName());
+                    }
                     binding.toolbarLayout.setBackgroundColor(activity.getCol());
                     binding.detailToolbar.setBackgroundColor(activity.getCol());
                     binding.minusTimeFab.setBackgroundTintList(ColorStateList.valueOf(darkenColor(activity.getCol())));
@@ -93,6 +98,8 @@ public class DetailFragment extends Fragment {
                     setUpTheViewDuration(activity);
                     setUpDeleteDialog(activity.getId());
                     setUpEditButton(activity.getId(), root);
+                    setUpAddTimeButton(activity.getId());
+                    setUpSubtractionButton(activity.getId());
                 } else {
                     navigateBackHome();
                     Toast.makeText(getActivity(), "I can't find this activity!", Toast.LENGTH_LONG).show();
@@ -102,6 +109,30 @@ public class DetailFragment extends Fragment {
         setUpDeleteActivity();
 
         return root;
+    }
+
+    private void setUpAddTimeButton(long activityId) {
+        binding.plusTimeFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle arguments = new Bundle();
+                arguments.putLong(AddTimeFragment.ITEM_ID, activityId);
+                arguments.putBoolean(AddTimeFragment.OPERATION_TYPE, true);
+                Navigation.findNavController(getView()).navigate(R.id.action_detailFragment_to_addTimeFragment, arguments);
+            }
+        });
+    }
+
+    private void setUpSubtractionButton(long activityId) {
+        binding.minusTimeFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle arguments = new Bundle();
+                arguments.putLong(AddTimeFragment.ITEM_ID, activityId);
+                arguments.putBoolean(AddTimeFragment.OPERATION_TYPE, false);
+                Navigation.findNavController(getView()).navigate(R.id.action_detailFragment_to_addTimeFragment, arguments);
+            }
+        });
     }
 
     private void setUpEditButton(long id, View fragView) {
@@ -148,7 +179,6 @@ public class DetailFragment extends Fragment {
     }
 
     private void setUpTheViewDuration(CustomActivity activity) {
-        System.out.println(activity.getDur());
         if(activity.gettT() > 0) {
             binding.detailDurationText.setVisibility(View.VISIBLE);
             binding.detailDuration.setVisibility(View.VISIBLE);

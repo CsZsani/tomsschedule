@@ -32,6 +32,7 @@ public class MainViewModel extends AndroidViewModel {
     private final LiveData<List<CustomActivity>> allActivitiesList;
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityWithTimes;
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityByIdWithTimes;
+    private final MutableLiveData<CustomActivity> singleActivity;
     private final LiveData<User> user;
     private final LiveData<List<CustomActivity>> activitiesList;
     private User currentUser;
@@ -47,6 +48,7 @@ public class MainViewModel extends AndroidViewModel {
         activitiesList = repository.getActivities();
         allActivitiesList = Transformations.map(repository.getAllActivitiesWithTimes(), new Deserializer());
         activityByIdWithTimes = repository.getActivityByIdWithTimesData();
+        singleActivity = repository.getActivitiesData();
     }
 
     private class Deserializer implements Function<Map<CustomActivity, List<ActivityTime>>, List<CustomActivity>> {
@@ -87,6 +89,10 @@ public class MainViewModel extends AndroidViewModel {
         repository.insertFirstActivityTime(activityId);
     }
 
+    public void updateActivity(CustomActivity customActivity) {
+        repository.updateActivity(customActivity);
+    }
+
     public void deleteActivityById(long id) {
         repository.deleteActivityById(id);
     }
@@ -107,11 +113,19 @@ public class MainViewModel extends AndroidViewModel {
         return repository.getActivityIdByName(name);
     }
 
-    public void findActivityById(long id) {
+    public void findActivityByIdWithTimes(long id) {
         repository.getSingleActivityByIdWithTimes(id);
+    }
+
+    public void findActivityById(long id) {
+        repository.getActivityById(id);
     }
 
     public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivityByIdWithTimes() {
         return activityByIdWithTimes;
+    }
+
+    public MutableLiveData<CustomActivity> getSingleActivity() {
+        return singleActivity;
     }
 }

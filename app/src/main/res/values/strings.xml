@@ -127,4 +127,15 @@
     <string name="fab_edit">Edit activity</string>
     <string name="fab_delete">Delete activity</string>
     <string name="sure_delete_acitvity">Do you really want to delete this activity?</string>
+    <string name="error">Error</string>
+    <string name="global_activity_name_immutable">Activity name (global activity names are immutable)</string>
+    <string name="edit">Edit</string>
+    <string name="add_time_to_activity">Add time</string>
+    <string name="add_time_date">Set the date</string>
+    <string name="add_time_time">Set the amount of time</string>
+    <string name="add_time_fragment_label">Edit time</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="select_time">Select time amount</string>
+    <string name="select_date">Select date</string>
 </resources>

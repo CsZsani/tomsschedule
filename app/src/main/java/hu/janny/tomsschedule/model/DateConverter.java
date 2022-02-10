@@ -107,21 +107,33 @@ public final class DateConverter {
     }
 
     public static String durationConverterFromLongToString(long milliseconds) {
-        System.out.println(milliseconds);
         long dy = TimeUnit.MILLISECONDS.toDays(milliseconds);
         long hr = TimeUnit.MILLISECONDS.toHours(milliseconds)
                 - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(milliseconds));
         long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
                 - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
-        System.out.println(dy + "nap");
-        System.out.println(hr + "ora");
-        System.out.println(min + "perc");
         if(dy == 0) {
             return String.format("%dh %dmin", hr, min);
         }else {
             return String.format("%dd %dh %dmin", dy, hr, min);
         }
+    }
 
+    public static long durationConverterFromLongToDays(long milliseconds) {
+        long dy = TimeUnit.MILLISECONDS.toDays(milliseconds);
+        return dy;
+    }
+
+    public static long durationConverterFromLongToHours(long milliseconds) {
+        long hr = TimeUnit.MILLISECONDS.toHours(milliseconds)
+                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(milliseconds));
+        return hr;
+    }
+
+    public static long durationConverterFromLongToMinutes(long milliseconds) {
+        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
+                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
+        return min;
     }
 
     public static void exampleLongToTime(long millis) {

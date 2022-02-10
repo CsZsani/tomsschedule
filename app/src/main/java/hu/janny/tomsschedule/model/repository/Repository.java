@@ -114,6 +114,14 @@ public class Repository {
         executor.shutdown();
     }
 
+    public void updateActivity(CustomActivity customActivity) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            customActivityDao.updateActivity(customActivity);
+        });
+        executor.shutdown();
+    }
+
     public void deleteActivityByName(String name) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -176,7 +184,7 @@ public class Repository {
         return id[0];
     }
 
-    public void getActivityById(int id) {
+    public void getActivityById(long id) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             activity = customActivityDao.getActivityById(id);

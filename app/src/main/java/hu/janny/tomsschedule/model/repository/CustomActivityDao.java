@@ -49,7 +49,7 @@ public interface CustomActivityDao {
     CustomActivity getActivityByName(String name);
 
     @Query("SELECT * FROM customactivities WHERE customactivities.activityId = :id")
-    CustomActivity getActivityById(int id);
+    CustomActivity getActivityById(long id);
 
     @Query("SELECT activityId FROM customactivities WHERE customactivities.name = :name")
     int getIdByName(String name);

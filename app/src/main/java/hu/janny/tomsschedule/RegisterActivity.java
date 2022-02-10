@@ -54,8 +54,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         String name = binding.registerName.getText().toString().trim();
         String birthDate = binding.registerBirthDate.getText().toString().trim();
         String gender;
-        if(binding.registerGender.getSelectedItem().toString().equals("Female") ||
-                binding.registerGender.getSelectedItem().toString().equals("Nő")) {
+        if(binding.registerGender.getSelectedItem().toString().equals(getString(R.string.female))) {
             gender = "female";
         } else {
             gender = "male";

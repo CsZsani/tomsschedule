@@ -57,21 +57,38 @@
         <action
             android:id="@+id/action_detailFragment_to_editActivityFragment"
             app:destination="@id/editActivityFragment" />
+        <action
+            android:id="@+id/action_detailFragment_to_addTimeFragment"
+            app:destination="@id/addTimeFragment" />
     </fragment>
     <fragment
         android:id="@+id/editActivityFragment"
         android:name="hu.janny.tomsschedule.ui.main.editactivity.EditActivityFragment"
-        android:label="fragment_edit_activity"
-        tools:layout="@layout/fragment_edit_activity" >
+        android:label="@string/edit"
+        tools:layout="@layout/fragment_edit_activity">
         <argument
             android:name="item_id"
-            app:argType="long"
-            android:defaultValue="0L" />
+            android:defaultValue="0L"
+            app:argType="long" />
         <action
             android:id="@+id/action_editActivityFragment_to_nav_home"
             app:destination="@id/nav_home" />
         <action
             android:id="@+id/action_editActivityFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addTimeFragment"
+        android:name="hu.janny.tomsschedule.ui.main.timeadding.AddTimeFragment"
+        android:label="@string/add_time_fragment_label"
+        tools:layout="@layout/fragment_add_time">
+        <argument
+            android:name="plus"
+            android:defaultValue="true"
+            app:argType="boolean" />
+        <argument
+            android:name="item_id"
+            android:defaultValue="0L"
+            app:argType="long" />
     </fragment>
 </navigation>

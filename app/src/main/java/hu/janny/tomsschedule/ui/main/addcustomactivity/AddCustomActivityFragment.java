@@ -39,6 +39,7 @@ import hu.janny.tomsschedule.databinding.CustomTimePickerForOneDayBinding;
 import hu.janny.tomsschedule.databinding.FragmentAddCustomActivityBinding;
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.CustomActivity;
+import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.ui.main.MainViewModel;
@@ -168,7 +169,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     private void saveActivity() {
         String name;
         if(binding.selectFixActivityOption.isChecked()) {
-            name = getSelectedFixActivityName();
+            name = CustomActivityHelper.getSelectedFixActivityName(binding.selectFixActivitySpinner.getSelectedItem().toString().trim());
         } else {
             name = binding.activityName.getText().toString().trim();
         }
@@ -480,49 +481,6 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         Navigation.findNavController(this.getView()).navigate(R.id.action_add_custom_activity_to_nav_home);
     }
 
-    private String getSelectedFixActivityName() {
-        String d = binding.selectFixActivitySpinner.getSelectedItem().toString().trim();
-        switch (d) {
-            case "Sleeping":
-            case "Alvás":
-                return "SLEEPING";
-            case "Cooking":
-            case "Főzés":
-                return "COOKING";
-            case "Workout":
-            case "Edzés":
-                return "WORKOUT";
-            case "Housework":
-            case "Házimunka":
-                return "HOUSEWORK";
-            case "Shopping":
-            case "Bevásárlás":
-                return "SHOPPING";
-            case "Work":
-            case "Munka":
-                return "WORK";
-            case "School":
-            case "Iskola":
-                return "SCHOOL";
-            case "Learning":
-            case "Tanulás":
-                return "LEARNING";
-            case "Travelling":
-            case "Utazás":
-                return "TRAVELLING";
-            case "Hobby":
-            case "Hobbi":
-                return "HOBBY";
-            case "Relaxation":
-            case "Kikapcsolódás":
-                return "RELAXATION";
-            case "Reading":
-            case "Olvasás":
-                return "READING";
-        }
-        return "ERROR";
-    }
-
     private void intiColorPicker() {
         colorPickerDialog = new ColorPickerDialog.Builder(getActivity())
                 .setTitle(R.string.nav_header_title)
@@ -579,6 +537,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                         setDurationGone();
                         setRegularityRadiosFalse();
                         binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                        binding.activityHasFixedWeeks.setVisibility(View.GONE);
+                        binding.activityHasAnEndDate.setVisibility(View.GONE);
+                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                        binding.durationText.setVisibility(View.GONE);
                         break;
                     case R.id.activityRegularity:
                         setIntervalGone();
@@ -599,6 +561,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                         setDurationGone();
                         setRegularityRadiosFalse();
                         binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                        binding.activityHasFixedWeeks.setVisibility(View.GONE);
+                        binding.activityHasAnEndDate.setVisibility(View.GONE);
+                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                        binding.durationText.setVisibility(View.GONE);
                         break;
                     case R.id.activityCustom:
                         setIntervalGone();
@@ -608,6 +574,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                         setDurationGone();
                         setRegularityRadiosFalse();
                         binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                        binding.activityHasFixedWeeks.setVisibility(View.GONE);
+                        binding.activityHasAnEndDate.setVisibility(View.GONE);
+                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                        binding.durationText.setVisibility(View.GONE);
                         break;
                 }
             }
