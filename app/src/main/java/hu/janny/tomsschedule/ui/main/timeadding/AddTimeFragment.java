@@ -1,5 +1,6 @@
 package hu.janny.tomsschedule.ui.main.timeadding;
 
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlertDialog;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -24,6 +27,7 @@ import java.util.Locale;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.DetailFragmentBinding;
 import hu.janny.tomsschedule.databinding.FragmentAddTimeBinding;
+import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.ui.main.MainViewModel;
 
@@ -31,14 +35,18 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
 
     public static final String OPERATION_TYPE = "plus";
     public static final String ITEM_ID = "item_id";
+    public static final String ACTIVITY_NAME = "name";
 
     private MainViewModel mainViewModel;
     private FragmentAddTimeBinding binding;
     private long activityId;
     private boolean isAdd;
+    private String activityName;
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
-    int hour, minute;
+    private Calendar calendar = Calendar.getInstance();
+    private long todayMillis = 0L;
+    private int hour = 0, minute = 0;
 
     public static AddTimeFragment newInstance() {
         return new AddTimeFragment();
@@ -53,6 +61,9 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
 
         if (getArguments().containsKey(ITEM_ID)) {
             activityId = getArguments().getLong(ITEM_ID);
+        }
+        if (getArguments().containsKey(ACTIVITY_NAME)) {
+            activityName = getArguments().getString(ACTIVITY_NAME);
         }
         if (getArguments().containsKey(OPERATION_TYPE)) {
             isAdd = getArguments().getBoolean(OPERATION_TYPE);
@@ -78,21 +89,49 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
         binding.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isAdd) {
-
-                } else {
-
-                }
+                savingTime(root);
             }
         });
 
         return root;
     }
 
+    private void savingTime(View fragView) {
+        String d = binding.date.getText().toString().trim();
+        String t = binding.time.getText().toString().trim();
+
+        if(d.isEmpty() || todayMillis == 0L) {
+            binding.date.setError("Date is required!");
+            binding.date.requestFocus();
+            return;
+        }
+
+        if(t.isEmpty() || (hour == 0 && minute == 0)) {
+            binding.time.setError("Time amount is required!");
+            binding.time.requestFocus();
+            return;
+        }
+        long time = DateConverter.durationTimeConverterFromIntToLongForDays(hour, minute);
+        ActivityTime activityTime = new ActivityTime(activityId, todayMillis, time);
+        if(!isAdd) {
+            activityTime.setT(-activityTime.getT());
+        }
+        mainViewModel.insertOrUpdateTime(activityTime);
+        if(isAdd) {
+            Toast.makeText(getContext(), String.format(Locale.getDefault(),"+%02d:%02d", hour, minute), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getContext(), String.format(Locale.getDefault(),"-%02d:%02d", hour, minute), Toast.LENGTH_LONG).show();
+        }
+        Navigation.findNavController(fragView).popBackStack();
+    }
+
     private void initDatePicker() {
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                calendar.clear();
+                calendar.set(year, month, day);
+                todayMillis = calendar.getTimeInMillis();
                 month = month + 1;
                 String date = DateConverter.makeDateStringForSimpleDateDialog(day, month, year);
                 binding.date.setText(date);

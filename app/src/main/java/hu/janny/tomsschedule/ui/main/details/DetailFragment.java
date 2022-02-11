@@ -20,13 +20,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.DetailFragmentBinding;
 import hu.janny.tomsschedule.model.ActivityTime;
+import hu.janny.tomsschedule.model.ActivityWithTimes;
 import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.CustomWeekTime;
@@ -58,19 +77,16 @@ public class DetailFragment extends Fragment {
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             long id = getArguments().getLong(ARG_ITEM_ID);
-            mainViewModel.findActivityByIdWithTimes(id);
+            //mainViewModel.findActivityByIdWithTimes(id);
+            mainViewModel.findActivityByIdWithTimesEntity(id);
         }
 
-        mainViewModel.getActivityByIdWithTimes().observe(getViewLifecycleOwner(), new Observer<Map<CustomActivity, List<ActivityTime>>>() {
+        //mainViewModel.getActivityByIdWithTimes().observe(getViewLifecycleOwner(), new Observer<Map<CustomActivity, List<ActivityTime>>>() {
+        mainViewModel.getActivityByIdWithTimesEntity().observe(getViewLifecycleOwner(), new Observer<ActivityWithTimes>() {
             @Override
-            public void onChanged(Map<CustomActivity, List<ActivityTime>> customActivityListMap) {
-                CustomActivity activity = new CustomActivity();
-                Optional<CustomActivity> firstKey = customActivityListMap.keySet().stream().findFirst();
-                if (firstKey.isPresent()) {
-                    activity = firstKey.get();
-                } else {
-                    activity = null;
-                }
+            public void onChanged(ActivityWithTimes activityWithTimes) {
+                System.out.println(activityWithTimes + " in detail frafgment");
+                CustomActivity activity = activityWithTimes.customActivity;
                 if(activity != null) {
                     if(CustomActivityHelper.isFixActivity(activity.getName())) {
                         binding.activityDetailName.setText(CustomActivityHelper.getStringResourceOfFixActivity(activity.getName()));
@@ -96,12 +112,13 @@ public class DetailFragment extends Fragment {
                     setUpTheViewRegularity(activity);
                     setUpTheViewDeadline(activity);
                     setUpTheViewDuration(activity);
-                    setUpDeleteDialog(activity.getId());
+                    setUpDeleteDialog(activity.getId(), root);
                     setUpEditButton(activity.getId(), root);
-                    setUpAddTimeButton(activity.getId());
-                    setUpSubtractionButton(activity.getId());
+                    setUpAddTimeButton(activity.getId(), activity.getName(), root);
+                    setUpSubtractionButton(activity.getId(), activity.getName(), root);
+                    setUpBarChart(activityWithTimes.activityTimes, activity.getCol());
                 } else {
-                    navigateBackHome();
+                    navigateBackHome(root);
                     Toast.makeText(getActivity(), "I can't find this activity!", Toast.LENGTH_LONG).show();
                 }
             }
@@ -111,26 +128,102 @@ public class DetailFragment extends Fragment {
         return root;
     }
 
-    private void setUpAddTimeButton(long activityId) {
+
+
+
+    private void setUpBarChart(List<ActivityTime> list, int color) {
+        Collections.sort(list);
+
+        BarChart chart = binding.chart;
+
+        int MAX_X_VALUE = 7;
+        float MAX_Y_VALUE = DateConverter.durationConverterFromLongToBarChart(list.get(0).t);
+        float MIN_Y_VALUE = 0f;
+        String SET_LABEL = "Time spent on this activity in the last week in hours";
+        String[] DAYS = new String[MAX_X_VALUE];
+
+        chart.getDescription().setEnabled(false);
+
+        ArrayList<BarEntry> values = new ArrayList<>();
+        Calendar cal = Calendar.getInstance();
+        int year  = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date  = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
+        long todayMillis = cal.getTimeInMillis();
+        Random r = new Random();
+        for (int i = MAX_X_VALUE - 1; i >= 0; i--) {
+            float x = i;
+            values.add(new BarEntry(x, containsName(list, todayMillis)));
+            DAYS[i] = String.format(Locale.getDefault(), "%02d.%02d.", cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DATE));
+            cal.add(Calendar.DATE, -1);
+            todayMillis = cal.getTimeInMillis();
+        }
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return DAYS[(int) value];
+            }
+        });
+
+        YAxis axisLeft = chart.getAxisLeft();
+        axisLeft.setGranularity(0.5f);
+        axisLeft.setAxisMinimum(0);
+
+        YAxis axisRight = chart.getAxisRight();
+        axisRight.setGranularity(0.5f);
+        axisRight.setAxisMinimum(0);
+
+        BarDataSet set1 = new BarDataSet(values, SET_LABEL);
+        set1.setColor(color);
+
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1);
+
+        BarData data = new BarData(dataSets);
+
+        data.setValueTextSize(12f);
+        chart.setData(data);
+        chart.invalidate();
+    }
+
+    private float containsName(final List<ActivityTime> list, final long date){
+        ActivityTime activityTime = list.stream()
+                .filter(at -> at.getD() == date)
+                .findAny()
+                .orElse(null);
+        if(activityTime != null) {
+            return DateConverter.durationConverterFromLongToBarChart(activityTime.getT());
+        } else {
+            return 0f;
+        }
+    }
+
+    private void setUpAddTimeButton(long activityId, String activityName, View fragView) {
         binding.plusTimeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle arguments = new Bundle();
                 arguments.putLong(AddTimeFragment.ITEM_ID, activityId);
+                arguments.putString(AddTimeFragment.ACTIVITY_NAME, activityName);
                 arguments.putBoolean(AddTimeFragment.OPERATION_TYPE, true);
-                Navigation.findNavController(getView()).navigate(R.id.action_detailFragment_to_addTimeFragment, arguments);
+                Navigation.findNavController(fragView).navigate(R.id.action_detailFragment_to_addTimeFragment, arguments);
             }
         });
     }
 
-    private void setUpSubtractionButton(long activityId) {
+    private void setUpSubtractionButton(long activityId, String activityName, View fragView) {
         binding.minusTimeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle arguments = new Bundle();
                 arguments.putLong(AddTimeFragment.ITEM_ID, activityId);
+                arguments.putString(AddTimeFragment.ACTIVITY_NAME, activityName);
                 arguments.putBoolean(AddTimeFragment.OPERATION_TYPE, false);
-                Navigation.findNavController(getView()).navigate(R.id.action_detailFragment_to_addTimeFragment, arguments);
+                Navigation.findNavController(fragView).navigate(R.id.action_detailFragment_to_addTimeFragment, arguments);
             }
         });
     }
@@ -141,12 +234,12 @@ public class DetailFragment extends Fragment {
             public void onClick(View view) {
                 Bundle arguments = new Bundle();
                 arguments.putLong(EditActivityFragment.ARG_ITEM_ID, id);
-                Navigation.findNavController(getView()).navigate(R.id.action_detailFragment_to_editActivityFragment, arguments);
+                Navigation.findNavController(fragView).navigate(R.id.action_detailFragment_to_editActivityFragment, arguments);
             }
         });
     }
 
-    private void setUpDeleteDialog(long id) {
+    private void setUpDeleteDialog(long id, View fragView) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.sure_delete_acitvity);
         builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
@@ -154,7 +247,7 @@ public class DetailFragment extends Fragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 mainViewModel.deleteActivityById(id);
                 mainViewModel.deleteActivityTimesByActivityId(id);
-                navigateBackHome();
+                navigateBackHome(fragView);
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -165,8 +258,9 @@ public class DetailFragment extends Fragment {
         deleteDialog = builder.create();
     }
 
-    private void navigateBackHome() {
-        Navigation.findNavController(this.getView()).navigate(R.id.action_detailFragment_to_nav_home);
+    private void navigateBackHome(View fragView) {
+        //Navigation.findNavController(fragView).navigate(R.id.action_detailFragment_to_nav_home);
+        Navigation.findNavController(fragView).popBackStack();
     }
 
     private void setUpDeleteActivity() {

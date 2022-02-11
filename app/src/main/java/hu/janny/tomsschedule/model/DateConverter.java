@@ -119,6 +119,16 @@ public final class DateConverter {
         }
     }
 
+    public static float durationConverterFromLongToBarChart(long milliseconds) {
+        long hr = TimeUnit.MILLISECONDS.toHours(milliseconds)
+                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(milliseconds));
+        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
+                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
+        float h = Integer.parseInt(String.valueOf(hr));
+        float m = Integer.parseInt(String.valueOf(min));
+        return h + (m / 60f);
+    }
+
     public static long durationConverterFromLongToDays(long milliseconds) {
         long dy = TimeUnit.MILLISECONDS.toDays(milliseconds);
         return dy;

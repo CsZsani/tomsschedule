@@ -101,7 +101,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         initSelectDurationTypeRadioGroups();
         initFixedDaysTimePickerListeners();
 
-        saveOnClickListener();
+        saveOnClickListener(root);
 
         return root;
     }
@@ -134,11 +134,11 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         });
     }
 
-    private void saveOnClickListener() {
+    private void saveOnClickListener(View fragview) {
         binding.saveActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveActivity();
+                saveActivity(fragview);
             }
         });
     }
@@ -166,7 +166,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         void onFragmentInteraction(Uri uri);
     }
 
-    private void saveActivity() {
+    private void saveActivity(View fragView) {
         String name;
         if(binding.selectFixActivityOption.isChecked()) {
             name = CustomActivityHelper.getSelectedFixActivityName(binding.selectFixActivitySpinner.getSelectedItem().toString().trim());
@@ -190,10 +190,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             return;
         }
 
-        decideWhichMainType();
+        decideWhichMainType(fragView);
     }
 
-    private void decideWhichMainType() {
+    private void decideWhichMainType(View fragView) {
         if(binding.activityHasDeadline.isChecked()) {
             String dl = binding.activityDeadline.getText().toString().trim();
             if(dl.isEmpty()) {
@@ -221,7 +221,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         } else {
             if(!setRegularity()) {return;}
         }
-        addActivityToDb();
+        addActivityToDb(fragView);
     }
 
     private boolean setDeadline(String date) {
@@ -474,11 +474,13 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         return true;
     }
 
-    private void addActivityToDb() {
+    private void addActivityToDb(View fragView) {
         mainViewModel.insertActivity(customActivity);
         mainViewModel.insertFirstActivityTime(activityId);
         System.out.println(customActivity);
-        Navigation.findNavController(this.getView()).navigate(R.id.action_add_custom_activity_to_nav_home);
+        //Navigation.findNavController(this.getView()).navigate(R.id.action_add_custom_activity_to_nav_home);
+        //Navigation.findNavController(this.getView()).popBackStack();
+        Navigation.findNavController(fragView).popBackStack();
     }
 
     private void intiColorPicker() {

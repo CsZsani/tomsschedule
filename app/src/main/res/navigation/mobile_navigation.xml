@@ -12,10 +12,12 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_nav_home_to_add_custom_activity"
-            app:destination="@id/add_custom_activity" />
+            app:destination="@id/add_custom_activity"
+            app:popUpTo="@id/nav_home" />
         <action
             android:id="@+id/action_nav_home_to_detailFragment"
-            app:destination="@id/detailFragment" />
+            app:destination="@id/detailFragment"
+            app:popUpTo="@id/nav_home" />
     </fragment>
 
     <fragment
@@ -38,11 +40,7 @@
         android:id="@+id/add_custom_activity"
         android:name="hu.janny.tomsschedule.ui.main.addcustomactivity.AddCustomActivityFragment"
         android:label="@string/add_new_activity_fragment_label"
-        tools:layout="@layout/fragment_add_custom_activity" >
-        <action
-            android:id="@+id/action_add_custom_activity_to_nav_home"
-            app:destination="@id/nav_home" />
-    </fragment>
+        tools:layout="@layout/fragment_add_custom_activity" />
     <fragment
         android:id="@+id/detailFragment"
         android:name="hu.janny.tomsschedule.ui.main.details.DetailFragment"
@@ -52,14 +50,14 @@
             android:defaultValue="0L"
             app:argType="long" />
         <action
-            android:id="@+id/action_detailFragment_to_nav_home"
-            app:destination="@id/nav_home" />
-        <action
             android:id="@+id/action_detailFragment_to_editActivityFragment"
-            app:destination="@id/editActivityFragment" />
+            app:destination="@id/editActivityFragment"
+            app:popUpTo="@id/detailFragment" />
         <action
             android:id="@+id/action_detailFragment_to_addTimeFragment"
-            app:destination="@id/addTimeFragment" />
+            app:destination="@id/addTimeFragment"
+            app:popUpTo="@id/detailFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/editActivityFragment"
@@ -70,12 +68,6 @@
             android:name="item_id"
             android:defaultValue="0L"
             app:argType="long" />
-        <action
-            android:id="@+id/action_editActivityFragment_to_nav_home"
-            app:destination="@id/nav_home" />
-        <action
-            android:id="@+id/action_editActivityFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
     </fragment>
     <fragment
         android:id="@+id/addTimeFragment"
@@ -90,5 +82,8 @@
             android:name="item_id"
             android:defaultValue="0L"
             app:argType="long" />
+        <argument
+            android:name="name"
+            app:argType="string" />
     </fragment>
 </navigation>

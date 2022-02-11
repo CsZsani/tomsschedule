@@ -126,4 +126,9 @@ public class CustomWeekTime {
         sun = -1L;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return mon + " " + tue + " " + wed + " " + thu + " " + fri + " " + sat + " " + sun;
+    }
 }

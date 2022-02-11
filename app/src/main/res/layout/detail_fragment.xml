@@ -25,7 +25,7 @@
                 android:id="@+id/detail_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin" >
+                app:layout_collapseMode="parallax" >
 
                 <TextView
                     android:id="@+id/activityDetailName"
@@ -67,9 +67,56 @@
                     app:tint="@color/black" />
             </LinearLayout>
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/startTimerFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="@dimen/fab_margin"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="@string/fab_start_timer"
+                app:layout_anchor="@+id/app_bar"
+                app:layout_anchorGravity="top|end"
+                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+                app:srcCompat="@drawable/ic_baseline_play_arrow_24"
+                app:tint="@color/white" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/plusTimeFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_marginStart="88dp"
+                android:layout_marginBottom="8dp"
+                android:clickable="true"
+                android:contentDescription="@string/fab_plus_time"
+                android:src="@drawable/ic_add_entry"
+                app:layout_anchor="@+id/app_bar"
+                app:layout_anchorGravity="start|top"
+                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+                app:tint="@color/white" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/minusTimeFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|bottom"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="8dp"
+                android:clickable="true"
+                android:contentDescription="@string/fab_minus_time"
+                app:layout_anchor="@+id/app_bar"
+                app:layout_anchorGravity="start|top"
+                android:src="@drawable/ic_minus"
+                app:tint="@color/white" />
+
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
+
+
     </com.google.android.material.appbar.AppBarLayout>
+
+
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/activityDetailView"
@@ -79,11 +126,11 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="16dp">
 
@@ -91,7 +138,6 @@
                     android:id="@+id/detailNoteText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="24dp"
                     android:text="@string/note_detail"
                     android:textStyle="italic" />
 
@@ -167,6 +213,7 @@
                     android:id="@+id/detailDuration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
                     android:textColor="@color/black"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -182,51 +229,14 @@
                 <com.github.mikephil.charting.charts.BarChart
                     android:id="@+id/chart"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="254dp"
+                    android:paddingTop="16dp"
+                    android:layout_marginTop="16dp"/>
 
             </LinearLayout>
         </ScrollView>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/startTimerFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|start"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="16dp"
-        app:tint="@color/white"
-        app:layout_anchor="@+id/activityDetailView"
-        app:layout_anchorGravity="top|end"
-        android:contentDescription="@string/fab_start_timer"
-        app:srcCompat="@drawable/ic_baseline_play_arrow_24" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/plusTimeFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|end"
-        android:layout_marginStart="88dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:contentDescription="@string/fab_plus_time"
-        android:src="@drawable/ic_add_entry"
-        app:layout_anchor="@+id/activityDetailView"
-        app:layout_anchorGravity="start|top"
-        app:tint="@color/white" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/minusTimeFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|end"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:contentDescription="@string/fab_minus_time"
-        android:src="@drawable/ic_minus"
-        app:layout_anchor="@+id/activityDetailView"
-        app:layout_anchorGravity="top"
-        app:tint="@color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

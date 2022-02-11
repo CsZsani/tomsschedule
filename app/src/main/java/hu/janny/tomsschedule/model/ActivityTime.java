@@ -9,16 +9,11 @@ import androidx.room.PrimaryKey;
 
 //@Entity(foreignKeys = {@ForeignKey(entity = CustomActivity.class,
  //parentColumns = "activityId", childColumns = "activityId", onDelete = ForeignKey.NO_ACTION, onUpdate = ForeignKey.RESTRICT)})
-@Entity(tableName = "activitytimes")
-public class ActivityTime {
-
-    @PrimaryKey(autoGenerate = true)
-    @NonNull
-    @ColumnInfo(name = "id")
-    public int id;
+@Entity(tableName = "activitytimes", primaryKeys = {"actId","date"})
+public class ActivityTime implements Comparable<ActivityTime> {
 
     @NonNull
-    @ColumnInfo(name = "activityId")
+    @ColumnInfo(name = "actId")
     public long aId;
 
     @NonNull
@@ -35,14 +30,6 @@ public class ActivityTime {
         this.aId = aId;
         this.d = d;
         this.t = t;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public long getaId() {
@@ -67,5 +54,17 @@ public class ActivityTime {
 
     public void setT(long t) {
         this.t = t;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "activityId: " + aId + ", date: " + d + ", time: " + t;
+    }
+
+
+    @Override
+    public int compareTo(ActivityTime activityTime) {
+        return Long.compare(0L, this.d - activityTime.d);
     }
 }

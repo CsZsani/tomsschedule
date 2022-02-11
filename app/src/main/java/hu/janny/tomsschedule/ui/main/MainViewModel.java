@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import hu.janny.tomsschedule.model.ActivityTime;
+import hu.janny.tomsschedule.model.ActivityWithTimes;
 import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
@@ -32,9 +33,11 @@ public class MainViewModel extends AndroidViewModel {
     private final LiveData<List<CustomActivity>> allActivitiesList;
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityWithTimes;
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityByIdWithTimes;
+    private final MutableLiveData<ActivityWithTimes> activityByIdWithTimesEntity;
     private final MutableLiveData<CustomActivity> singleActivity;
     private final LiveData<User> user;
     private final LiveData<List<CustomActivity>> activitiesList;
+    private final LiveData<List<CustomActivity>> activitiesListEntities;
     private User currentUser;
 
     public MainViewModel(@NonNull Application application) {
@@ -48,18 +51,36 @@ public class MainViewModel extends AndroidViewModel {
         activitiesList = repository.getActivities();
         allActivitiesList = Transformations.map(repository.getAllActivitiesWithTimes(), new Deserializer());
         activityByIdWithTimes = repository.getActivityByIdWithTimesData();
+        activityByIdWithTimesEntity = repository.getActivityWithTimesEntity();
         singleActivity = repository.getActivitiesData();
+        activitiesListEntities = Transformations.map(repository.getActivitiesWithTimesEntities(), new DeserializerSecond());
     }
 
     private class Deserializer implements Function<Map<CustomActivity, List<ActivityTime>>, List<CustomActivity>> {
         @Override
         public List<CustomActivity> apply(Map<CustomActivity, List<ActivityTime>> liveData) {
-            //System.out.println(liveData.entrySet().toString());
+            System.out.println(liveData.keySet().toString());
+            System.out.println(liveData.toString());
+            System.out.println(liveData.values().toString());
             List<CustomActivity> list = new ArrayList<>(liveData.keySet());
             List<CustomActivity> filter = list.stream().filter(ca -> ca.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
             return filter;
         }
     }
+
+    private class DeserializerSecond implements Function<List<ActivityWithTimes>, List<CustomActivity>> {
+        @Override
+        public List<CustomActivity> apply(List<ActivityWithTimes> liveData) {
+            System.out.println(liveData);
+            List<CustomActivity> list = new ArrayList<>();
+            for(ActivityWithTimes at : liveData) {
+                list.add(at.customActivity);
+            }
+            return list;
+        }
+    }
+
+
 
     public void logoutUserInDb(User user) {
         userRepository.updateUser(user);
@@ -71,6 +92,10 @@ public class MainViewModel extends AndroidViewModel {
 
     public LiveData<List<CustomActivity>> getAllActivitiesInList() {
         return allActivitiesList;
+    }
+
+    public LiveData<List<CustomActivity>> getActivitiesListEntities() {
+        return activitiesListEntities;
     }
 
     public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivityWithTimes() {
@@ -101,6 +126,10 @@ public class MainViewModel extends AndroidViewModel {
         repository.deleteTimesByActivityId(id);
     }
 
+    public void insertOrUpdateTime(ActivityTime activityTime) {
+        repository.updateOrInsertTime(activityTime);
+    }
+
     public LiveData<User> getUser() {
         return user;
     }
@@ -117,12 +146,20 @@ public class MainViewModel extends AndroidViewModel {
         repository.getSingleActivityByIdWithTimes(id);
     }
 
+    public void findActivityByIdWithTimesEntity(long id) {
+        repository.getSingleActivityByIdWithTimesEntity(id);
+    }
+
     public void findActivityById(long id) {
         repository.getActivityById(id);
     }
 
     public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivityByIdWithTimes() {
         return activityByIdWithTimes;
+    }
+
+    public MutableLiveData<ActivityWithTimes> getActivityByIdWithTimesEntity() {
+        return activityByIdWithTimesEntity;
     }
 
     public MutableLiveData<CustomActivity> getSingleActivity() {

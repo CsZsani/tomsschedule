@@ -54,13 +54,10 @@ public class HomeFragment extends Fragment {
 
         recyclerSetup();
 
-        mainViewModel.getAllActivitiesInList().observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
+        //mainViewModel.getAllActivitiesInList()
+        mainViewModel.getActivitiesListEntities().observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
             @Override
             public void onChanged(List<CustomActivity> customActivities) {
-                // TODO: update custom activities list on UI
-                if(customActivities.isEmpty()) {
-                    Toast.makeText(getActivity(), "Empty list!!! WHHY", Toast.LENGTH_LONG).show();
-                }
                 adapter.setActivityList(customActivities);
             }
         });

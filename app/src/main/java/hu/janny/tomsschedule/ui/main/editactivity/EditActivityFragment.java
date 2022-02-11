@@ -105,7 +105,7 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
                     initNoteAndPriority();
                     initSelection();
                 } else {
-                    navigateBackHome();
+                    navigateBackHome(root);
                     Toast.makeText(getActivity(), "I can't find this activity!", Toast.LENGTH_LONG).show();
                 }
             }
@@ -118,7 +118,7 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         initIsTimeMeasuredSwitch();
         initSelectDurationTypeRadioGroups();
         initFixedDaysTimePickerListeners();
-        saveOnClickListener();
+        saveOnClickListener(root);
 
         return root;
     }
@@ -137,11 +137,11 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         });
     }
 
-    private void saveOnClickListener() {
+    private void saveOnClickListener(View fragView) {
         binding.saveActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveActivity();
+                saveActivity(fragView);
             }
         });
     }
@@ -161,7 +161,7 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         void onFragmentInteraction(Uri uri);
     }
 
-    private void saveActivity() {
+    private void saveActivity(View fragView) {
         String name = binding.activityName.getText().toString().trim();
         if(name.isEmpty()) {
             binding.activityName.setError("Name is required");
@@ -176,10 +176,10 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         customActivity.setNote(binding.activityNote.getText().toString().trim());
         customActivity.setPr(Integer.parseInt(binding.activityPriority.getSelectedItem().toString()));
         customActivity.setEverythingToDefault();
-        decideWhichMainType();
+        decideWhichMainType(fragView);
     }
 
-    private void decideWhichMainType() {
+    private void decideWhichMainType(View fragView) {
         if(binding.activityHasDeadline.isChecked()) {
             String dl = binding.activityDeadline.getText().toString().trim();
             if(dl.isEmpty()) {
@@ -207,7 +207,7 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         } else {
             if(!setRegularity()) {return;}
         }
-        addActivityToDb();
+        addActivityToDb(fragView);
     }
 
     private boolean setDeadline(String date) {
@@ -460,11 +460,11 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         return true;
     }
 
-    private void addActivityToDb() {
+    private void addActivityToDb(View fragView) {
         mainViewModel.updateActivity(customActivity);
         System.out.println(customActivity);
         //Navigation.findNavController(this.getView()).navigate(R.id.action_editActivityFragment_to_detailFragment);
-        navigateBackToDetails();
+        navigateBackToDetails(fragView);
     }
 
     private void intiColorPicker() {
@@ -1085,14 +1085,16 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         setOnChangeListenersOnFixedDayTimePicker(binding.sunday, binding.activitySundayPicker);
     }
 
-    private void navigateBackHome() {
-        Navigation.findNavController(this.getView()).navigate(R.id.action_editActivityFragment_to_nav_home);
+    private void navigateBackHome(View fragView) {
+        //Navigation.findNavController(this.getView()).navigate(R.id.action_editActivityFragment_to_nav_home);
+        Navigation.findNavController(fragView).popBackStack();
     }
 
-    private void navigateBackToDetails() {
-        Bundle arguments = new Bundle();
-        arguments.putLong(DetailFragment.ARG_ITEM_ID, customActivity.getId());
-        Navigation.findNavController(this.getView()).navigate(R.id.action_editActivityFragment_to_detailFragment, arguments);
+    private void navigateBackToDetails(View fragView) {
+        //Bundle arguments = new Bundle();
+        //arguments.putLong(DetailFragment.ARG_ITEM_ID, customActivity.getId());
+        //Navigation.findNavController(this.getView()).navigate(R.id.action_editActivityFragment_to_detailFragment, arguments);
+        Navigation.findNavController(fragView).popBackStack();
     }
 
     private void initNoteAndPriority() {
