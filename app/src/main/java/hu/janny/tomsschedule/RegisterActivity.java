@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import hu.janny.tomsschedule.databinding.ActivityRegisterBinding;
@@ -34,6 +35,8 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
     private ActivityRegisterBinding binding;
     private DatePickerDialog datePickerDialog;
     private LoginRegisterViewModel viewModel;
+    private Calendar calendar = Calendar.getInstance();
+    private Date birthDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +106,8 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
                             User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(),email, name,
-                                    DateConverter.stringFromSimpleDateDialogToLongMillis(birthDate),
+                                    //DateConverter.stringFromSimpleDateDialogToLongMillis(birthDate),
+                                    birthDate,
                                     DateConverter.birthDateFromSimpleDateDialogToAgeGroupInt(birthDate), gender);
 
                             FirebaseManager.database.getReference("users")
@@ -129,7 +133,6 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
                         }
                     }
                 });
-
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,
@@ -153,6 +156,9 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                calendar.clear();
+                calendar.set(year, month, day);
+                birthDay = calendar.getTime();
                 month = month + 1;
                 String date = DateConverter.makeDateStringForSimpleDateDialog(day, month, year);
                 binding.registerBirthDate.setText(date);

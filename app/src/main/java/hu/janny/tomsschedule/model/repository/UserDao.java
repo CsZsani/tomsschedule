@@ -6,6 +6,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.List;
+
 import hu.janny.tomsschedule.model.User;
 
 @Dao
@@ -22,6 +24,9 @@ public interface UserDao {
 
     @Query("SELECT * FROM users WHERE users.isLoggedIn = 1 ")
     LiveData<User> getCurrentUser();
+
+    @Query("SELECT * FROM users")
+    LiveData<List<User>> getUsers();
 
     @Query("SELECT * FROM users WHERE users.isLoggedIn = 1 ")
     User getCurrentUserNoLiveData();

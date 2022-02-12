@@ -2,6 +2,7 @@ package hu.janny.tomsschedule;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -16,6 +17,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 
+import java.util.List;
+
 import hu.janny.tomsschedule.databinding.ActivityLoginBinding;
 import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
@@ -24,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
     private LoginRegisterViewModel viewModel;
+    private List<User> us;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(LoginRegisterViewModel.class);
+
+        viewModel.getUsers().observe(this, new Observer<List<User>>() {
+            @Override
+            public void onChanged(List<User> users) {
+                us = users;
+            }
+        });
 
         binding.registerButtonLogin.setOnClickListener(
                 new View.OnClickListener() {
@@ -102,7 +113,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void manageLogin(FirebaseUser user) {
         if(user != null) {
-            if(viewModel.isInDatabase(user.getUid()) == null){
+            User u = us.stream().filter(e -> e.getUid().equals(user.getUid())).findAny().orElse(null);
+            if(u == null){
                 FirebaseManager.database.getReference("users").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -110,6 +122,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, "Can't login! Check your internet connection!", Toast.LENGTH_LONG).show();
                         } else {
                             User newUser = task.getResult().getValue(User.class);
+                            System.out.println(newUser.toString() + " new user to db");
                             newUser.setLoggedIn(true);
                             viewModel.insertUser(newUser);
                             FirebaseManager.setUserLoggedIn(user);

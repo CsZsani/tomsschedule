@@ -63,6 +63,15 @@ public final class DateConverter {
         return makeDateStringForSimpleDateDialog(day, month, year);
     }
 
+    public static String dateToStringForSimpleDateDialog(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        return makeDateStringForSimpleDateDialog(day, month, year);
+    }
+
     public static int birthDateFromSimpleDateDialogToAgeGroupInt(String birthDateString) {
         Calendar birthDateCal = Calendar.getInstance();
         birthDateCal.set(Integer.parseInt(birthDateString.split(" ")[2]), getMonthIntFromMonthFormat(birthDateString.split(" ")[0]),
@@ -73,7 +82,7 @@ public final class DateConverter {
 
         today.add(Calendar.YEAR, -20);
         int group = 0;
-        while(!birthDateCal.after(today) && group <= 5) {
+        while(!birthDateCal.after(today) && group <= 4) {
             today.add(Calendar.YEAR, -10);
             group++;
         }

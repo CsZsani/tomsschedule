@@ -1,6 +1,7 @@
 package hu.janny.tomsschedule.ui.main.timeadding;
 
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlertDialog;
@@ -28,7 +29,10 @@ import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.DetailFragmentBinding;
 import hu.janny.tomsschedule.databinding.FragmentAddTimeBinding;
 import hu.janny.tomsschedule.model.ActivityTime;
+import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.DateConverter;
+import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 import hu.janny.tomsschedule.ui.main.MainViewModel;
 
 public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -47,6 +51,7 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
     private Calendar calendar = Calendar.getInstance();
     private long todayMillis = 0L;
     private int hour = 0, minute = 0;
+    private User currentUser;
 
     public static AddTimeFragment newInstance() {
         return new AddTimeFragment();
@@ -93,6 +98,13 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
             }
         });
 
+        mainViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                currentUser = user;
+            }
+        });
+
         return root;
     }
 
@@ -116,12 +128,28 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
         if(!isAdd) {
             activityTime.setT(-activityTime.getT());
         }
-        mainViewModel.insertOrUpdateTime(activityTime);
+
+        if(CustomActivityHelper.isFixActivity(activityName)) {
+            int isInsert = mainViewModel.insertOrUpdateTime(activityTime);
+            while(isInsert == 0) {
+                isInsert = mainViewModel.insertOrUpdateTime(activityTime);
+            }
+            if(isInsert == 1) {
+                // add to Firebase
+                FirebaseManager.saveInsertedActivityTimeToFirebase(activityTime, activityName, currentUser);
+            } else if(isInsert == 2){
+                // update in Firebase
+                FirebaseManager.saveUpdateActivityTimeToFirebase(activityTime, activityName, currentUser);
+            }
+        } else {
+            mainViewModel.insertOrUpdateTimeSingle(activityTime);
+        }
         if(isAdd) {
             Toast.makeText(getContext(), String.format(Locale.getDefault(),"+%02d:%02d", hour, minute), Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(getContext(), String.format(Locale.getDefault(),"-%02d:%02d", hour, minute), Toast.LENGTH_LONG).show();
         }
+
         Navigation.findNavController(fragView).popBackStack();
     }
 

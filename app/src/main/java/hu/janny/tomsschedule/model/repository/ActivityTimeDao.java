@@ -28,10 +28,12 @@ public abstract class ActivityTimeDao {
     public abstract void update(long activityId, long date, long timeAmount);
 
     @Transaction
-    public void insertOrUpdateTime(ActivityTime activityTime) {
+    public boolean insertOrUpdateTime(ActivityTime activityTime) {
         if (insertIgnore(activityTime) == -1L) {
             update(activityTime.getaId(), activityTime.getD(), activityTime.getT());
+            return false;
         }
+        return true;
     }
 
     @Update

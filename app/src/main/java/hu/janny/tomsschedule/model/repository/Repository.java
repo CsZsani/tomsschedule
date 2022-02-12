@@ -11,8 +11,11 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.ActivityWithTimes;
@@ -231,11 +234,21 @@ public class Repository {
         executor.shutdown();
     }
 
-    public void updateOrInsertTime(ActivityTime activityTime) {
+    public boolean updateOrInsertTime(ActivityTime activityTime) throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activityTimeDao.insertOrUpdateTime(activityTime);
-        });
+        Future<Boolean> future = executor.submit(() -> activityTimeDao.insertOrUpdateTime(activityTime));
+        while(!future.isDone()) {
+            Thread.sleep(300);
+        }
+        Boolean result = future.get();
+        boolean canceled = future.cancel(true);
+        executor.shutdown();
+        return result;
+    }
+
+    public void updateOrInsertTimeSingle(ActivityTime activityTime) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Boolean> future = executor.submit(() -> activityTimeDao.insertOrUpdateTime(activityTime));
         executor.shutdown();
     }
 

@@ -21,6 +21,7 @@ public class UserRepository {
 
     private final MutableLiveData<User> userData = new MutableLiveData<>();
     private final LiveData<User> currentUser;
+    private final LiveData<List<User>> users;
     private User user;
     private User userById;
 
@@ -32,6 +33,7 @@ public class UserRepository {
         userDao = db.userDao();
 
         currentUser = userDao.getCurrentUser();
+        users = userDao.getUsers();
     }
 
     Handler handlerUser = new Handler(Looper.getMainLooper()) {
@@ -120,5 +122,9 @@ public class UserRepository {
 
     public MutableLiveData<User> getUserData() {
         return userData;
+    }
+
+    public LiveData<List<User>> getUsers() {
+        return users;
     }
 }

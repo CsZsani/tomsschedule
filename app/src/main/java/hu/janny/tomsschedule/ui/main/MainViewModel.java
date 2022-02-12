@@ -15,6 +15,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import hu.janny.tomsschedule.model.ActivityTime;
@@ -59,9 +60,6 @@ public class MainViewModel extends AndroidViewModel {
     private class Deserializer implements Function<Map<CustomActivity, List<ActivityTime>>, List<CustomActivity>> {
         @Override
         public List<CustomActivity> apply(Map<CustomActivity, List<ActivityTime>> liveData) {
-            System.out.println(liveData.keySet().toString());
-            System.out.println(liveData.toString());
-            System.out.println(liveData.values().toString());
             List<CustomActivity> list = new ArrayList<>(liveData.keySet());
             List<CustomActivity> filter = list.stream().filter(ca -> ca.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
             return filter;
@@ -71,7 +69,7 @@ public class MainViewModel extends AndroidViewModel {
     private class DeserializerSecond implements Function<List<ActivityWithTimes>, List<CustomActivity>> {
         @Override
         public List<CustomActivity> apply(List<ActivityWithTimes> liveData) {
-            System.out.println(liveData);
+            //System.out.println(liveData);
             List<CustomActivity> list = new ArrayList<>();
             for(ActivityWithTimes at : liveData) {
                 list.add(at.customActivity);
@@ -126,8 +124,26 @@ public class MainViewModel extends AndroidViewModel {
         repository.deleteTimesByActivityId(id);
     }
 
-    public void insertOrUpdateTime(ActivityTime activityTime) {
-        repository.updateOrInsertTime(activityTime);
+    public int insertOrUpdateTime(ActivityTime activityTime) {
+        boolean result = false;
+        try {
+            result = repository.updateOrInsertTime(activityTime);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return 0;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        if(result) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    public void insertOrUpdateTimeSingle(ActivityTime activityTime) {
+        repository.updateOrInsertTimeSingle(activityTime);
     }
 
     public LiveData<User> getUser() {

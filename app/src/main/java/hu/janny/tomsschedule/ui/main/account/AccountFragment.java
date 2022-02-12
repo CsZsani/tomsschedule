@@ -44,12 +44,12 @@ public class AccountFragment extends Fragment {
             @Override
             public void onChanged(@Nullable User u) {
                 if(u != null) {
-                    binding.accountEmail.setText(u.email);
+                    binding.accountEmail.setText(u.getEmail());
                     //binding.accountBirthDate.setText(DateConverter.longMillisToStringForSimpleDateDialog(DateConverter.stringMillisToLong(u.birthDate)));
-                    binding.accountBirthDate.setText(DateConverter.longMillisToStringForSimpleDateDialog(u.birthDate));
+                    binding.accountBirthDate.setText(u.getBirthDate());
                     binding.accountAgeGroup.setText(u.ageGroup());
-                    binding.accountName.setText(u.name);
-                    binding.accountGender.setText(u.getGender());
+                    binding.accountName.setText(u.getName());
+                    binding.accountGender.setText(u.getGenderForAccount());
                 } else {
                     binding.accountEmail.setText("ERROR");
                     binding.accountBirthDate.setText("ERROR");

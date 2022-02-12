@@ -5,6 +5,9 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.google.firebase.database.Exclude;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,6 +16,7 @@ import java.util.Date;
 import hu.janny.tomsschedule.R;
 
 @Entity(tableName = "users")
+@TypeConverters(DateTypeConverter.class)
 public class User {
 
     @PrimaryKey
@@ -27,7 +31,7 @@ public class User {
     public String name;
 
     @ColumnInfo(name = "birthDate")
-    public long birthDate;
+    public String birthDate;
 
     @ColumnInfo(name = "ageGroup")
     public int ageGroup;
@@ -44,12 +48,12 @@ public class User {
     @ColumnInfo(name = "isLoggedIn")
     public boolean isLoggedIn = false;
 
-    @Ignore
+    //@Ignore
     public User() {
 
     }
 
-    public User(@NonNull String uid, String email, String name, long birthDate, int ageGroup, String gender) {
+    public User(@NonNull String uid, String email, String name, String birthDate, int ageGroup, String gender) {
         this.uid = uid;
         this.email = email;
         this.name = name;
@@ -58,6 +62,7 @@ public class User {
         this.gender = gender;
     }
 
+    @Exclude
     private Gender stringToGender(String gender) {
         if(gender.equals("female")) {
             return Gender.FEMALE;
@@ -65,6 +70,7 @@ public class User {
         return Gender.MALE;
     }
 
+    @Exclude
     public String ageGroup() {
         switch (ageGroup) {
             case 0: return "<20";
@@ -77,12 +83,20 @@ public class User {
         }
     }
 
-    public int getGender() {
+    public String getGender() {return gender;}
+
+    @Exclude
+    public int getGenderForAccount() {
         if(gender.equals("female")) {
             return R.string.female;
         } else {
             return R.string.male;
         }
+    }
+
+    @Exclude
+    public String getGenderString() {
+        return gender;
     }
 
     @NonNull
@@ -110,11 +124,11 @@ public class User {
         this.name = name;
     }
 
-    public long getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(long birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -152,5 +166,21 @@ public class User {
 
     public void setLoggedIn(boolean loggedIn) {
         isLoggedIn = loggedIn;
+    }
+
+    @Exclude
+    @Override
+    public String toString() {
+        return "User{" +
+                "uid='" + uid + '\'' +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", birthDate='" + birthDate + '\'' +
+                ", ageGroup=" + ageGroup +
+                ", gender='" + gender + '\'' +
+                ", lastSeenSer=" + lastSeenSer +
+                ", lastSeenSys=" + lastSeenSys +
+                ", isLoggedIn=" + isLoggedIn +
+                '}';
     }
 }
