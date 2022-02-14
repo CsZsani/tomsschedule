@@ -62,6 +62,7 @@ public class MainViewModel extends AndroidViewModel {
         public List<CustomActivity> apply(Map<CustomActivity, List<ActivityTime>> liveData) {
             List<CustomActivity> list = new ArrayList<>(liveData.keySet());
             List<CustomActivity> filter = list.stream().filter(ca -> ca.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
+            //List<CustomActivity> filter = list.stream().filter(ca -> ca.getUserId().equals(user.getValue().getUid())).collect(Collectors.toList());
             return filter;
         }
     }
@@ -74,6 +75,7 @@ public class MainViewModel extends AndroidViewModel {
             for(ActivityWithTimes at : liveData) {
                 list.add(at.customActivity);
             }
+            List<CustomActivity> listFiltered = list.stream().filter(ca -> ca.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
             return list;
         }
     }

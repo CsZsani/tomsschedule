@@ -67,20 +67,17 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
-
     }
 
     private void recyclerSetup() {
         View.OnClickListener onClickListener = itemView -> {
             CustomActivity item = (CustomActivity) itemView.getTag();
             Bundle arguments = new Bundle();
-            arguments.putLong(DetailFragment.ARG_ITEM_ID, item.id);
+            arguments.putLong(DetailFragment.ARG_ITEM_ID, item.getId());
             Navigation.findNavController(itemView).navigate(R.id.action_nav_home_to_detailFragment, arguments);
         };
 
-        adapter = new CustomActivityRecyclerAdapter(R.layout.custom_activity_list_item, onClickListener);
+        adapter = new CustomActivityRecyclerAdapter(R.layout.custom_activity_list_item, onClickListener, (MainActivity)getActivity());
         binding.activitiesListRecyclerView.setLayoutManager(
                 new LinearLayoutManager(getContext()));
         binding.activitiesListRecyclerView.setAdapter(adapter);

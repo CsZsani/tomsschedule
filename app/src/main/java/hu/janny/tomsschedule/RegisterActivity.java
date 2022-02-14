@@ -176,5 +176,9 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
+    }
 }

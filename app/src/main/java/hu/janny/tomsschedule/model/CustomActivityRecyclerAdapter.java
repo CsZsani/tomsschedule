@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
 
 public class CustomActivityRecyclerAdapter
@@ -19,11 +20,13 @@ public class CustomActivityRecyclerAdapter
 {
     private final int listItemLayout;
     private View.OnClickListener onClickListener;
+    private MainActivity mainActivity;
     List<CustomActivity> activityList;
 
-    public CustomActivityRecyclerAdapter(int layoutId, View.OnClickListener onClickListener) {
+    public CustomActivityRecyclerAdapter(int layoutId, View.OnClickListener onClickListener, MainActivity mainActivity) {
         this.listItemLayout = layoutId;
         this.onClickListener = onClickListener;
+        this.mainActivity = mainActivity;
     }
 
     public void setActivityList(List<CustomActivity> activityList) {
@@ -55,14 +58,21 @@ public class CustomActivityRecyclerAdapter
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         viewHolder.itemView.setOnClickListener(onClickListener);
         viewHolder.itemView.setTag(activityList.get(i));
-        if(CustomActivityHelper.isFixActivity(activityList.get(i).name)) {
-            viewHolder.activityName.setText(CustomActivityHelper.getStringResourceOfFixActivity(activityList.get(i).name));
+        if(CustomActivityHelper.isFixActivity(activityList.get(i).getName())) {
+            viewHolder.activityName.setText(CustomActivityHelper.getStringResourceOfFixActivity(activityList.get(i).getName()));
         } else {
-            viewHolder.activityName.setText(activityList.get(i).name);
+            viewHolder.activityName.setText(activityList.get(i).getName());
         }
         viewHolder.detailsText.setText("Ide jon majd a fancy reszlet");
         viewHolder.divider.setBackgroundColor(activityList.get(i).getCol());
         viewHolder.beginActivity.setBackgroundColor(darkenColor(activityList.get(i).getCol()));
+        viewHolder.beginActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainActivity.startTimerActivity(activityList.get(viewHolder.getBindingAdapterPosition()).getId(),
+                        activityList.get(viewHolder.getBindingAdapterPosition()).getName());
+            }
+        });
     }
 
     @Override

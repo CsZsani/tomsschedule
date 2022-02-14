@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import hu.janny.tomsschedule.databinding.ActivityMainBinding;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 import hu.janny.tomsschedule.ui.main.addcustomactivity.AddCustomActivityFragment;
+import hu.janny.tomsschedule.ui.timeractivity.TimerActivity;
 
 public class MainActivity extends AppCompatActivity implements AddCustomActivityFragment.OnFragmentInteractionListener {
 
@@ -88,6 +89,14 @@ public class MainActivity extends AppCompatActivity implements AddCustomActivity
         FirebaseManager.logoutUser();
 
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
+    }
+
+    public void startTimerActivity(long customActivityId, String activityName) {
+        Intent i = new Intent(this, TimerActivity.class);
+        i.putExtra(TimerActivity.ACTIVITY_ID, customActivityId);
+        i.putExtra(TimerActivity.ACTIVITY_NAME, activityName);
+        startActivity(i);
+        finish();
     }
 
     @Override

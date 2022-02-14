@@ -137,4 +137,16 @@
     <string name="time">Időmennyiség</string>
     <string name="select_time">Válaszd ki az időmennyiséget!</string>
     <string name="select_date">Válaszd ki a dátumot!</string>
+    <string name="stop">Befejez</string>
+    <string name="today">Ma:</string>
+    <string name="remaining">Hátralévő:</string>
+    <string name="so_far">Eddig:</string>
+    <string name="blue">Kék</string>
+    <string name="green">Zöld</string>
+    <string name="water">Víz</string>
+    <string name="morning">Reggel</string>
+    <string name="forest">Erdő</string>
+    <string name="fire">Tűz</string>
+    <string name="milky_way">Tejút</string>
+    <string name="colourful">Színes</string>
 </resources>

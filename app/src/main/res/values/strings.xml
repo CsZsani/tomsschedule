@@ -138,4 +138,16 @@
     <string name="time">Time</string>
     <string name="select_time">Select time amount</string>
     <string name="select_date">Select date</string>
+    <string name="stop">Finish</string>
+    <string name="today">Today:</string>
+    <string name="remaining">Remaining:</string>
+    <string name="so_far">So far:</string>
+    <string name="blue">Blue</string>
+    <string name="green">Green</string>
+    <string name="water">Water</string>
+    <string name="morning">Morning</string>
+    <string name="forest">Forest</string>
+    <string name="fire">Fire</string>
+    <string name="milky_way">Milky way</string>
+    <string name="colourful">Colourful</string>
 </resources>

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import hu.janny.tomsschedule.R;
@@ -122,9 +123,26 @@ public final class DateConverter {
         long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
                 - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
         if(dy == 0) {
-            return String.format("%dh %dmin", hr, min);
+            return String.format(Locale.getDefault(),"%dh %dmin", hr, min);
         }else {
-            return String.format("%dd %dh %dmin", dy, hr, min);
+            return String.format(Locale.getDefault(),"%dd %dh %dmin", dy, hr, min);
+        }
+    }
+
+    public static String durationConverterFromLongToStringToTimer(long milliseconds) {
+        long dy = TimeUnit.MILLISECONDS.toDays(milliseconds);
+        long hr = TimeUnit.MILLISECONDS.toHours(milliseconds)
+                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(milliseconds));
+        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
+                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
+        long sec = TimeUnit.MILLISECONDS.toSeconds(milliseconds)
+                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds));
+        if(dy == 0 && hr == 0) {
+            return String.format(Locale.getDefault(),"%02d:%02d", min, sec);
+        }else if(dy == 0){
+            return String.format(Locale.getDefault(),"%02d:%02d:%02d", hr, min, sec);
+        } else {
+            return String.format(Locale.getDefault(),"%d:%02d:%02d:%02d", dy, hr, min, sec);
         }
     }
 
