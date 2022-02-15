@@ -25,9 +25,13 @@ public class CounterService extends Service {
         initial_time = SystemClock.uptimeMillis();
         intent = new Intent();
         intent.setAction(BROADCAST_ACTION);
-        //intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        //handler.removeCallbacks(sendUpdatesToUI);
         handler.postDelayed(sendUpdatesToUI, 1000); // 1 second
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        //return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     private Runnable sendUpdatesToUI = new Runnable() {
@@ -42,7 +46,6 @@ public class CounterService extends Service {
         timeInMilliseconds = SystemClock.uptimeMillis() - initial_time;
 
         intent.putExtra("time", timeInMilliseconds);
-        //localBroadcastManager.sendBroadcast(intent);
         sendBroadcast(intent);
 
     }
@@ -51,7 +54,7 @@ public class CounterService extends Service {
     public void onDestroy() {
         super.onDestroy();
         handler.removeCallbacks(sendUpdatesToUI);
-
+        System.out.println("ondestroy counter");
     }
 
     @Override
