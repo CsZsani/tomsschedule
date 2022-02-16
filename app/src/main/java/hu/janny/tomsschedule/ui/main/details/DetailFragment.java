@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -53,6 +55,7 @@ import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.ui.main.MainViewModel;
 import hu.janny.tomsschedule.ui.main.editactivity.EditActivityFragment;
 import hu.janny.tomsschedule.ui.main.timeadding.AddTimeFragment;
+import hu.janny.tomsschedule.ui.timeractivity.TimerActivity;
 
 public class DetailFragment extends Fragment {
 
@@ -114,6 +117,7 @@ public class DetailFragment extends Fragment {
                     setUpTheViewDuration(activity);
                     setUpDeleteDialog(activity.getId(), root);
                     setUpEditButton(activity.getId(), root);
+                    setUpStartActivityButton(activity.getId(), activity.getName());
                     setUpAddTimeButton(activity.getId(), activity.getName(), root);
                     setUpSubtractionButton(activity.getId(), activity.getName(), root);
                     setUpBarChart(activityWithTimes.activityTimes, activity.getCol());
@@ -256,6 +260,20 @@ public class DetailFragment extends Fragment {
             }
         });
         deleteDialog = builder.create();
+    }
+
+    private void setUpStartActivityButton(long activityId, String activityName) {
+        binding.startTimerFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), TimerActivity.class);
+                i.putExtra(TimerActivity.ACTIVITY_ID, activityId);
+                i.putExtra(TimerActivity.ACTIVITY_NAME, activityName);
+                startActivity(i);
+                Objects.requireNonNull(getActivity()).finish();
+            }
+        });
+
     }
 
     private void navigateBackHome(View fragView) {

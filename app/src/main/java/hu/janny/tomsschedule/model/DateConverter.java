@@ -116,6 +116,15 @@ public final class DateConverter {
         return hourMillis + minMillis;
     }
 
+    public static String durationConverterFromLongToStringForADay(long milliseconds) {
+        //long dy = TimeUnit.MILLISECONDS.toDays(milliseconds);
+        long hr = TimeUnit.MILLISECONDS.toHours(milliseconds)
+                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(milliseconds));
+        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
+                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
+        return String.format(Locale.getDefault(),"%dh %dm", hr, min);
+    }
+
     public static String durationConverterFromLongToString(long milliseconds) {
         long dy = TimeUnit.MILLISECONDS.toDays(milliseconds);
         long hr = TimeUnit.MILLISECONDS.toHours(milliseconds)
@@ -123,9 +132,9 @@ public final class DateConverter {
         long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
                 - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
         if(dy == 0) {
-            return String.format(Locale.getDefault(),"%dh %dmin", hr, min);
+            return String.format(Locale.getDefault(),"%dh %dm", hr, min);
         }else {
-            return String.format(Locale.getDefault(),"%dd %dh %dmin", dy, hr, min);
+            return String.format(Locale.getDefault(),"%dd %dh %dm", dy, hr, min);
         }
     }
 

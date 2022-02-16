@@ -296,9 +296,12 @@ public class TimerActivity extends AppCompatActivity {
                     String channelID = "hu.janny.tomsschedule.timerstarted";
                     notificationManager.deleteNotificationChannel(channelID);
 
-                    long fullMinutes = currentTime % 60000;
+                    if(currentTime > (24L * 60L * 60L * 1000L)) {
+                        currentTime = 24L * 60L * 60L * 1000L;
+                    }
+                    long fullMinutes = currentTime % 60000L;
                     if(fullMinutes != 0L) {
-                        currentTime = (currentTime / 60000) * 60000 + 60000;
+                        currentTime = (currentTime / 60000L) * 60000L + 60000L;
                     }
                     ActivityTime activityTime = new ActivityTime(customActivityId, todayMillis, currentTime);
                     if(CustomActivityHelper.isFixActivity(customActivityName)) {

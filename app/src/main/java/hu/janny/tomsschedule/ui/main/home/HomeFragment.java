@@ -28,6 +28,7 @@ import java.util.Map;
 import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentHomeBinding;
+import hu.janny.tomsschedule.model.ActivityWithTimes;
 import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.CustomActivityRecyclerAdapter;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
@@ -55,9 +56,15 @@ public class HomeFragment extends Fragment {
         recyclerSetup();
 
         //mainViewModel.getAllActivitiesInList()
-        mainViewModel.getActivitiesListEntities().observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
+        /*mainViewModel.getActivitiesListEntities().observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
             @Override
             public void onChanged(List<CustomActivity> customActivities) {
+                adapter.setActivityList(customActivities);
+            }
+        });*/
+        mainViewModel.getActivitiesWithTimesList().observe(getViewLifecycleOwner(), new Observer<List<ActivityWithTimes>>() {
+            @Override
+            public void onChanged(List<ActivityWithTimes> customActivities) {
                 adapter.setActivityList(customActivities);
             }
         });
@@ -71,9 +78,9 @@ public class HomeFragment extends Fragment {
 
     private void recyclerSetup() {
         View.OnClickListener onClickListener = itemView -> {
-            CustomActivity item = (CustomActivity) itemView.getTag();
+            ActivityWithTimes item = (ActivityWithTimes) itemView.getTag();
             Bundle arguments = new Bundle();
-            arguments.putLong(DetailFragment.ARG_ITEM_ID, item.getId());
+            arguments.putLong(DetailFragment.ARG_ITEM_ID, item.customActivity.getId());
             Navigation.findNavController(itemView).navigate(R.id.action_nav_home_to_detailFragment, arguments);
         };
 

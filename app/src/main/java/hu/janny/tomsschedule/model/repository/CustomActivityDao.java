@@ -64,6 +64,6 @@ public interface CustomActivityDao {
     LiveData<List<ActivityWithTimes>> getActivitiesWithTimes();
 
     @Transaction
-    @Query("SELECT * FROM customactivities WHERE activityId = :id")
+    @Query("SELECT * FROM customactivities WHERE activityId = :id ORDER BY priority DESC")
     ActivityWithTimes getActivityWithTimesEntity(long id);
 }

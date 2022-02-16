@@ -39,6 +39,7 @@ public class MainViewModel extends AndroidViewModel {
     private final LiveData<User> user;
     private final LiveData<List<CustomActivity>> activitiesList;
     private final LiveData<List<CustomActivity>> activitiesListEntities;
+    private final LiveData<List<ActivityWithTimes>> activitiesWithTimesList;
     private User currentUser;
 
     public MainViewModel(@NonNull Application application) {
@@ -55,6 +56,7 @@ public class MainViewModel extends AndroidViewModel {
         activityByIdWithTimesEntity = repository.getActivityWithTimesEntity();
         singleActivity = repository.getActivitiesData();
         activitiesListEntities = Transformations.map(repository.getActivitiesWithTimesEntities(), new DeserializerSecond());
+        activitiesWithTimesList = Transformations.map(repository.getActivitiesWithTimesEntities(), new DeserializerThird());
     }
 
     private class Deserializer implements Function<Map<CustomActivity, List<ActivityTime>>, List<CustomActivity>> {
@@ -76,11 +78,17 @@ public class MainViewModel extends AndroidViewModel {
                 list.add(at.customActivity);
             }
             List<CustomActivity> listFiltered = list.stream().filter(ca -> ca.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
-            return list;
+            return listFiltered;
         }
     }
 
-
+    private class DeserializerThird implements Function<List<ActivityWithTimes>, List<ActivityWithTimes>> {
+        @Override
+        public List<ActivityWithTimes> apply(List<ActivityWithTimes> liveData) {
+            List<ActivityWithTimes> listFiltered = liveData.stream().filter(ca -> ca.customActivity.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
+            return listFiltered;
+        }
+    }
 
     public void logoutUserInDb(User user) {
         userRepository.updateUser(user);
@@ -96,6 +104,10 @@ public class MainViewModel extends AndroidViewModel {
 
     public LiveData<List<CustomActivity>> getActivitiesListEntities() {
         return activitiesListEntities;
+    }
+
+    public LiveData<List<ActivityWithTimes>> getActivitiesWithTimesList() {
+        return activitiesWithTimesList;
     }
 
     public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivityWithTimes() {

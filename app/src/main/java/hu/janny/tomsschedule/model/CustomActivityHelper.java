@@ -1,7 +1,16 @@
 package hu.janny.tomsschedule.model;
 
+import android.view.View;
+
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import hu.janny.tomsschedule.R;
 
@@ -87,5 +96,99 @@ public final class CustomActivityHelper {
                 return R.string.fa_reading;
         }
         return R.string.error;
+    }
+
+    public static long getHowManyTimeWasSpentTodayOnAct(List<ActivityTime> list, long todayMillis) {
+        ActivityTime activityTime = list.stream()
+                .filter(at -> at.getD() == todayMillis)
+                .findAny()
+                .orElse(null);
+        if(activityTime != null) {
+            return activityTime.getT();
+        } else {
+            return 0L;
+        }
+    }
+
+    public static long getHowManyTimeWasSpentOnActInInterval(List<ActivityTime> list, long from , long to) {
+        List<ActivityTime> activityTime = list.stream()
+                .filter(at -> at.getD() > from && at.getD() < to)
+                .collect(Collectors.toList());
+        long sumTime = 0L;
+        for(ActivityTime at : activityTime) {
+            sumTime += at.getT();
+        }
+        return sumTime;
+    }
+
+    public static long getHowManyTimeWasSpentFrom(List<ActivityTime> list, long from) {
+        List<ActivityTime> activityTime = list.stream()
+                .filter(at -> at.getD() > from)
+                .collect(Collectors.toList());
+        long sumTime = 0L;
+        for(ActivityTime at : activityTime) {
+            sumTime += at.getT();
+        }
+        return sumTime;
+    }
+
+    public static String detailsOnCardsDeadline(CustomActivity activity) {
+        if(activity.getDl() != 0L) {
+            return DateConverter.longMillisToStringForSimpleDateDialog(activity.getDl());
+        } else if(activity.getsD() != 0L && activity.geteD() != 0L) {
+            String text = DateConverter.longMillisToStringForSimpleDateDialog(activity.getsD())
+                    + "-" + DateConverter.longMillisToStringForSimpleDateDialog(activity.geteD());
+            return text;
+        } else if(activity.getsD() == 0L && activity.geteD() != 0L) {
+            return DateConverter.longMillisToStringForSimpleDateDialog(activity.geteD());
+        } else {
+            return "";
+        }
+    }
+
+    public static int detailsOnCardRegularity(CustomActivity activity) {
+        if(activity.getReg() > 0) {
+            switch (activity.getReg()) {
+                case 1:
+                    return R.string.details_daily;
+                case 2:
+                    return R.string.details_weekly;
+                case 3:
+                    return R.string.details_monthly;
+            }
+        }
+        return 0;
+    }
+
+    public static String detailsOnCardDuration(CustomActivity activity) {
+        if(activity.gettT() > 0 && activity.gettT() != 5) {
+            return DateConverter.durationConverterFromLongToString(activity.getDur());
+        }
+        return "";
+    }
+
+    public static long remainingTime(CustomActivity activity, List<ActivityTime> list) {
+        Calendar cal = Calendar.getInstance();
+        return 0L;
+    }
+
+    public static long todayMillis() {
+        LocalDate localDate = LocalDate.now();
+        Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        return instant.toEpochMilli();
+    }
+
+    public static long thisMondayMillis() {
+        LocalDate localDate = LocalDate.now();
+        LocalDate mon = localDate.with(DayOfWeek.MONDAY);
+        Instant instant = mon.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        return instant.toEpochMilli();
+    }
+
+    public static long firstDayOfThisMonth() {
+        LocalDate localDate = LocalDate.now();
+        LocalDate fd = localDate.withDayOfMonth(1);
+        Instant instant = fd.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        return instant.toEpochMilli();
     }
 }
