@@ -63,14 +63,6 @@ public class User {
     }
 
     @Exclude
-    private Gender stringToGender(String gender) {
-        if(gender.equals("female")) {
-            return Gender.FEMALE;
-        }
-        return Gender.MALE;
-    }
-
-    @Exclude
     public String ageGroup() {
         switch (ageGroup) {
             case 0: return "<20";

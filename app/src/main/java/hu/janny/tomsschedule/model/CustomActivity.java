@@ -48,9 +48,6 @@ public class CustomActivity {
     @ColumnInfo(name = "duration")
     public long dur = 0L;
 
-    @ColumnInfo(name = "deadline")
-    public long dl = 0L;
-
     @ColumnInfo(name = "regularity")
     public int reg = 0;
 
@@ -62,6 +59,21 @@ public class CustomActivity {
 
     @ColumnInfo(name = "endDay")
     public long eD = 0L;
+
+    @ColumnInfo(name = "soFar")
+    public long sF = 0L;
+
+    @ColumnInfo(name = "remaining")
+    public long re = 0L;
+
+    @ColumnInfo(name = "allTime")
+    public long aT = 0L;
+
+    @ColumnInfo(name = "lastDayAdded")
+    public long lD = 0L;
+
+    @ColumnInfo(name = "typeNumber")
+    public int tN = 0;
 
     @ColumnInfo(name = "notification")
     public boolean notif = false;
@@ -177,14 +189,6 @@ public class CustomActivity {
         this.dur = dur;
     }
 
-    public long getDl() {
-        return dl;
-    }
-
-    public void setDl(long dl) {
-        this.dl = dl;
-    }
-
     public int getReg() {
         return reg;
     }
@@ -217,6 +221,46 @@ public class CustomActivity {
         this.eD = eD;
     }
 
+    public long getsF() {
+        return sF;
+    }
+
+    public void setsF(long sF) {
+        this.sF = sF;
+    }
+
+    public long getRe() {
+        return re;
+    }
+
+    public void setRe(long re) {
+        this.re = re;
+    }
+
+    public long getaT() {
+        return aT;
+    }
+
+    public void setaT(long aT) {
+        this.aT = aT;
+    }
+
+    public long getlD() {
+        return lD;
+    }
+
+    public void setlD(long lD) {
+        this.lD = lD;
+    }
+
+    public int gettN() {
+        return tN;
+    }
+
+    public void settN(int tN) {
+        this.tN = tN;
+    }
+
     public boolean isNotif() {
         return notif;
     }
@@ -236,11 +280,15 @@ public class CustomActivity {
                 ", pr=" + pr +
                 ", tT=" + tT +
                 ", dur=" + dur +
-                ", dl=" + dl +
                 ", reg=" + reg +
                 ", hFD=" + hFD +
                 ", sD=" + sD +
                 ", eD=" + eD +
+                ", sF=" + sF +
+                ", re=" + re +
+                ", aT=" + aT +
+                ", lD=" + lD +
+                ", tN=" + tN +
                 ", notif=" + notif +
                 ", customWeekTime=" + customWeekTime +
                 '}';
@@ -250,11 +298,15 @@ public class CustomActivity {
     public void setEverythingToDefault() {
         tT = 0;
         dur = 0;
-        dl = 0L;
         reg = 0;
         hFD = false;
         sD = 0L;
         eD = 0L;
+        sF = 0L;
+        re = 0L;
+        aT = 0L;
+        lD = 0L;
+        tN = 0;
         notif = false;
         customWeekTime.setEverythingToDefault();
     }

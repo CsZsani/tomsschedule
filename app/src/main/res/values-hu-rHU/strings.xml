@@ -35,7 +35,7 @@
     <string name="priority">Prioritás (0-10)</string>
     <string name="has_deadline">Csak egy határidő</string>
     <string name="regularity">Rendszeres tevékenység</string>
-    <string name="just_interval">Csak egy intervallum</string>
+    <string name="just_interval">Csak egy intervallum vagy határidős</string>
     <string name="just_time_measure">Semelyik előző (pl. hobby)</string>
     <string name="dates_type">Válaszd ki a rendszerességet!</string>
     <string name="deadline">Határidő</string>

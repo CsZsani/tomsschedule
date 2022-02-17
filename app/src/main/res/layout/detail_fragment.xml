@@ -186,7 +186,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="16dp"
-                    android:text="Deadline/interval date/end date text"
+                    android:text="Interval date/end date text"
                     android:textStyle="italic"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -213,10 +213,67 @@
                     android:id="@+id/detailDuration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp"
                     android:textColor="@color/black"
                     android:visibility="gone"
                     tools:visibility="visible" />
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/detailSoFarText"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.33"
+                            android:text="@string/detail_so_far"
+                            android:textStyle="italic" />
+
+                        <TextView
+                            android:id="@+id/detailRemainingText"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.33"
+                            android:text="@string/detail_remaining"
+                            android:textStyle="italic" />
+
+                        <TextView
+                            android:id="@+id/detailAllTimeText"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.33"
+                            android:text="@string/detail_all_time"
+                            android:textStyle="italic" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/detailSoFar"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.33"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:id="@+id/detailRemaining"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.33"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:id="@+id/detailAllTime"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.33" />
+                    </TableRow>
+
+                </TableLayout>
 
                 <Switch
                     android:id="@+id/switch1"

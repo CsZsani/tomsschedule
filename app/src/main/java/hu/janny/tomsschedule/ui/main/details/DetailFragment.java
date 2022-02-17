@@ -115,6 +115,7 @@ public class DetailFragment extends Fragment {
                     setUpTheViewRegularity(activity);
                     setUpTheViewDeadline(activity);
                     setUpTheViewDuration(activity);
+                    setUpTable(activity);
                     setUpDeleteDialog(activity.getId(), root);
                     setUpEditButton(activity.getId(), root);
                     setUpStartActivityButton(activity.getId(), activity.getName());
@@ -212,7 +213,7 @@ public class DetailFragment extends Fragment {
             public void onClick(View view) {
                 Bundle arguments = new Bundle();
                 arguments.putLong(AddTimeFragment.ITEM_ID, activityId);
-                arguments.putString(AddTimeFragment.ACTIVITY_NAME, activityName);
+                //arguments.putString(AddTimeFragment.ACTIVITY_NAME, activityName);
                 arguments.putBoolean(AddTimeFragment.OPERATION_TYPE, true);
                 Navigation.findNavController(fragView).navigate(R.id.action_detailFragment_to_addTimeFragment, arguments);
             }
@@ -225,7 +226,7 @@ public class DetailFragment extends Fragment {
             public void onClick(View view) {
                 Bundle arguments = new Bundle();
                 arguments.putLong(AddTimeFragment.ITEM_ID, activityId);
-                arguments.putString(AddTimeFragment.ACTIVITY_NAME, activityName);
+                //arguments.putString(AddTimeFragment.ACTIVITY_NAME, activityName);
                 arguments.putBoolean(AddTimeFragment.OPERATION_TYPE, false);
                 Navigation.findNavController(fragView).navigate(R.id.action_detailFragment_to_addTimeFragment, arguments);
             }
@@ -322,10 +323,7 @@ public class DetailFragment extends Fragment {
     private void setUpTheViewDeadline(CustomActivity activity) {
         binding.detailDeadlineText.setVisibility(View.VISIBLE);
         binding.detailDeadline.setVisibility(View.VISIBLE);
-        if(activity.getDl() != 0L) {
-            binding.detailDeadlineText.setText(R.string.details_deadline);
-            binding.detailDeadline.setText(DateConverter.longMillisToStringForSimpleDateDialog(activity.getDl()));
-        } else if(activity.getsD() != 0L && activity.geteD() != 0L) {
+        if(activity.getsD() != 0L && activity.geteD() != 0L) {
             binding.detailDeadlineText.setText(R.string.details_interval);
             String text = DateConverter.longMillisToStringForSimpleDateDialog(activity.getsD())
                     + " - " + DateConverter.longMillisToStringForSimpleDateDialog(activity.geteD());
@@ -361,6 +359,12 @@ public class DetailFragment extends Fragment {
             }
         }
 
+    }
+
+    private void setUpTable(CustomActivity activity) {
+        binding.detailAllTime.setText(DateConverter.durationConverterFromLongToString(activity.getaT()));
+        binding.detailSoFar.setText(CustomActivityHelper.getSoFar(activity));
+        binding.detailRemaining.setText(CustomActivityHelper.getRemaining(activity));
     }
 
     private String selectedWeeklyDaysToString(CustomActivity activity) {

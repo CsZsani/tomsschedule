@@ -82,8 +82,5 @@
             android:name="item_id"
             android:defaultValue="0L"
             app:argType="long" />
-        <argument
-            android:name="name"
-            app:argType="string" />
     </fragment>
 </navigation>

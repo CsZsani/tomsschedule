@@ -60,10 +60,10 @@ public interface CustomActivityDao {
     int getIdByName(String name);
 
     @Transaction
-    @Query("SELECT * FROM customactivities")
+    @Query("SELECT * FROM customactivities ORDER BY customactivities.priority DESC, customactivities.remaining DESC, customactivities.lastDayAdded ASC")
     LiveData<List<ActivityWithTimes>> getActivitiesWithTimes();
 
     @Transaction
-    @Query("SELECT * FROM customactivities WHERE activityId = :id ORDER BY priority DESC")
+    @Query("SELECT * FROM customactivities WHERE activityId = :id")
     ActivityWithTimes getActivityWithTimesEntity(long id);
 }

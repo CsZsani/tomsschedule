@@ -38,7 +38,7 @@
     <string name="has_deadline">It has just a deadline</string>
     <string name="regularity">It is a regular activity</string>
     <string name="regularity_detail">Regularity</string>
-    <string name="just_interval">It is just a simple interval</string>
+    <string name="just_interval">It is just an interval or has a deadline</string>
     <string name="just_time_measure">Neither of them</string>
     <string name="dates_type">Select the regularity type</string>
     <string name="deadline">Deadline</string>
@@ -157,4 +157,7 @@
     <string name="fire">Fire</string>
     <string name="milky_way">Milky way</string>
     <string name="colourful">Colourful</string>
+    <string name="detail_all_time">All time</string>
+    <string name="detail_so_far">So far</string>
+    <string name="detail_remaining">Remaining</string>
 </resources>

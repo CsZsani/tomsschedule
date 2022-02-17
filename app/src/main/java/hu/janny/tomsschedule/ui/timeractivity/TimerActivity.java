@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -217,6 +218,9 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void setUIAsset() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, TimerAssets.getAsset(currentAsset).getColor()));
+        }
         actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, TimerAssets.getAsset(currentAsset).getColor())));
         binding.timerLayout.setBackground(AppCompatResources.getDrawable(this, TimerAssets.getAsset(currentAsset).getBgResId()));
         binding.themeName.setText(TimerAssets.getAsset(currentAsset).getNameResId());

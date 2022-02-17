@@ -26,6 +26,8 @@ public final class CustomActivityHelper {
         return false;
     }
 
+    private final static String NULL_MIN = "0h 0m";
+
     public static String getSelectedFixActivityName(String d) {
         switch (d) {
             case "Sleeping":
@@ -133,9 +135,7 @@ public final class CustomActivityHelper {
     }
 
     public static String detailsOnCardsDeadline(CustomActivity activity) {
-        if(activity.getDl() != 0L) {
-            return DateConverter.longMillisToStringForSimpleDateDialog(activity.getDl());
-        } else if(activity.getsD() != 0L && activity.geteD() != 0L) {
+        if(activity.getsD() != 0L && activity.geteD() != 0L) {
             String text = DateConverter.longMillisToStringForSimpleDateDialog(activity.getsD())
                     + "-" + DateConverter.longMillisToStringForSimpleDateDialog(activity.geteD());
             return text;
@@ -191,4 +191,169 @@ public final class CustomActivityHelper {
         Instant instant = fd.atStartOfDay(ZoneId.systemDefault()).toInstant();
         return instant.toEpochMilli();
     }
+
+    public static DayOfWeek whatDayOfWeekToday() {
+        LocalDate dt = LocalDate.now();
+        return dt.getDayOfWeek();
+    }
+
+    public static String goalDurationForFixedDay(CustomWeekTime customWeekTime, DayOfWeek today) {
+        switch (today) {
+            case MONDAY:
+                return DateConverter.durationConverterFromLongToStringForADay(customWeekTime.getMon());
+            case TUESDAY:
+                return DateConverter.durationConverterFromLongToStringForADay(customWeekTime.getTue());
+            case WEDNESDAY:
+                return DateConverter.durationConverterFromLongToStringForADay(customWeekTime.getWed());
+            case THURSDAY:
+                return DateConverter.durationConverterFromLongToStringForADay(customWeekTime.getThu());
+            case FRIDAY:
+                return DateConverter.durationConverterFromLongToStringForADay(customWeekTime.getFri());
+            case SATURDAY:
+                return DateConverter.durationConverterFromLongToStringForADay(customWeekTime.getSat());
+            case SUNDAY:
+                return DateConverter.durationConverterFromLongToStringForADay(customWeekTime.getSun());
+        }
+        return "?";
+    }
+
+    public static int todayIsAFixedDayAndWhat(CustomWeekTime customWeekTime) {
+        DayOfWeek today = whatDayOfWeekToday();
+        switch (today) {
+            case MONDAY:
+                if(customWeekTime.getMon() != -1L) {
+                    return 1;
+                }
+            case TUESDAY:
+                if(customWeekTime.getTue() != -1L) {
+                    return 2;
+                }
+            case WEDNESDAY:
+                if(customWeekTime.getWed() != -1L) {
+                    return 3;
+                }
+            case THURSDAY:
+                if(customWeekTime.getThu() != -1L) {
+                    return 4;
+                }
+            case FRIDAY:
+                if(customWeekTime.getFri() != -1L) {
+                    return 5;
+                }
+            case SATURDAY:
+                if(customWeekTime.getSat() != -1L) {
+                    return 6;
+                }
+            case SUNDAY:
+                if(customWeekTime.getSun() != -1L) {
+                    return 7;
+                }
+        }
+        return 0;
+    }
+
+    public static long todayIsAFixedDayAndDuration(CustomWeekTime customWeekTime) {
+        DayOfWeek today = whatDayOfWeekToday();
+        switch (today) {
+            case MONDAY:
+                if(customWeekTime.getMon() != -1L) {
+                    return customWeekTime.getMon();
+                }
+            case TUESDAY:
+                if(customWeekTime.getTue() != -1L) {
+                    return customWeekTime.getTue();
+                }
+            case WEDNESDAY:
+                if(customWeekTime.getWed() != -1L) {
+                    return customWeekTime.getWed();
+                }
+            case THURSDAY:
+                if(customWeekTime.getThu() != -1L) {
+                    return customWeekTime.getThu();
+                }
+            case FRIDAY:
+                if(customWeekTime.getFri() != -1L) {
+                    return customWeekTime.getFri();
+                }
+            case SATURDAY:
+                if(customWeekTime.getSat() != -1L) {
+                    return customWeekTime.getSat();
+                }
+            case SUNDAY:
+                if(customWeekTime.getSun() != -1L) {
+                    return customWeekTime.getSun();
+                }
+        }
+        return 0L;
+    }
+
+    public static String getSoFar(CustomActivity activity) {
+        switch (activity.gettN()) {
+            case 1:
+                return "-";
+            case 2:
+            case 8:
+                if(activity.getlD() != todayMillis()) {
+                    return NULL_MIN;
+                }
+                return DateConverter.durationConverterFromLongToString(activity.getsF());
+            case 3:
+                if(activity.getlD() < firstDayOfThisMonth()) {
+                    return NULL_MIN;
+                }
+                return DateConverter.durationConverterFromLongToString(activity.getsF());
+            case 4:
+                if(activity.getlD() < thisMondayMillis()) {
+                    return NULL_MIN;
+                }
+                return DateConverter.durationConverterFromLongToString(activity.getsF());
+            case 5:
+                return DateConverter.durationConverterFromLongToString(activity.getsF());
+            case 6:
+            case 7:
+                if(activity.getlD() < activity.getsD()) {
+                    return NULL_MIN;
+                }
+                return DateConverter.durationConverterFromLongToString(activity.getsF());
+        }
+        return "?";
+    }
+
+    public static String getRemaining(CustomActivity activity) {
+        switch (activity.gettN()) {
+            case 1:
+            case 6:
+                return "-";
+            case 2:
+            case 8:
+                if(activity.ishFD() && activity.getlD() != todayMillis()) {
+                    return goalDurationForFixedDay(activity.getCustomWeekTime(), whatDayOfWeekToday());
+                }else if(!activity.ishFD() && activity.getlD() != todayMillis()) {
+                    return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
+                }
+                return DateConverter.durationConverterFromLongToString(activity.getRe());
+            case 3:
+                if(activity.getlD() < firstDayOfThisMonth()) {
+                    return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
+                }
+                return DateConverter.durationConverterFromLongToString(activity.getRe());
+            case 4:
+                if(activity.ishFD() && activity.getlD() < thisMondayMillis()) {
+                    return goalDurationForFixedDay(activity.getCustomWeekTime(), whatDayOfWeekToday());
+                }else if(!activity.ishFD() && activity.getlD() < thisMondayMillis()) {
+                    return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
+                }
+                return DateConverter.durationConverterFromLongToString(activity.getRe());
+            case 5:
+                return DateConverter.durationConverterFromLongToString(activity.getRe());
+            case 7:
+                if(activity.getlD() < activity.getsD()) {
+                    return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
+                }
+                return DateConverter.durationConverterFromLongToString(activity.getRe());
+        }
+        return "?";
+    }
+
+
 }

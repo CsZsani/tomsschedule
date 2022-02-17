@@ -50,7 +50,6 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     private MainViewModel mainViewModel;
     private FragmentAddCustomActivityBinding binding;
     private AlertDialog colorPickerDialog;
-    final Calendar calDeadline= Calendar.getInstance();
     final Calendar calStartDay= Calendar.getInstance();
     final Calendar calEndDay= Calendar.getInstance();
     final Calendar calEndDate= Calendar.getInstance();
@@ -194,15 +193,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     }
 
     private void decideWhichMainType(View fragView) {
-        if(binding.activityHasDeadline.isChecked()) {
-            String dl = binding.activityDeadline.getText().toString().trim();
-            if(dl.isEmpty()) {
-                binding.activityDeadline.setError("Date is required for deadline option!");
-                binding.activityDeadline.requestFocus();
-                return;
-            }
-            if(!setDeadline(dl)) {return;}
-        } else if(binding.activityIsInterval.isChecked()) {
+        if(binding.activityIsInterval.isChecked()) {
             String from = binding.activityStartDay.getText().toString().trim();
             String to = binding.activityEndDay.getText().toString().trim();
             if(from.isEmpty()) {
@@ -224,18 +215,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         addActivityToDb(fragView);
     }
 
-    private boolean setDeadline(String date) {
-        customActivity.setDl(DateConverter.stringFromSimpleDateDialogToLongMillis(date));
-        if(binding.activityIsTimeMeasured.isChecked()) {
-            customActivity.settT(1);
-            if(setTimeFromSumTime()) {return false;}
-        }
-        return true;
-    }
-
     private boolean setInterval(String from, String to) {
         customActivity.setsD(DateConverter.stringFromSimpleDateDialogToLongMillis(from));
         customActivity.seteD(DateConverter.stringFromSimpleDateDialogToLongMillis(to));
+        customActivity.settN(6);
         if(binding.activityIsTimeMeasured.isChecked()) {
             if(!setIntervalMeasuredTime()) {return false;}
         }
@@ -245,8 +228,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     private boolean setIntervalMeasuredTime() {
         if(binding.activityIsSumTime.isChecked()) {
             customActivity.settT(1);
+            customActivity.settN(7);
         } else {
             customActivity.settT(2);
+            customActivity.settN(2);
         }
         return !setTimeFromSumTime();
     }
@@ -285,8 +270,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     }
 
     private boolean setNeither() {
+        customActivity.settN(1);
         if(binding.activityIsTimeMeasured.isChecked()) {
             customActivity.settT(1);
+            customActivity.settN(5);
             if(setTimeFromSumTime()) {return false;}
         }
         return true;
@@ -307,8 +294,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
 
     private boolean setDaily() {
         customActivity.setReg(1);
+        customActivity.settN(1);
         if(binding.activityIsTimeMeasured.isChecked()) {
             customActivity.settT(1);
+            customActivity.settN(2);
             if(setTimeFromSumTime()) {return false;}
         }
         return true;
@@ -327,25 +316,39 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     private boolean setWeeklyWithoutFixedDays() {
         if(!setAnEndDate()) {return false;}
         customActivity.settT(3);
+        customActivity.settN(4);
         return !setTimeFromSumTime();
     }
 
     private boolean setFixedWeeks() {
         if(!setAnEndDate()) {return false;}
+        customActivity.settN(1);
         if(!setFixedDays()) {return false;}
         if(binding.activityIsTimeMeasured.isChecked()) {
             if(binding.activityCustomTime.isChecked()) {
                 customActivity.settT(5);
+                customActivity.settN(8);
                 if(!setTimeForFixedDays()) {return false;}
             } else {
                 if(binding.activityIsSumTime.isChecked()) {
                     customActivity.settT(1);
+                    customActivity.settN(5);
                 } else if(binding.activityDaily.isChecked()) {
                     customActivity.settT(2);
+                    customActivity.settN(2);
                 } else if(binding.activityWeekly.isChecked()) {
                     customActivity.settT(3);
+                    customActivity.settN(4);
                 }
                 if(!setTimeFromSumTime()) {return true;}
+            }
+        } else {
+            if(binding.activityCustomTime.isChecked()) {
+                customActivity.settN(8);
+            } else if(binding.activityDaily.isChecked()) {
+                customActivity.settN(2);
+            } else if(binding.activityWeekly.isChecked()) {
+                customActivity.settN(4);
             }
         }
         return true;
@@ -456,6 +459,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
 
     private boolean setMonthly() {
         customActivity.setReg(3);
+        customActivity.settN(3);
         if(!setAnEndDate()) {return false;}
         customActivity.settT(4);
         return !setTimeFromSumTime();
@@ -531,22 +535,8 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 switch (i) {
-                    case R.id.activityHasDeadline:
-                        setDeadlineVisible();
-                        setIntervalGone();
-                        setRegularityGone();
-                        setEndDateGone();
-                        setDurationGone();
-                        setRegularityRadiosFalse();
-                        binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
-                        binding.activityHasFixedWeeks.setVisibility(View.GONE);
-                        binding.activityHasAnEndDate.setVisibility(View.GONE);
-                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
-                        binding.durationText.setVisibility(View.GONE);
-                        break;
                     case R.id.activityRegularity:
                         setIntervalGone();
-                        setDeadlineGone();
                         setEndDateGone();
                         binding.activityRegularityTypeText.setVisibility(View.VISIBLE);
                         binding.selectExactRegularity.setVisibility(View.VISIBLE);
@@ -557,7 +547,6 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                         break;
                     case R.id.activityIsInterval:
                         setIntervalVisible();
-                        setDeadlineGone();
                         setEndDateGone();
                         setRegularityGone();
                         setDurationGone();
@@ -570,7 +559,6 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                         break;
                     case R.id.activityCustom:
                         setIntervalGone();
-                        setDeadlineGone();
                         setEndDateGone();
                         setRegularityGone();
                         setDurationGone();
@@ -684,11 +672,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    if(binding.activityHasDeadline.isChecked()) {
-                        binding.durationText.setText(R.string.choose_sum_time_for_deadline);
-                        binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
-                    } else if(binding.activityCustom.isChecked()) {
+                    if(binding.activityCustom.isChecked()) {
                         binding.durationText.setText(R.string.choose_sum_time_for_neither);
                         binding.durationText.setVisibility(View.VISIBLE);
                         setSumTimePickerDefault();
@@ -803,15 +787,6 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     }
 
     private void initCalendars() {
-        DatePickerDialog.OnDateSetListener dateDeadline = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int day) {
-                calDeadline.set(Calendar.YEAR, year);
-                calDeadline.set(Calendar.MONTH,month);
-                calDeadline.set(Calendar.DAY_OF_MONTH,day);
-                updateLabelDeadline();
-            }
-        };
 
         DatePickerDialog.OnDateSetListener dateStartday = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -843,12 +818,6 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             }
         };
 
-        binding.activityDeadline.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new DatePickerDialog(getActivity(),dateDeadline,calDeadline.get(Calendar.YEAR),calDeadline.get(Calendar.MONTH),calDeadline.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
         binding.activityStartDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -867,12 +836,8 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                 new DatePickerDialog(getActivity(),dateEndDate,calEndDate.get(Calendar.YEAR),calEndDate.get(Calendar.MONTH),calEndDate.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-    }
 
-
-    private void updateLabelDeadline(){
-        binding.activityDeadline.setText(DateConverter.makeDateStringForSimpleDateDialog(
-                calDeadline.get(Calendar.DATE), calDeadline.get(Calendar.MONTH) + 1, calDeadline.get(Calendar.YEAR)));
+        binding.activityStartDay.performClick();
     }
 
     private void updateLabelStartDay(){
@@ -888,16 +853,6 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
     private void updateLabelEndDate(){
         binding.activityEndDate.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 calEndDate.get(Calendar.DATE), calEndDate.get(Calendar.MONTH) + 1, calEndDate.get(Calendar.YEAR)));
-    }
-
-    private void setDeadlineGone() {
-        binding.activityDeadlineText.setVisibility(View.GONE);
-        binding.activityDeadline.setVisibility(View.GONE);
-    }
-
-    private void setDeadlineVisible() {
-        binding.activityDeadlineText.setVisibility(View.VISIBLE);
-        binding.activityDeadline.setVisibility(View.VISIBLE);
     }
 
     private void setIntervalGone() {
