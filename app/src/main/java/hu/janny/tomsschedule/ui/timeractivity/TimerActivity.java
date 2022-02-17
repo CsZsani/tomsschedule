@@ -6,6 +6,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -33,6 +34,7 @@ import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.ActivityTimerBinding;
 import hu.janny.tomsschedule.model.ActivityTime;
+import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.TimerAssets;
@@ -67,6 +69,7 @@ public class TimerActivity extends AppCompatActivity {
     private Handler handler = new Handler();
 
     public static boolean started = false;
+    private CustomActivity customActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +87,7 @@ public class TimerActivity extends AppCompatActivity {
         musicOn = sharedPref.getBoolean(MUSIC_ON, true);
         initialMillis = sharedPref.getLong(TIMER_INITIAL_MILLIS, 0L);
         setUIAsset();
-        if(initialMillis == 0L){
+        if (initialMillis == 0L) {
             initialMillis = SystemClock.uptimeMillis();
         }
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -97,6 +100,21 @@ public class TimerActivity extends AppCompatActivity {
         }
         customActivityId = extras.getLong(ACTIVITY_ID);
         customActivityName = extras.getString(ACTIVITY_NAME);
+        mainViewModel.findActivityById(customActivityId);
+
+        mainViewModel.getSingleActivity().observe(this, new Observer<CustomActivity>() {
+            @Override
+            public void onChanged(CustomActivity activity) {
+                if (activity != null) {
+                    customActivity = activity;
+                } else {
+                    Toast.makeText(TimerActivity.this, "I can't find this activity! Something went wrong :(", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(TimerActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
 
         //startCounterService();
         //initMusic();
@@ -121,7 +139,7 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void initNotificationManager() {
-        notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         createNotificationChannel("hu.janny.tomsschedule.timerstarted",
                 CustomActivityHelper.isFixActivity(customActivityName)
                         ? getString(CustomActivityHelper.getStringResourceOfFixActivity(customActivityName))
@@ -130,13 +148,13 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void initMusic() {
-        if(musicOn && TimerAssets.getAsset(currentAsset).getMusicResId() != 0){
+        if (musicOn && TimerAssets.getAsset(currentAsset).getMusicResId() != 0) {
             startMusicService();
             binding.musicOn.setVisibility(View.VISIBLE);
-        } else if(!musicOn && TimerAssets.getAsset(currentAsset).getMusicResId() != 0) {
+        } else if (!musicOn && TimerAssets.getAsset(currentAsset).getMusicResId() != 0) {
             binding.musicOn.setImageResource(R.drawable.ic_music_off);
             binding.musicOn.setVisibility(View.VISIBLE);
-        } else if(TimerAssets.getAsset(currentAsset).getMusicResId() == 0) {
+        } else if (TimerAssets.getAsset(currentAsset).getMusicResId() == 0) {
             binding.musicOn.setVisibility(View.INVISIBLE);
         }
     }
@@ -145,7 +163,7 @@ public class TimerActivity extends AppCompatActivity {
         binding.musicOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(musicOn) {
+                if (musicOn) {
                     musicOn = false;
                     stopService(musicIntent);
                     binding.musicOn.setImageResource(R.drawable.ic_music_off);
@@ -203,14 +221,14 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     private void changeAssetMusicHandling() {
-        if(musicOn) {
+        if (musicOn) {
             stopService(musicIntent);
         }
-        if(TimerAssets.getAsset(currentAsset).getMusicResId() != 0 && musicOn) {
+        if (TimerAssets.getAsset(currentAsset).getMusicResId() != 0 && musicOn) {
             stopService(musicIntent);
             startMusicService();
         }
-        if(TimerAssets.getAsset(currentAsset).getMusicResId() != 0) {
+        if (TimerAssets.getAsset(currentAsset).getMusicResId() != 0) {
             binding.musicOn.setVisibility(View.VISIBLE);
         } else {
             binding.musicOn.setVisibility(View.INVISIBLE);
@@ -290,39 +308,41 @@ public class TimerActivity extends AppCompatActivity {
         binding.timerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 handler.removeCallbacks(sendUpdatesToUI);
-                if(musicOn && TimerAssets.getAsset(currentAsset).getMusicResId() != 0) {
+                if (musicOn && TimerAssets.getAsset(currentAsset).getMusicResId() != 0) {
                     stopService(musicIntent);
                 }
-                if(started) {
+                if (started) {
                     /*unregisterReceiver(broadcastReceiver);
                     stopService(counterIntent);*/
                     started = false;
                     String channelID = "hu.janny.tomsschedule.timerstarted";
                     notificationManager.deleteNotificationChannel(channelID);
 
-                    if(currentTime > (24L * 60L * 60L * 1000L)) {
+                    if (currentTime > (24L * 60L * 60L * 1000L)) {
                         currentTime = 24L * 60L * 60L * 1000L;
                     }
                     long fullMinutes = currentTime % 60000L;
-                    if(fullMinutes != 0L) {
+                    if (fullMinutes != 0L) {
                         currentTime = (currentTime / 60000L) * 60000L + 60000L;
                     }
                     ActivityTime activityTime = new ActivityTime(customActivityId, todayMillis, currentTime);
-                    if(CustomActivityHelper.isFixActivity(customActivityName)) {
+                    if (CustomActivityHelper.isFixActivity(customActivityName)) {
                         int isInsert = mainViewModel.insertOrUpdateTime(activityTime);
-                        while(isInsert == 0) {
+                        while (isInsert == 0) {
                             isInsert = mainViewModel.insertOrUpdateTime(activityTime);
                         }
-                        if(isInsert == 1) {
+                        if (isInsert == 1) {
                             // add to Firebase
                             FirebaseManager.saveInsertedActivityTimeToFirebase(activityTime, customActivityName, currentUser);
-                        } else if(isInsert == 2){
+                        } else if (isInsert == 2) {
                             // update in Firebase
                             FirebaseManager.saveUpdateActivityTimeToFirebase(activityTime, customActivityName, currentUser);
                         }
                     } else {
                         mainViewModel.insertOrUpdateTimeSingle(activityTime);
                     }
+                    updateActivity(activityTime);
+                    mainViewModel.updateActivity(customActivity);
                     System.out.println(currentTime);
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.remove(TIMER_INITIAL_MILLIS);
@@ -333,6 +353,138 @@ public class TimerActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void updateActivity(ActivityTime activityTime) {
+        long todayMillis = CustomActivityHelper.todayMillis();
+        long firstDayOfThisMonth = CustomActivityHelper.firstDayOfThisMonth();
+        long thisMonday = CustomActivityHelper.thisMondayMillis();
+        customActivity.setaT(customActivity.getaT() + activityTime.getT());
+
+        switch (customActivity.gettN()) {
+            case 2:
+                if (customActivity.ishFD()) {
+                    if (activityTime.getD() == todayMillis && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0
+                            && customActivity.geteD() == 0L) {
+                        if (customActivity.getlD() != todayMillis) {
+                            customActivity.setsF(activityTime.getT());
+                            setRemainingFieldFixedDays(activityTime.getT());
+                        } else {
+                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                            setRemainingFieldUpdate(activityTime.getT());
+                        }
+                    } else if (activityTime.getD() == todayMillis && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0
+                            && customActivity.getsD() == 0L && customActivity.geteD() != 0L && customActivity.getlD() < customActivity.geteD()) {
+                        if (customActivity.getlD() != todayMillis) {
+                            customActivity.setsF(activityTime.getT());
+                            setRemainingFieldFixedDays(activityTime.getT());
+                        } else {
+                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                            setRemainingFieldUpdate(activityTime.getT());
+                        }
+                    }
+                } else {
+                    if (activityTime.getD() == todayMillis) {
+                        if (customActivity.getlD() != todayMillis) {
+                            customActivity.setsF(activityTime.getT());
+                            setRemainingFieldInsert(activityTime.getT());
+                        } else {
+                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                            setRemainingFieldUpdate(activityTime.getT());
+                        }
+                    }
+                }
+            case 3:
+                if (customActivity.geteD() == 0L) {
+                    if (activityTime.getD() >= firstDayOfThisMonth && customActivity.getlD() < firstDayOfThisMonth) {
+                        customActivity.setsF(activityTime.getT());
+                        setRemainingFieldInsert(activityTime.getT());
+                    } else if (activityTime.getD() > firstDayOfThisMonth && customActivity.getlD() >= firstDayOfThisMonth) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        setRemainingFieldUpdate(activityTime.getT());
+                    }
+                } else {
+                    if (activityTime.getD() >= firstDayOfThisMonth && customActivity.getlD() < firstDayOfThisMonth && todayMillis <= customActivity.geteD()) {
+                        customActivity.setsF(activityTime.getT());
+                        setRemainingFieldInsert(activityTime.getT());
+                    } else if (activityTime.getD() > firstDayOfThisMonth && customActivity.getlD() >= firstDayOfThisMonth && todayMillis < customActivity.geteD()) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        setRemainingFieldUpdate(activityTime.getT());
+                    }
+                }
+            case 4:
+                if (customActivity.geteD() == 0L) {
+                    if (activityTime.getD() >= thisMonday && customActivity.getlD() < thisMonday) {
+                        customActivity.setsF(activityTime.getT());
+                        setRemainingFieldInsert(activityTime.getT());
+                    } else if (activityTime.getD() > thisMonday && customActivity.getlD() >= thisMonday) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        setRemainingFieldUpdate(activityTime.getT());
+                    }
+                } else {
+                    if (activityTime.getD() >= thisMonday && customActivity.getlD() < thisMonday && todayMillis <= customActivity.geteD()) {
+                        customActivity.setsF(activityTime.getT());
+                        setRemainingFieldInsert(activityTime.getT());
+                    } else if (activityTime.getD() > thisMonday && customActivity.getlD() >= thisMonday && todayMillis < customActivity.geteD()) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        setRemainingFieldUpdate(activityTime.getT());
+                    }
+                }
+            case 5:
+                if (customActivity.geteD() == 0L) {
+                    if (customActivity.getsF() < customActivity.getDur()) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        setRemainingFieldUpdate(activityTime.getT());
+                    }
+                } else {
+                    if (customActivity.getsF() < customActivity.getDur() && todayMillis < customActivity.geteD()) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        setRemainingFieldUpdate(activityTime.getT());
+                    }
+                }
+            case 6:
+                if (todayMillis >= customActivity.getsD() && todayMillis <= customActivity.geteD()) {
+                    customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                }
+            case 7:
+                System.out.println(todayMillis + " " + customActivity.getsD() + " " + customActivity.geteD() + " " + customActivity.getlD());
+                if (todayMillis >= customActivity.getsD() && todayMillis <= customActivity.geteD() && customActivity.getlD() < customActivity.getsD()) {
+                    customActivity.setsF(activityTime.getT());
+                    setRemainingFieldInsert(activityTime.getT());
+                } else if (todayMillis >= customActivity.getsD() && todayMillis <= customActivity.geteD() && customActivity.getlD() >= customActivity.getsD()) {
+                    customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                    setRemainingFieldUpdate(activityTime.getT());
+                }
+            case 8:
+                if (customActivity.geteD() == 0L) {
+                    if (activityTime.getD() >= thisMonday && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0 && activityTime.getD() == todayMillis) {
+                        if (customActivity.getlD() != todayMillis) {
+                            customActivity.setsF(activityTime.getT());
+                            customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - activityTime.getT()), 0L));
+                        } else {
+                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                            customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - activityTime.getT()), 0L));
+                        }
+                    }
+                }
+
+        }
+
+        if (customActivity.getlD() < activityTime.getD()) {
+            customActivity.setlD(activityTime.getD());
+        }
+    }
+
+    private void setRemainingFieldFixedDays(long time) {
+        customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - time), 0L));
+    }
+
+    private void setRemainingFieldInsert(long time) {
+        customActivity.setRe(Math.max((customActivity.getDur() - time), 0L));
+    }
+
+    private void setRemainingFieldUpdate(long time) {
+        customActivity.setRe(Math.max((customActivity.getRe() - time), 0L));
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

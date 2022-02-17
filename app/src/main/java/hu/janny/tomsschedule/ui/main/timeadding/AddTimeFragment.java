@@ -68,7 +68,7 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
 
         if (getArguments().containsKey(ITEM_ID)) {
             activityId = getArguments().getLong(ITEM_ID);
-            //mainViewModel.findActivityById(activityId);
+            mainViewModel.findActivityById(activityId);
         }
 
         if (getArguments().containsKey(OPERATION_TYPE)) {
@@ -209,7 +209,7 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
                 }
             case 3:
                 if(customActivity.geteD() == 0L) {
-                    if(activityTime.getD() > firstDayOfThisMonth && customActivity.getlD() < firstDayOfThisMonth) {
+                    if(activityTime.getD() >= firstDayOfThisMonth && customActivity.getlD() < firstDayOfThisMonth) {
                         customActivity.setsF(activityTime.getT());
                         setRemainingFieldInsert(activityTime.getT());
                     } else if(activityTime.getD() > firstDayOfThisMonth && customActivity.getlD() >= firstDayOfThisMonth) {
@@ -217,7 +217,7 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
                         setRemainingFieldUpdate(activityTime.getT());
                     }
                 } else {
-                    if(activityTime.getD() > firstDayOfThisMonth && customActivity.getlD() < firstDayOfThisMonth && todayMillis < customActivity.geteD()) {
+                    if(activityTime.getD() >= firstDayOfThisMonth && customActivity.getlD() < firstDayOfThisMonth && todayMillis <= customActivity.geteD()) {
                         customActivity.setsF(activityTime.getT());
                         setRemainingFieldInsert(activityTime.getT());
                     } else if(activityTime.getD() > firstDayOfThisMonth && customActivity.getlD() >= firstDayOfThisMonth && todayMillis < customActivity.geteD()) {
@@ -227,7 +227,7 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
                 }
             case 4:
                 if(customActivity.geteD() == 0L) {
-                    if(activityTime.getD() > thisMonday && customActivity.getlD() < thisMonday) {
+                    if(activityTime.getD() >= thisMonday && customActivity.getlD() < thisMonday) {
                         customActivity.setsF(activityTime.getT());
                         setRemainingFieldInsert(activityTime.getT());
                     } else if(activityTime.getD() > thisMonday && customActivity.getlD() >= thisMonday) {
@@ -235,7 +235,7 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
                         setRemainingFieldUpdate(activityTime.getT());
                     }
                 } else {
-                    if(activityTime.getD() > thisMonday && customActivity.getlD() < thisMonday && todayMillis < customActivity.geteD()) {
+                    if(activityTime.getD() >= thisMonday && customActivity.getlD() < thisMonday && todayMillis <= customActivity.geteD()) {
                         customActivity.setsF(activityTime.getT());
                         setRemainingFieldInsert(activityTime.getT());
                     } else if(activityTime.getD() > thisMonday && customActivity.getlD() >= thisMonday && todayMillis < customActivity.geteD()) {
@@ -256,20 +256,20 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
                     }
                 }
             case 6:
-                if(todayMillis > customActivity.getsD() && todayMillis < customActivity.geteD()) {
+                if(todayMillis >= customActivity.getsD() && todayMillis <= customActivity.geteD()) {
                     customActivity.setsF(customActivity.getsF() + activityTime.getT());
                 }
             case 7:
-                if(todayMillis > customActivity.getsD() && todayMillis < customActivity.geteD() && customActivity.getlD() < customActivity.getsD()) {
+                if(todayMillis >= customActivity.getsD() && todayMillis <= customActivity.geteD() && customActivity.getlD() < customActivity.getsD()) {
                     customActivity.setsF(activityTime.getT());
                     setRemainingFieldInsert(activityTime.getT());
-                } else if(todayMillis > customActivity.getsD() && todayMillis < customActivity.geteD() && customActivity.getlD() >= customActivity.getsD()) {
+                } else if(todayMillis >= customActivity.getsD() && todayMillis <= customActivity.geteD() && customActivity.getlD() >= customActivity.getsD()) {
                     customActivity.setsF(customActivity.getsF() + activityTime.getT());
                     setRemainingFieldUpdate(activityTime.getT());
                 }
             case 8:
                 if(customActivity.geteD() == 0L) {
-                    if(activityTime.getD() > thisMonday && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0 && activityTime.getD() == todayMillis) {
+                    if(activityTime.getD() >= thisMonday && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0 && activityTime.getD() == todayMillis) {
                         if (customActivity.getlD() != todayMillis) {
                             customActivity.setsF(activityTime.getT());
                             customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - activityTime.getT()), 0L));
