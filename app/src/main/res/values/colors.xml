@@ -23,4 +23,7 @@
     <color name="milky_way">#004378</color>
     <color name="colourful">#7617CA</color>
     <color name="coffee">#855948</color>
+    <color name="red_notification">#F44336</color>
+    <color name="orange_notification">#FFC107</color>
+    <color name="green_notification">#4CAF50</color>
 </resources>

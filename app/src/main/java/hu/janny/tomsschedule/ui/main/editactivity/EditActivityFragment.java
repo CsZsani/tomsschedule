@@ -837,9 +837,8 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         DatePickerDialog.OnDateSetListener dateStartday = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calStartDay.set(Calendar.YEAR, year);
-                calStartDay.set(Calendar.MONTH,month);
-                calStartDay.set(Calendar.DAY_OF_MONTH,day);
+                calStartDay.clear();
+                calStartDay.set(year, month, day);
                 updateLabelStartDay();
             }
         };
@@ -847,9 +846,8 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         DatePickerDialog.OnDateSetListener dateEndDay = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calEndDay.set(Calendar.YEAR, year);
-                calEndDay.set(Calendar.MONTH,month);
-                calEndDay.set(Calendar.DAY_OF_MONTH,day);
+                calEndDay.clear();
+                calEndDay.set(year, month, day);
                 updateLabelEndDay();
             }
         };
@@ -857,9 +855,8 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
         DatePickerDialog.OnDateSetListener dateEndDate = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calEndDate.set(Calendar.YEAR, year);
-                calEndDate.set(Calendar.MONTH,month);
-                calEndDate.set(Calendar.DAY_OF_MONTH,day);
+                calEndDate.clear();
+                calEndDate.set(year, month, day);
                 updateLabelEndDate();
             }
         };
@@ -883,7 +880,13 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
             }
         });
 
-        binding.activityStartDay.performClick();
+        Calendar helper = Calendar.getInstance();
+        int year = helper.get(Calendar.YEAR);
+        int month = helper.get(Calendar.MONTH);
+        int day = helper.get(Calendar.DATE);
+        calStartDay.clear();
+        calStartDay.set(year, month, day);
+        updateLabelStartDay();
     }
 
     private void updateLabelStartDay(){

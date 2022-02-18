@@ -60,10 +60,12 @@ import hu.janny.tomsschedule.ui.timeractivity.TimerActivity;
 public class DetailFragment extends Fragment {
 
     public static final String ARG_ITEM_ID = "item_id";
+    public static final String TODAY_SO_FAR = "today_so_far";
 
     private DetailFragmentBinding binding;
     private MainViewModel mainViewModel;
     private AlertDialog deleteDialog;
+    private long today;
 
     public static DetailFragment newInstance() {
         return new DetailFragment();
@@ -83,6 +85,11 @@ public class DetailFragment extends Fragment {
             //mainViewModel.findActivityByIdWithTimes(id);
             mainViewModel.findActivityByIdWithTimesEntity(id);
         }
+
+        if (getArguments().containsKey(TODAY_SO_FAR)) {
+            today = getArguments().getLong(TODAY_SO_FAR);
+        }
+        System.out.println(today);
 
         //mainViewModel.getActivityByIdWithTimes().observe(getViewLifecycleOwner(), new Observer<Map<CustomActivity, List<ActivityTime>>>() {
         mainViewModel.getActivityByIdWithTimesEntity().observe(getViewLifecycleOwner(), new Observer<ActivityWithTimes>() {
@@ -270,6 +277,7 @@ public class DetailFragment extends Fragment {
                 Intent i = new Intent(getActivity(), TimerActivity.class);
                 i.putExtra(TimerActivity.ACTIVITY_ID, activityId);
                 i.putExtra(TimerActivity.ACTIVITY_NAME, activityName);
+                i.putExtra(TimerActivity.TODAY_SO_FAR, today);
                 startActivity(i);
                 Objects.requireNonNull(getActivity()).finish();
             }

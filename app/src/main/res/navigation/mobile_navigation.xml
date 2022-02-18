@@ -82,5 +82,9 @@
             android:name="item_id"
             android:defaultValue="0L"
             app:argType="long" />
+        <argument
+            android:name="today_so_far"
+            app:argType="long"
+            android:defaultValue="0L" />
     </fragment>
 </navigation>

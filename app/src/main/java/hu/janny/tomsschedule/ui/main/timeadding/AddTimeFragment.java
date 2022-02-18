@@ -71,6 +71,7 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
             mainViewModel.findActivityById(activityId);
         }
 
+
         if (getArguments().containsKey(OPERATION_TYPE)) {
             isAdd = getArguments().getBoolean(OPERATION_TYPE);
         }
@@ -162,141 +163,10 @@ public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelec
         } else {
             Toast.makeText(getContext(), String.format(Locale.getDefault(),"-%02d:%02d", hour, minute), Toast.LENGTH_LONG).show();
         }
-        updateActivity(activityTime);
+        customActivity = CustomActivityHelper.updateActivity(customActivity, activityTime);
         mainViewModel.updateActivity(customActivity);
 
         Navigation.findNavController(fragView).popBackStack();
-    }
-
-    private void updateActivity(ActivityTime activityTime) {
-        long todayMillis = CustomActivityHelper.todayMillis();
-        long firstDayOfThisMonth = CustomActivityHelper.firstDayOfThisMonth();
-        long thisMonday = CustomActivityHelper.thisMondayMillis();
-        customActivity.setaT(customActivity.getaT() + activityTime.getT());
-
-        switch (customActivity.gettN()) {
-            case 2:
-                if(customActivity.ishFD()) {
-                    if (activityTime.getD() == todayMillis && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0
-                            && customActivity.geteD() == 0L) {
-                        if (customActivity.getlD() != todayMillis) {
-                            customActivity.setsF(activityTime.getT());
-                            setRemainingFieldFixedDays(activityTime.getT());
-                        } else {
-                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                            setRemainingFieldUpdate(activityTime.getT());
-                        }
-                    } else if(activityTime.getD() == todayMillis && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0
-                            && customActivity.getsD() == 0L && customActivity.geteD() != 0L && customActivity.getlD() < customActivity.geteD()) {
-                        if (customActivity.getlD() != todayMillis) {
-                            customActivity.setsF(activityTime.getT());
-                            setRemainingFieldFixedDays(activityTime.getT());
-                        } else {
-                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                            setRemainingFieldUpdate(activityTime.getT());
-                        }
-                    }
-                } else {
-                    if (activityTime.getD() == todayMillis) {
-                        if (customActivity.getlD() != todayMillis) {
-                            customActivity.setsF(activityTime.getT());
-                            setRemainingFieldInsert(activityTime.getT());
-                        } else {
-                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                            setRemainingFieldUpdate(activityTime.getT());
-                        }
-                    }
-                }
-            case 3:
-                if(customActivity.geteD() == 0L) {
-                    if(activityTime.getD() >= firstDayOfThisMonth && customActivity.getlD() < firstDayOfThisMonth) {
-                        customActivity.setsF(activityTime.getT());
-                        setRemainingFieldInsert(activityTime.getT());
-                    } else if(activityTime.getD() > firstDayOfThisMonth && customActivity.getlD() >= firstDayOfThisMonth) {
-                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                        setRemainingFieldUpdate(activityTime.getT());
-                    }
-                } else {
-                    if(activityTime.getD() >= firstDayOfThisMonth && customActivity.getlD() < firstDayOfThisMonth && todayMillis <= customActivity.geteD()) {
-                        customActivity.setsF(activityTime.getT());
-                        setRemainingFieldInsert(activityTime.getT());
-                    } else if(activityTime.getD() > firstDayOfThisMonth && customActivity.getlD() >= firstDayOfThisMonth && todayMillis < customActivity.geteD()) {
-                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                        setRemainingFieldUpdate(activityTime.getT());
-                    }
-                }
-            case 4:
-                if(customActivity.geteD() == 0L) {
-                    if(activityTime.getD() >= thisMonday && customActivity.getlD() < thisMonday) {
-                        customActivity.setsF(activityTime.getT());
-                        setRemainingFieldInsert(activityTime.getT());
-                    } else if(activityTime.getD() > thisMonday && customActivity.getlD() >= thisMonday) {
-                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                        setRemainingFieldUpdate(activityTime.getT());
-                    }
-                } else {
-                    if(activityTime.getD() >= thisMonday && customActivity.getlD() < thisMonday && todayMillis <= customActivity.geteD()) {
-                        customActivity.setsF(activityTime.getT());
-                        setRemainingFieldInsert(activityTime.getT());
-                    } else if(activityTime.getD() > thisMonday && customActivity.getlD() >= thisMonday && todayMillis < customActivity.geteD()) {
-                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                        setRemainingFieldUpdate(activityTime.getT());
-                    }
-                }
-            case 5:
-                if(customActivity.geteD() == 0L) {
-                    if(customActivity.getsF() < customActivity.getDur()) {
-                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                        setRemainingFieldUpdate(activityTime.getT());
-                    }
-                } else {
-                    if(customActivity.getsF() < customActivity.getDur() && todayMillis < customActivity.geteD()) {
-                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                        setRemainingFieldUpdate(activityTime.getT());
-                    }
-                }
-            case 6:
-                if(todayMillis >= customActivity.getsD() && todayMillis <= customActivity.geteD()) {
-                    customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                }
-            case 7:
-                if(todayMillis >= customActivity.getsD() && todayMillis <= customActivity.geteD() && customActivity.getlD() < customActivity.getsD()) {
-                    customActivity.setsF(activityTime.getT());
-                    setRemainingFieldInsert(activityTime.getT());
-                } else if(todayMillis >= customActivity.getsD() && todayMillis <= customActivity.geteD() && customActivity.getlD() >= customActivity.getsD()) {
-                    customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                    setRemainingFieldUpdate(activityTime.getT());
-                }
-            case 8:
-                if(customActivity.geteD() == 0L) {
-                    if(activityTime.getD() >= thisMonday && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0 && activityTime.getD() == todayMillis) {
-                        if (customActivity.getlD() != todayMillis) {
-                            customActivity.setsF(activityTime.getT());
-                            customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - activityTime.getT()), 0L));
-                        } else {
-                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                            customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - activityTime.getT()), 0L));
-                        }
-                    }
-                }
-
-        }
-
-        if(customActivity.getlD() < activityTime.getD()) {
-            customActivity.setlD(activityTime.getD());
-        }
-    }
-
-    private void setRemainingFieldFixedDays(long time) {
-        customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - time), 0L));
-    }
-
-    private void setRemainingFieldInsert(long time) {
-        customActivity.setRe(Math.max((customActivity.getDur() - time), 0L));
-    }
-
-    private void setRemainingFieldUpdate(long time) {
-        customActivity.setRe(Math.max((customActivity.getRe() - time), 0L));
     }
 
     private void initDatePicker() {

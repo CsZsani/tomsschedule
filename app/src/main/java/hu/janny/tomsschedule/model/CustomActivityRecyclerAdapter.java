@@ -1,5 +1,6 @@
 package hu.janny.tomsschedule.model;
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Calendar;
@@ -49,6 +51,7 @@ public class CustomActivityRecyclerAdapter
         View divider;
         Button beginActivity;
         TextView todayTime;
+        Button statusIndicator;
         ViewHolder(View itemView) {
             super(itemView);
             activityName = itemView.findViewById(R.id.activityNameInList);
@@ -56,6 +59,7 @@ public class CustomActivityRecyclerAdapter
             divider = itemView.findViewById(R.id.divider);
             beginActivity = itemView.findViewById(R.id.beginActivityInList);
             todayTime = itemView.findViewById(R.id.todayTime);
+            statusIndicator = itemView.findViewById(R.id.statusIndicatorInList);
         }
     }
 
@@ -77,18 +81,83 @@ public class CustomActivityRecyclerAdapter
         viewHolder.detailsText.setText("Ide jon majd a fancy reszlet");
         viewHolder.divider.setBackgroundColor(activityList.get(i).customActivity.getCol());
         viewHolder.beginActivity.setBackgroundColor(darkenColor(activityList.get(i).customActivity.getCol()));
+        long timeSpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(activityList.get(i).activityTimes);
         viewHolder.beginActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mainActivity.startTimerActivity(activityList.get(viewHolder.getBindingAdapterPosition()).customActivity.getId(),
-                        activityList.get(viewHolder.getBindingAdapterPosition()).customActivity.getName());
+                        activityList.get(viewHolder.getBindingAdapterPosition()).customActivity.getName(),
+                        timeSpentToday);
             }
         });
-        viewHolder.todayTime.setText(DateConverter.durationConverterFromLongToStringForADay(CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(
-                activityList.get(i).activityTimes, todayMillis
-        )));
+        viewHolder.todayTime.setText(DateConverter.durationConverterFromLongToStringForADay(timeSpentToday));
         viewHolder.detailsText.setText(detailsText(activityList.get(i).customActivity));
-        CustomActivityHelper.remainingTime(activityList.get(i).customActivity, activityList.get(i).activityTimes);
+        //CustomActivityHelper.remainingTime(activityList.get(i).customActivity, activityList.get(i).activityTimes);
+        long soFar = CustomActivityHelper.getSoFarLong(activityList.get(i).customActivity);
+        long remaining = CustomActivityHelper.getRemainingLong(activityList.get(i).customActivity);
+        if(notificationShown(soFar, remaining, activityList.get(i).customActivity)) {
+            viewHolder.statusIndicator.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mainActivity,
+                    notificationColor(soFar, remaining, activityList.get(i).customActivity))));
+            int intColor = ContextCompat.getColor(mainActivity,notificationColor(soFar, remaining, activityList.get(i).customActivity));
+            String hexColor = String.format("#%06X", (0xFFFFFF & intColor));
+            System.out.println(hexColor);
+            viewHolder.statusIndicator.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private int notificationColor(long soFar, long remaining, CustomActivity activity) {
+        if(greenColor(soFar, remaining, activity)) {
+            return R.color.green_notification;
+        } else if(redColor(soFar, remaining, activity)) {
+            return R.color.red_notification;
+        } else if(orangeColor(soFar, remaining, activity)) {
+            return R.color.orange_notification;
+        }
+        return R.color.white;
+    }
+
+    private boolean greenColor(long soFar, long remaining, CustomActivity activity) {
+        if(remaining == 0L && soFar >= activity.getDur()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean orangeColor(long soFar, long remaining, CustomActivity activity) {
+        if(activity.gettT() == 1 && soFar < activity.getDur()) {
+            return true;
+        }else if(activity.ishFD() && activity.gettT() == 3 && soFar < activity.getDur()
+                && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) != 0) {
+            return true;
+        } else if(activity.gettT() == 3 && soFar < activity.getDur()) {
+            return true;
+        } else if(activity.gettT() == 4 && soFar < activity.getDur()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean redColor(long soFar, long remaining, CustomActivity activity) {
+        if(activity.gettT() == 2 && soFar < activity.getDur()) {
+            return true;
+        }
+        if(activity.ishFD()) {
+            if((activity.gettT() == 3 || activity.gettT() == 5) && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) != 0
+                    && soFar < activity.getDur()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean notificationShown(long soFar, long remaining, CustomActivity activity) {
+        if(activity.gettT() == 0 || activity.gettN() == 1
+                || (activity.geteD() != 0 && CustomActivityHelper.todayMillis() > activity.geteD()) ||
+                (activity.ishFD() && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) != 0) ||
+                (activity.gettT() == 1 && activity.geteD() == 0L && soFar > activity.getDur())) {
+            return false;
+        }
+        return true;
     }
 
     private String detailsText(CustomActivity activity) {

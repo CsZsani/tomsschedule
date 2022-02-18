@@ -1,5 +1,8 @@
 package hu.janny.tomsschedule.model;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
 import java.time.DayOfWeek;
@@ -26,7 +29,7 @@ public final class CustomActivityHelper {
         return false;
     }
 
-    private final static String NULL_MIN = "0h 0m";
+    public final static String NULL_MIN = "0h 0m";
 
     public static String getSelectedFixActivityName(String d) {
         switch (d) {
@@ -100,7 +103,8 @@ public final class CustomActivityHelper {
         return R.string.error;
     }
 
-    public static long getHowManyTimeWasSpentTodayOnAct(List<ActivityTime> list, long todayMillis) {
+    public static long getHowManyTimeWasSpentTodayOnAct(List<ActivityTime> list) {
+        long todayMillis = CustomActivityHelper.todayMillis();
         ActivityTime activityTime = list.stream()
                 .filter(at -> at.getD() == todayMillis)
                 .findAny()
@@ -167,11 +171,6 @@ public final class CustomActivityHelper {
         return "";
     }
 
-    public static long remainingTime(CustomActivity activity, List<ActivityTime> list) {
-        Calendar cal = Calendar.getInstance();
-        return 0L;
-    }
-
     public static long todayMillis() {
         LocalDate localDate = LocalDate.now();
         Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
@@ -215,6 +214,26 @@ public final class CustomActivityHelper {
                 return DateConverter.durationConverterFromLongToStringForADay(customWeekTime.getSun());
         }
         return "?";
+    }
+
+    public static long goalDurationForFixedDayLong(CustomWeekTime customWeekTime, DayOfWeek today) {
+        switch (today) {
+            case MONDAY:
+                return customWeekTime.getMon();
+            case TUESDAY:
+                return customWeekTime.getTue();
+            case WEDNESDAY:
+                return customWeekTime.getWed();
+            case THURSDAY:
+                return customWeekTime.getThu();
+            case FRIDAY:
+                return customWeekTime.getFri();
+            case SATURDAY:
+                return customWeekTime.getSat();
+            case SUNDAY:
+                return customWeekTime.getSun();
+        }
+        return -1L;
     }
 
     public static int todayIsAFixedDayAndWhat(CustomWeekTime customWeekTime) {
@@ -319,6 +338,38 @@ public final class CustomActivityHelper {
         return "?";
     }
 
+    public static long getSoFarLong(CustomActivity activity) {
+        switch (activity.gettN()) {
+            case 1:
+                return -1;
+            case 2:
+            case 8:
+                if(activity.getlD() != todayMillis()) {
+                    return 0L;
+                }
+                return activity.getsF();
+            case 3:
+                if(activity.getlD() < firstDayOfThisMonth()) {
+                    return 0L;
+                }
+                return activity.getsF();
+            case 4:
+                if(activity.getlD() < thisMondayMillis()) {
+                    return 0L;
+                }
+                return activity.getsF();
+            case 5:
+                return activity.getsF();
+            case 6:
+            case 7:
+                if(activity.getlD() < activity.getsD()) {
+                    return 0L;
+                }
+                return activity.getsF();
+        }
+        return -1L;
+    }
+
     public static String getRemaining(CustomActivity activity) {
         switch (activity.gettN()) {
             case 1:
@@ -354,6 +405,196 @@ public final class CustomActivityHelper {
         }
         return "?";
     }
+
+    public static long getRemainingLong(CustomActivity activity) {
+        switch (activity.gettN()) {
+            case 1:
+            case 6:
+                return -1L;
+            case 2:
+            case 8:
+                if(activity.ishFD() && activity.getlD() != todayMillis()) {
+                    return goalDurationForFixedDayLong(activity.getCustomWeekTime(), whatDayOfWeekToday());
+                }else if(!activity.ishFD() && activity.getlD() != todayMillis()) {
+                    return activity.getDur();
+                }
+                return activity.getRe();
+            case 3:
+                if(activity.getlD() < firstDayOfThisMonth()) {
+                    return activity.getDur();
+                }
+                return activity.getRe();
+            case 4:
+                if(activity.ishFD() && activity.getlD() < thisMondayMillis()) {
+                    return goalDurationForFixedDayLong(activity.getCustomWeekTime(), whatDayOfWeekToday());
+                }else if(!activity.ishFD() && activity.getlD() < thisMondayMillis()) {
+                    return activity.getDur();
+                }
+                return activity.getRe();
+            case 5:
+                return activity.getRe();
+            case 7:
+                if(activity.getlD() < activity.getsD()) {
+                    return activity.getDur();
+                }
+                return activity.getRe();
+        }
+        return -1L;
+    }
+
+    public static CustomActivity updateActivity(CustomActivity customActivity, ActivityTime activityTime) {
+        long todayMillis = CustomActivityHelper.todayMillis();
+        long firstDayOfThisMonth = CustomActivityHelper.firstDayOfThisMonth();
+        long thisMonday = CustomActivityHelper.thisMondayMillis();
+        customActivity.setaT(customActivity.getaT() + activityTime.getT());
+        boolean updateLastDay = false;
+        switch (customActivity.gettN()) {
+            case 2:
+                if (customActivity.ishFD()) {
+                    if (activityTime.getD() == todayMillis && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0
+                            && customActivity.geteD() == 0L) {
+                        if (customActivity.getlD() != todayMillis) {
+                            customActivity.setsF(activityTime.getT());
+                            customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - activityTime.getT()), 0L));
+                            updateLastDay = true;
+                        } else {
+                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                            customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                            updateLastDay = true;
+                        }
+                    } else if (activityTime.getD() == todayMillis && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0
+                            && customActivity.getsD() == 0L && customActivity.geteD() != 0L && customActivity.getlD() < customActivity.geteD()) {
+                        if (customActivity.getlD() != todayMillis) {
+                            customActivity.setsF(activityTime.getT());
+                            customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - activityTime.getT()), 0L));
+                            updateLastDay = true;
+                        } else {
+                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                            customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                            updateLastDay = true;
+                        }
+                    }
+                } else {
+                    if (activityTime.getD() == todayMillis) {
+                        if (customActivity.getlD() != todayMillis) {
+                            customActivity.setsF(activityTime.getT());
+                            customActivity.setRe(Math.max((customActivity.getDur() - activityTime.getT()), 0L));
+                            updateLastDay = true;
+                        } else {
+                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                            customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                            updateLastDay = true;
+                        }
+                    }
+                }
+            case 3:
+                if (customActivity.geteD() == 0L) {
+                    if (activityTime.getD() >= firstDayOfThisMonth && customActivity.getlD() < firstDayOfThisMonth) {
+                        customActivity.setsF(activityTime.getT());
+                        customActivity.setRe(Math.max((customActivity.getDur() - activityTime.getT()), 0L));
+                        updateLastDay = true;
+                    } else if (activityTime.getD() > firstDayOfThisMonth && customActivity.getlD() >= firstDayOfThisMonth) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                        updateLastDay = true;
+                    }
+                } else {
+                    if (activityTime.getD() >= firstDayOfThisMonth && customActivity.getlD() < firstDayOfThisMonth && todayMillis <= customActivity.geteD()) {
+                        customActivity.setsF(activityTime.getT());
+                        customActivity.setRe(Math.max((customActivity.getDur() - activityTime.getT()), 0L));
+                        updateLastDay = true;
+                    } else if (activityTime.getD() > firstDayOfThisMonth && customActivity.getlD() >= firstDayOfThisMonth && todayMillis < customActivity.geteD()) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                        updateLastDay = true;
+                    }
+                }
+            case 4:
+                if (customActivity.geteD() == 0L) {
+                    if (activityTime.getD() >= thisMonday && customActivity.getlD() < thisMonday) {
+                        customActivity.setsF(activityTime.getT());
+                        customActivity.setRe(Math.max((customActivity.getDur() - activityTime.getT()), 0L));
+                        updateLastDay = true;
+                    } else if (activityTime.getD() > thisMonday && customActivity.getlD() >= thisMonday) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                        updateLastDay = true;
+                    }
+                } else {
+                    if (activityTime.getD() >= thisMonday && customActivity.getlD() < thisMonday && todayMillis <= customActivity.geteD()) {
+                        customActivity.setsF(activityTime.getT());
+                        customActivity.setRe(Math.max((customActivity.getDur() - activityTime.getT()), 0L));
+                        updateLastDay = true;
+                    } else if (activityTime.getD() > thisMonday && customActivity.getlD() >= thisMonday && todayMillis < customActivity.geteD()) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                        updateLastDay = true;
+                    }
+                }
+            case 5:
+                if (customActivity.geteD() == 0L) {
+                    if (customActivity.getsF() < customActivity.getDur()) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                        updateLastDay = true;
+                    }
+                } else {
+                    if (customActivity.getsF() < customActivity.getDur() && todayMillis < customActivity.geteD()) {
+                        customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                        customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                        updateLastDay = true;
+                    }
+                }
+            case 6:
+                if (activityTime.getD() >= customActivity.getsD() && activityTime.getD() <= customActivity.geteD()) {
+                    customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                    updateLastDay = true;
+                }
+            case 7:
+                System.out.println(todayMillis + " " + customActivity.getsD() + " " + customActivity.geteD() + " " + customActivity.getlD());
+                if (activityTime.getD() >= customActivity.getsD() && activityTime.getD() <= customActivity.geteD() && customActivity.getlD() < customActivity.getsD()) {
+                    customActivity.setsF(activityTime.getT());
+                    customActivity.setRe(Math.max((customActivity.getDur() - activityTime.getT()), 0L));
+                    updateLastDay = true;
+                } else if (activityTime.getD() >= customActivity.getsD() && activityTime.getD() <= customActivity.geteD() && customActivity.getlD() >= customActivity.getsD()) {
+                    customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                    customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                    updateLastDay = true;
+                }
+            case 8:
+                if (customActivity.geteD() == 0L) {
+                    if (activityTime.getD() >= thisMonday && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0 && activityTime.getD() == todayMillis) {
+                        if (customActivity.getlD() != todayMillis) {
+                            customActivity.setsF(activityTime.getT());
+                            customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - activityTime.getT()), 0L));
+                            updateLastDay = true;
+                        } else {
+                            customActivity.setsF(customActivity.getsF() + activityTime.getT());
+                            customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - activityTime.getT()), 0L));
+                            updateLastDay = true;
+                        }
+                    }
+                }
+        }
+        if(updateLastDay) {
+            if (customActivity.getlD() < activityTime.getD()) {
+                customActivity.setlD(activityTime.getD());
+            }
+        }
+        return customActivity;
+    }
+
+    /*public static void setRemainingFieldFixedDays(long time) {
+        customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - time), 0L));
+    }
+
+    public static void setRemainingFieldInsert(long time) {
+        customActivity.setRe(Math.max((customActivity.getDur() - time), 0L));
+    }
+
+    public static void setRemainingFieldUpdate(long time) {
+        customActivity.setRe(Math.max((customActivity.getRe() - time), 0L));
+    }*/
 
 
 }

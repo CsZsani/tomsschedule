@@ -91,10 +91,11 @@ public class MainActivity extends AppCompatActivity implements AddCustomActivity
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
-    public void startTimerActivity(long customActivityId, String activityName) {
+    public void startTimerActivity(long customActivityId, String activityName, long todaySoFar) {
         Intent i = new Intent(this, TimerActivity.class);
         i.putExtra(TimerActivity.ACTIVITY_ID, customActivityId);
         i.putExtra(TimerActivity.ACTIVITY_NAME, activityName);
+        i.putExtra(TimerActivity.TODAY_SO_FAR, todaySoFar);
         startActivity(i);
         finish();
     }

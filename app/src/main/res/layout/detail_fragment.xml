@@ -10,22 +10,22 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="136dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
 
             <LinearLayout
                 android:id="@+id/detail_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="parallax" >
+                app:layout_collapseMode="parallax">
 
                 <TextView
                     android:id="@+id/activityDetailName"
@@ -47,11 +47,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|end"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@string/fab_edit"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="16dp"
-                    android:contentDescription="@string/fab_edit"
                     app:srcCompat="@drawable/ic_edit"
-                    android:background="?android:attr/selectableItemBackground"
                     app:tint="@color/black" />
 
                 <ImageButton
@@ -59,11 +59,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@string/fab_delete"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="16dp"
-                    android:contentDescription="@string/fab_delete"
                     app:srcCompat="@drawable/ic_delete"
-                    android:background="?android:attr/selectableItemBackground"
                     app:tint="@color/black" />
             </LinearLayout>
 
@@ -105,13 +105,12 @@
                 android:layout_marginBottom="8dp"
                 android:clickable="true"
                 android:contentDescription="@string/fab_minus_time"
+                android:src="@drawable/ic_minus"
                 app:layout_anchor="@+id/app_bar"
                 app:layout_anchorGravity="start|top"
-                android:src="@drawable/ic_minus"
                 app:tint="@color/white" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
 
 
     </com.google.android.material.appbar.AppBarLayout>
