@@ -156,4 +156,10 @@
     <string name="friday_short">p</string>
     <string name="saturday_short">szo</string>
     <string name="sunday_short">v</string>
+    <string name="detail_all_time">Összesen</string>
+    <string name="detail_so_far">Eddig</string>
+    <string name="detail_remaining">Hátralévő</string>
+    <string name="personal_statistics">Személyes</string>
+    <string name="global_statistics">Globális</string>
+    <string name="tips">Javaslatok</string>
 </resources>

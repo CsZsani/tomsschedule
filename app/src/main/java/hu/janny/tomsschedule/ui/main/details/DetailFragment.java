@@ -89,13 +89,13 @@ public class DetailFragment extends Fragment {
         if (getArguments().containsKey(TODAY_SO_FAR)) {
             today = getArguments().getLong(TODAY_SO_FAR);
         }
-        System.out.println(today);
+        //System.out.println(today);
 
         //mainViewModel.getActivityByIdWithTimes().observe(getViewLifecycleOwner(), new Observer<Map<CustomActivity, List<ActivityTime>>>() {
         mainViewModel.getActivityByIdWithTimesEntity().observe(getViewLifecycleOwner(), new Observer<ActivityWithTimes>() {
             @Override
             public void onChanged(ActivityWithTimes activityWithTimes) {
-                System.out.println(activityWithTimes + " in detail frafgment");
+                //System.out.println(activityWithTimes + " in detail frafgment");
                 CustomActivity activity = activityWithTimes.customActivity;
                 if(activity != null) {
                     if(CustomActivityHelper.isFixActivity(activity.getName())) {

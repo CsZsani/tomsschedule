@@ -80,12 +80,12 @@ public class HomeFragment extends Fragment {
     private void recyclerSetup() {
         View.OnClickListener onClickListener = itemView -> {
             ActivityWithTimes item = (ActivityWithTimes) itemView.getTag();
-            System.out.println(item);
+            //System.out.println(item);
             Bundle arguments = new Bundle();
             arguments.putLong(DetailFragment.ARG_ITEM_ID, item.customActivity.getId());
             long timeSpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(item.activityTimes);
             arguments.putLong(DetailFragment.TODAY_SO_FAR, timeSpentToday);
-            System.out.println(timeSpentToday);
+            //System.out.println(timeSpentToday);
             Navigation.findNavController(itemView).navigate(R.id.action_nav_home_to_detailFragment, arguments);
         };
 

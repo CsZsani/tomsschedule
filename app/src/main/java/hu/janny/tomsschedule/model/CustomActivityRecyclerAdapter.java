@@ -99,8 +99,8 @@ public class CustomActivityRecyclerAdapter
             viewHolder.statusIndicator.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mainActivity,
                     notificationColor(soFar, remaining, activityList.get(i).customActivity))));
             int intColor = ContextCompat.getColor(mainActivity,notificationColor(soFar, remaining, activityList.get(i).customActivity));
-            String hexColor = String.format("#%06X", (0xFFFFFF & intColor));
-            System.out.println(hexColor);
+            //String hexColor = String.format("#%06X", (0xFFFFFF & intColor));
+            //System.out.println(hexColor);
             viewHolder.statusIndicator.setVisibility(View.VISIBLE);
         }
     }
