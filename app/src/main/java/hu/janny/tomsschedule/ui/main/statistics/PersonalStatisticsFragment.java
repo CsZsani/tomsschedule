@@ -1,5 +1,6 @@
 package hu.janny.tomsschedule.ui.main.statistics;
 
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -19,8 +20,9 @@ import hu.janny.tomsschedule.databinding.FragmentStatisticsBinding;
 
 public class PersonalStatisticsFragment extends Fragment {
 
-    private PersonalStatisticsViewModel mViewModel;
     private FragmentPersonalStatisticsBinding binding;
+
+    private int periodType = 0;
 
     public static PersonalStatisticsFragment newInstance() {
         return new PersonalStatisticsFragment();
@@ -40,13 +42,21 @@ public class PersonalStatisticsFragment extends Fragment {
             }
         });
 
+        getParentFragmentManager().setFragmentResultListener("requestKey", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+                // We use a String here, but any type that can be put in a Bundle is supported
+                periodType = bundle.getInt("bundleKey");
+                // Do something with the result
+            }
+        });
+
         return root;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(PersonalStatisticsViewModel.class);
         // TODO: Use the ViewModel
     }
 

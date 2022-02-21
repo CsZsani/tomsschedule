@@ -95,6 +95,6 @@
     <fragment
         android:id="@+id/personalFilterFragment"
         android:name="hu.janny.tomsschedule.ui.main.statistics.PersonalFilterFragment"
-        android:label="fragment_personal_filter"
+        android:label="@string/filter"
         tools:layout="@layout/fragment_personal_filter" />
 </navigation>

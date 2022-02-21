@@ -11,6 +11,7 @@ import androidx.room.Update;
 import java.util.List;
 import java.util.Map;
 
+import hu.janny.tomsschedule.model.ActivityFilter;
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.ActivityWithTimes;
 import hu.janny.tomsschedule.model.CustomActivity;
@@ -59,9 +60,20 @@ public interface CustomActivityDao {
     @Query("SELECT activityId FROM customactivities WHERE customactivities.name = :name")
     int getIdByName(String name);
 
+    @Query("SELECT activityId, name, color from customactivities")
+    LiveData<List<ActivityFilter>> getActivityFilter();
+
     @Transaction
     @Query("SELECT * FROM customactivities ORDER BY customactivities.priority DESC, customactivities.remaining DESC, customactivities.lastDayAdded ASC")
     LiveData<List<ActivityWithTimes>> getActivitiesWithTimes();
+
+    @Transaction
+    @Query("SELECT * FROM customactivities where activityId in (:list)")
+    List<ActivityWithTimes> getActivitiesWithTimesFilter(List<Long> list);
+
+    @Transaction
+    @Query("SELECT * FROM customactivities")
+    LiveData<List<ActivityWithTimes>> getActivitiesWithTimesFilterAll();
 
     @Transaction
     @Query("SELECT * FROM customactivities WHERE activityId = :id")

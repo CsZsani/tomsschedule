@@ -17,6 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import hu.janny.tomsschedule.model.ActivityFilter;
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.ActivityWithTimes;
 import hu.janny.tomsschedule.model.CustomActivity;
@@ -31,10 +32,14 @@ public class Repository {
     private final LiveData<Map<CustomActivity, List<ActivityTime>>> allActivitiesWithTimes;
     private final LiveData<List<CustomActivity>> activities;
     private final LiveData<List<ActivityWithTimes>> activitiesWithTimesEntities;
+    private final LiveData<List<ActivityFilter>> filterActivities;
     private CustomActivity activity;
 
     private final MutableLiveData<ActivityWithTimes> activityWithTimesEntity = new MutableLiveData<>();
     private ActivityWithTimes activityWithTimes;
+
+    private final MutableLiveData<List<ActivityWithTimes>> activityWithTimesFilterList = new MutableLiveData<>();
+    private List<ActivityWithTimes> activityWithTimesFilter;
 
     private final MutableLiveData<List<ActivityTime>> allActivitiesTime = new MutableLiveData<>();
     private final MutableLiveData<List<ActivityTime>> oneActivitiesTime = new MutableLiveData<>();
@@ -53,6 +58,7 @@ public class Repository {
         allActivitiesWithTimes = customActivityDao.getAllActivitiesWithTimes();
         activities = customActivityDao.getActivitiesList();
         activitiesWithTimesEntities = customActivityDao.getActivitiesWithTimes();
+        filterActivities = customActivityDao.getActivityFilter();
     }
 
     Handler handler = new Handler(Looper.getMainLooper()) {
@@ -73,6 +79,13 @@ public class Repository {
         @Override
         public void handleMessage(Message msg) {
             activityWithTimesEntity.setValue(activityWithTimes);
+        }
+    };
+
+    Handler handlerFilter = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            activityWithTimesFilterList.setValue(activityWithTimesFilter);
         }
     };
 
@@ -190,6 +203,15 @@ public class Repository {
         executor.shutdown();
     }
 
+    public void getFilterSomeAcivity(List<Long> list) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            activityWithTimesFilter = customActivityDao.getActivitiesWithTimesFilter(list);
+            handlerFilter.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
     public void getActivityByName(String name) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -268,6 +290,15 @@ public class Repository {
         executor.shutdown();
     }
 
+    public void getAllExactDates(long date) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getAllExactDate(date);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
     public void getAllLaterDates(long from) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -281,6 +312,42 @@ public class Repository {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             allTimes = activityTimeDao.getAllBetweenTwoDates(from, to);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    public void getSomeExactDates(long date, List<Long> list) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getSomeExactDate(date, list);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    public void getSomeLaterDates(long from, List<Long> list) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getSomeLaterDates(from, list);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    public void getSomeBetweenTwoDates(long from, long to, List<Long> list) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getSomeBetweenTwoDates(from, to, list);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    public void getAllTimes() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getAllAllTheTime();
             handlerAllTimes.sendEmptyMessage(0);
         });
         executor.shutdown();
@@ -338,5 +405,9 @@ public class Repository {
 
     public LiveData<List<ActivityWithTimes>> getActivitiesWithTimesEntities() {
         return activitiesWithTimesEntities;
+    }
+
+    public LiveData<List<ActivityFilter>> getFilterActivities() {
+        return filterActivities;
     }
 }

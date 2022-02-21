@@ -23,19 +23,21 @@
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/activity_splash_screen.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/activity_timer.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/app_bar_main.xml" value="0.3546875" />
+        <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/chip_layout.xml" value="0.17864583333333334" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/content_main.xml" value="0.33" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/custom_activity_list_item.xml" value="0.31527777777777777" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/custom_time_picker.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/custom_time_picker_for_one_day.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/detail_fragment.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_account.xml" value="0.3546875" />
-        <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_add_custom_activity.xml" value="0.33" />
+        <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_add_custom_activity.xml" value="0.2675834970530452" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_add_time.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_date_picker.xml" value="0.31527777777777777" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_detail.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_edit_activity.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_gallery.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_home.xml" value="0.3546875" />
+        <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_personal_filter.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_personal_statistics.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_settings.xml" value="0.3546875" />
         <entry key="..\:/Users/2000c/AndroidStudioProjects/TomsSchedule/app/src/main/res/layout/fragment_slideshow.xml" value="0.3546875" />

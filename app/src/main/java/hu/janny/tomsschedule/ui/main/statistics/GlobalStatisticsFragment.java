@@ -16,7 +16,7 @@ import hu.janny.tomsschedule.R;
 
 public class GlobalStatisticsFragment extends Fragment {
 
-    private GlobalStatisticsViewModel mViewModel;
+
 
     public static GlobalStatisticsFragment newInstance() {
         return new GlobalStatisticsFragment();
@@ -31,7 +31,7 @@ public class GlobalStatisticsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(GlobalStatisticsViewModel.class);
+
         // TODO: Use the ViewModel
     }
 

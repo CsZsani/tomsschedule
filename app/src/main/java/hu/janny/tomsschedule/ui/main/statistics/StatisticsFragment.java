@@ -18,6 +18,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentStatisticsBinding;
+import hu.janny.tomsschedule.viewmodel.StatisticsViewModel;
 
 public class StatisticsFragment extends Fragment {
 

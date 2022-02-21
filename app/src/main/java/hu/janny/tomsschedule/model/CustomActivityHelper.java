@@ -177,6 +177,13 @@ public final class CustomActivityHelper {
         return instant.toEpochMilli();
     }
 
+    public static long yesterdayMillis() {
+        LocalDate localDate = LocalDate.now();
+        localDate.minusDays(1);
+        Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        return instant.toEpochMilli();
+    }
+
     public static long thisMondayMillis() {
         LocalDate localDate = LocalDate.now();
         LocalDate mon = localDate.with(DayOfWeek.MONDAY);

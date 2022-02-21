@@ -174,4 +174,10 @@
     <string name="all_time_chip">All</string>
     <string name="all_activity_chip">All</string>
     <string name="select_activity_chip">Select one or more activity</string>
+    <string name="select_custom_day">Custom day</string>
+    <string name="select_custom_from_to">Custom from - to</string>
+    <string name="date_hint">Date</string>
+    <string name="from_day">Beginning</string>
+    <string name="to_day">End</string>
+    <string name="filter">Filter</string>
 </resources>
