@@ -180,4 +180,5 @@
     <string name="from_day">Beginning</string>
     <string name="to_day">End</string>
     <string name="filter">Filter</string>
+    <string name="please_filter">Please, filter to see data.</string>
 </resources>

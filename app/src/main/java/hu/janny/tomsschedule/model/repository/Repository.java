@@ -353,6 +353,15 @@ public class Repository {
         executor.shutdown();
     }
 
+    public void getSomeAllTimes(List<Long> list) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getSomeAll(list);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
     public void getOneByIdLaterDates(int id, long from) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {

@@ -165,6 +165,16 @@ public final class DateConverter {
         return h + (m / 60f);
     }
 
+    public static float durationConverterFromLongToChartInt(long milliseconds) {
+        long hr = TimeUnit.MILLISECONDS.toHours(milliseconds)
+                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(milliseconds));
+        long min = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
+                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
+        int h = Integer.parseInt(String.valueOf(hr));
+        int m = Integer.parseInt(String.valueOf(min));
+        return h * 60 + m;
+    }
+
     public static long durationConverterFromLongToDays(long milliseconds) {
         long dy = TimeUnit.MILLISECONDS.toDays(milliseconds);
         return dy;

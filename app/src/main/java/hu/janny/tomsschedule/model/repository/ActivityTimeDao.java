@@ -78,6 +78,11 @@ public abstract class ActivityTimeDao {
     @Query("select * from activitytimes")
     public abstract List<ActivityTime> getAllAllTheTime();
 
+    // For some act. all times
+    @Transaction
+    @Query("select * from activitytimes where actId in (:list)")
+    public abstract List<ActivityTime> getSomeAll(List<Long> list);
+
     @Query("select * from activitytimes where activitytimes.actId = :id and activitytimes.date >= :from")
     public abstract List<ActivityTime> getOneByIdLaterDates(long id, long from);
 

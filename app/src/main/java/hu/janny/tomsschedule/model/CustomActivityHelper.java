@@ -177,10 +177,24 @@ public final class CustomActivityHelper {
         return instant.toEpochMilli();
     }
 
-    public static long yesterdayMillis() {
+    public static long minusDaysMillis(int days) {
         LocalDate localDate = LocalDate.now();
-        localDate.minusDays(1);
-        Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        LocalDate returnValue = localDate.minusDays(days);
+        Instant instant = returnValue.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        return instant.toEpochMilli();
+    }
+
+    public static long minusWeekMillis(int week) {
+        LocalDate localDate = LocalDate.now();
+        LocalDate returnValue = localDate.minusWeeks(week);
+        Instant instant = returnValue.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        return instant.toEpochMilli();
+    }
+
+    public static long minusMonthMillis(int month) {
+        LocalDate localDate = LocalDate.now();
+        LocalDate returnValue = localDate.minusMonths(month);
+        Instant instant = returnValue.atStartOfDay(ZoneId.systemDefault()).toInstant();
         return instant.toEpochMilli();
     }
 

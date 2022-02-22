@@ -10,12 +10,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -45,12 +47,13 @@ public class PersonalFilterFragment extends Fragment {
     final Calendar calTo = Calendar.getInstance();
 
     private int periodType;
+    private int activityNum;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         statisticsViewModel =
-                new ViewModelProvider(this).get(StatisticsViewModel.class);
+                new ViewModelProvider(requireActivity()).get(StatisticsViewModel.class);
         binding = FragmentPersonalFilterBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -66,11 +69,9 @@ public class PersonalFilterFragment extends Fragment {
         });
 
         initActivityChipGroup();
-        initFilterButton();
+        initFilterButton(root);
 
-        /*Bundle result = new Bundle();
-        result.putString("bundleKey", "result");
-        getParentFragmentManager().setFragmentResult("requestKey", result);*/
+        /**/
 
         return root;
     }
@@ -100,7 +101,7 @@ public class PersonalFilterFragment extends Fragment {
     private void addChipToActivityGroup(ActivityFilter af) {
         if(getContext() != null) {
             Chip chip = (Chip) getLayoutInflater().inflate(R.layout.chip_layout, binding.pActivityChipGroup, false);
-            //chip.setId(ViewCompat.generateViewId());
+            chip.setId(ViewCompat.generateViewId());
             chip.setText(af.name);
             chip.setChipBackgroundColor(ColorStateList.valueOf(af.color));
             chip.setCheckable(true);
@@ -138,31 +139,114 @@ public class PersonalFilterFragment extends Fragment {
         });
     }
 
-    private void initFilterButton() {
+    private void initFilterButton(View fragView) {
         binding.pFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(binding.pAllActivityChip.isChecked()) {
-                    filterAll();
+                    filterAll(fragView);
                 } else {
-                    filterActivities();
+                    filterActivities(fragView);
                 }
             }
         });
     }
 
-    private void filterAll() {
-        if(binding.pTodayChip.isChecked()) {
-            statisticsViewModel.filterExactDay(CustomActivityHelper.todayMillis(), new ArrayList<>());
-            periodType = 0;
-        } else if(binding.pYesterdayChip.isChecked()) {
-            statisticsViewModel.filterExactDay(CustomActivityHelper.yesterdayMillis(), new ArrayList<>());
+    private void filterAll(View fragView) {
+        activityNum = 0;
+        statisticsViewModel.setpActivityNum(0);
+        statisticsViewModel.setActsList(new ArrayList<>());
+        List<Long> list = new ArrayList<>();
+        List<Integer> colList = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        for(int i = 0; i<activityFilters.size(); i++) {
+            list.add(activityFilters.get(i).activityId);
+            colList.add(activityFilters.get(i).color);
+            names.add(activityFilters.get(i).name);
+        }
+        statisticsViewModel.setActsList(list);
+        statisticsViewModel.setColors(colList);
+        statisticsViewModel.setNames(names);
+        sendRequestToDb(new ArrayList<>());
+        //sendData(new ArrayList<>());
+        Navigation.findNavController(fragView).popBackStack();
+
+    }
+
+    private void filterActivities(View fragView) {
+        List<Long> list = new ArrayList<>();
+        List<Integer> colList = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        int chipsCount = binding.pActivityChipGroup.getChildCount();
+        for(int i = 1; i<chipsCount; i++) {
+            Chip chip = (Chip) binding.pActivityChipGroup.getChildAt(i);
+            if(chip.isChecked()) {
+                list.add(activityFilters.get(i-1).activityId);
+                colList.add(activityFilters.get(i-1).color);
+                names.add(activityFilters.get(i-1).name);
+            }
+        }
+        if(list.size() == 0) {
+            Toast.makeText(getActivity(), "You must choose All or at least one activity!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        activityNum = list.size();
+        statisticsViewModel.setpActivityNum(list.size());
+        statisticsViewModel.setActsList(list);
+        statisticsViewModel.setColors(colList);
+        statisticsViewModel.setNames(names);
+        sendRequestToDb(list);
+        //sendData(list);
+        Navigation.findNavController(fragView).popBackStack();
+    }
+
+    private void sendRequestToDb(List<Long> list) {
+        if(binding.pYesterdayChip.isChecked()) {
+            statisticsViewModel.filterExactDay(CustomActivityHelper.minusDaysMillis(1), list);
             periodType = 1;
+            statisticsViewModel.setpPeriodType(1);
+        } else if(binding.pWeekChip.isChecked()) {
+            statisticsViewModel.filterFrom(CustomActivityHelper.minusWeekMillis(1), list);
+            periodType = 2;
+            statisticsViewModel.setpPeriodType(2);
+        } else if(binding.pTwoWeeksChip.isChecked()) {
+            statisticsViewModel.filterFrom(CustomActivityHelper.minusWeekMillis(2), list);
+            periodType = 3;
+            statisticsViewModel.setpPeriodType(3);
+        } else if(binding.pMonthChip.isChecked()) {
+            statisticsViewModel.filterFrom(CustomActivityHelper.minusMonthMillis(1), list);
+            periodType = 4;
+            statisticsViewModel.setpPeriodType(4);
+        } else if(binding.pThreeMonthsChip.isChecked()) {
+            statisticsViewModel.filterFrom(CustomActivityHelper.minusMonthMillis(3), list);
+            periodType = 5;
+            statisticsViewModel.setpPeriodType(5);
+        } else if(binding.pCustomDayChip.isChecked()) {
+            statisticsViewModel.filterExactDay(calDay.getTimeInMillis(), list);
+            periodType = 6;
+            statisticsViewModel.setpPeriodType(6);
+        } else if(binding.pFromToChip.isChecked()) {
+            statisticsViewModel.filterFromTo(calFrom.getTimeInMillis(), calTo.getTimeInMillis(), list);
+            periodType = 7;
+            statisticsViewModel.setpPeriodType(7);
+        } else {
+            statisticsViewModel.filterExactDay(CustomActivityHelper.todayMillis(), list);
+            periodType = 0;
+            statisticsViewModel.setpPeriodType(0);
         }
     }
 
-    private void filterActivities() {
-
+    private void sendData(List<Long> list) {
+        ArrayList<String> stringList = new ArrayList<>();
+        for(int i = 0; i<list.size(); i++) {
+            stringList.add(String.valueOf(list.get(i)));
+        }
+        Bundle result = new Bundle();
+        result.putInt(PersonalStatisticsFragment.PERIOD_TYPE, periodType);
+        result.putInt(PersonalStatisticsFragment.ACTIVITY_NUM, list.size());
+        result.putStringArrayList(PersonalStatisticsFragment.ACTIVITIES, stringList);
+        System.out.println(periodType + " " + list.size() + " " + stringList + " filterrfrag");
+        getParentFragmentManager().setFragmentResult(PersonalStatisticsFragment.REQUEST_KEY, result);
     }
 
     private void initCalendars() {
