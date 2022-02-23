@@ -33,7 +33,7 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="color_pick">Choose a color</string>
-    <string name="priority">Priority (1-10)</string>
+    <string name="priority">Priority (1–10)</string>
     <string name="priority_detail">Priority</string>
     <string name="has_deadline">It has just a deadline</string>
     <string name="regularity">It is a regular activity</string>
@@ -96,8 +96,8 @@
     <string name="fa_reading">Reading</string>
     <string name="notification_type">Select notification type</string>
     <string name="days">Days (>=0)</string>
-    <string name="hours">Hours (0-23)</string>
-    <string name="minutes">Minutes (0-59)</string>
+    <string name="hours">Hours (0–23)</string>
+    <string name="minutes">Minutes (0–59)</string>
     <string name="days_hint">Days</string>
     <string name="hours_hint">Hours</string>
     <string name="minutes_hint">Minutes</string>
@@ -110,7 +110,7 @@
     <string name="choose_daily_time_for_interval">Set how much time you want daily till end day</string>
     <string name="choose_daily_time">Set how much time you want daily</string>
     <string name="save">Save</string>
-    <string name="turn_off_notifications">Do you want...?</string>
+    <string name="turn_off_notifications">Do you want…?</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="detail_fragment_label">Details</string>
     <string name="details_daily">daily</string>
@@ -181,4 +181,16 @@
     <string name="to_day">End</string>
     <string name="filter">Filter</string>
     <string name="please_filter">Please, filter to see data.</string>
+    <string name="time_spent">Time spent on the given day and activity:</string>
+    <string name="select_activity">Select activity</string>
+    <string name="select_gender">Select gender</string>
+    <string name="select_age_group">Select age group</string>
+    <string name="age_group_1" translatable="false">\u003C 20</string>
+    <string name="age_group_2" translatable="false">20 – 29</string>
+    <string name="age_group_3" translatable="false">30 – 39</string>
+    <string name="age_group_4" translatable="false">40 – 49</string>
+    <string name="age_group_5" translatable="false">50 – 59</string>
+    <string name="age_group_6" translatable="false">\u003E 60</string>
+    <string name="both">Both</string>
+    <string name="all_age_group_chip">All</string>
 </resources>

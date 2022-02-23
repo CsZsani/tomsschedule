@@ -71,8 +71,6 @@ public class PersonalFilterFragment extends Fragment {
         initActivityChipGroup();
         initFilterButton(root);
 
-        /**/
-
         return root;
     }
 
@@ -105,6 +103,16 @@ public class PersonalFilterFragment extends Fragment {
             chip.setText(af.name);
             chip.setChipBackgroundColor(ColorStateList.valueOf(af.color));
             chip.setCheckable(true);
+            chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if(b) {
+                        if(binding.pAllActivityChip.isChecked()) {
+                            binding.pAllActivityChip.setChecked(false);
+                        }
+                    }
+                }
+            });
             //chip.setTextColor(getResources().getColor(R.color.black));
             binding.pActivityChipGroup.addView(chip);
         }
@@ -190,6 +198,10 @@ public class PersonalFilterFragment extends Fragment {
             Toast.makeText(getActivity(), "You must choose All or at least one activity!", Toast.LENGTH_LONG).show();
             return;
         }
+        if(list.size() == 1 && (binding.pTodayChip.isChecked() || binding.pYesterdayChip.isChecked() || binding.pWeekChip.isChecked())) {
+            Toast.makeText(getActivity(), "For only one activity, you must choose longer period than one week or custom dates!", Toast.LENGTH_LONG).show();
+            return;
+        }
         activityNum = list.size();
         statisticsViewModel.setpActivityNum(list.size());
         statisticsViewModel.setActsList(list);
@@ -202,37 +214,53 @@ public class PersonalFilterFragment extends Fragment {
 
     private void sendRequestToDb(List<Long> list) {
         if(binding.pYesterdayChip.isChecked()) {
+            statisticsViewModel.setpPeriodType(1);
+            statisticsViewModel.setFromTime(0L);
+            statisticsViewModel.setToTime(CustomActivityHelper.minusDaysMillis(1));
             statisticsViewModel.filterExactDay(CustomActivityHelper.minusDaysMillis(1), list);
             periodType = 1;
-            statisticsViewModel.setpPeriodType(1);
         } else if(binding.pWeekChip.isChecked()) {
+            statisticsViewModel.setpPeriodType(2);
+            statisticsViewModel.setFromTime(CustomActivityHelper.minusWeekMillis(1));
+            statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusWeekMillis(1), list);
             periodType = 2;
-            statisticsViewModel.setpPeriodType(2);
         } else if(binding.pTwoWeeksChip.isChecked()) {
+            statisticsViewModel.setpPeriodType(3);
+            statisticsViewModel.setFromTime(CustomActivityHelper.minusWeekMillis(2));
+            statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusWeekMillis(2), list);
             periodType = 3;
-            statisticsViewModel.setpPeriodType(3);
         } else if(binding.pMonthChip.isChecked()) {
+            statisticsViewModel.setpPeriodType(4);
+            statisticsViewModel.setFromTime(CustomActivityHelper.minusMonthMillis(1));
+            statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusMonthMillis(1), list);
             periodType = 4;
-            statisticsViewModel.setpPeriodType(4);
         } else if(binding.pThreeMonthsChip.isChecked()) {
+            statisticsViewModel.setpPeriodType(5);
+            statisticsViewModel.setFromTime(CustomActivityHelper.minusMonthMillis(3));
+            statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusMonthMillis(3), list);
             periodType = 5;
-            statisticsViewModel.setpPeriodType(5);
         } else if(binding.pCustomDayChip.isChecked()) {
+            statisticsViewModel.setpPeriodType(6);
+            statisticsViewModel.setFromTime(0L);
+            statisticsViewModel.setToTime(calDay.getTimeInMillis());
             statisticsViewModel.filterExactDay(calDay.getTimeInMillis(), list);
             periodType = 6;
-            statisticsViewModel.setpPeriodType(6);
         } else if(binding.pFromToChip.isChecked()) {
+            statisticsViewModel.setpPeriodType(7);
+            statisticsViewModel.setFromTime(calFrom.getTimeInMillis());
+            statisticsViewModel.setToTime(calTo.getTimeInMillis());
             statisticsViewModel.filterFromTo(calFrom.getTimeInMillis(), calTo.getTimeInMillis(), list);
             periodType = 7;
-            statisticsViewModel.setpPeriodType(7);
         } else {
+            statisticsViewModel.setpPeriodType(0);
+            statisticsViewModel.setFromTime(0L);
+            statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterExactDay(CustomActivityHelper.todayMillis(), list);
             periodType = 0;
-            statisticsViewModel.setpPeriodType(0);
         }
     }
 
@@ -312,5 +340,11 @@ public class PersonalFilterFragment extends Fragment {
     private void updateLabelEndDate(){
         binding.pToDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 calTo.get(Calendar.DATE), calTo.get(Calendar.MONTH) + 1, calTo.get(Calendar.YEAR)));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 }

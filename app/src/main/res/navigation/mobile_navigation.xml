@@ -29,6 +29,10 @@
             android:id="@+id/action_nav_statistics_to_personalFilterFragment"
             app:destination="@id/personalFilterFragment"
             app:popUpTo="@id/nav_statistics" />
+        <action
+            android:id="@+id/action_nav_statistics_to_globalFilterFragment"
+            app:destination="@id/globalFilterFragment"
+            app:popUpTo="@id/nav_statistics" />
     </fragment>
 
     <fragment
@@ -97,4 +101,9 @@
         android:name="hu.janny.tomsschedule.ui.main.statistics.PersonalFilterFragment"
         android:label="@string/filter"
         tools:layout="@layout/fragment_personal_filter" />
+    <fragment
+        android:id="@+id/globalFilterFragment"
+        android:name="hu.janny.tomsschedule.ui.main.statistics.GlobalFilterFragment"
+        android:label="fragment_global_filter"
+        tools:layout="@layout/fragment_global_filter" />
 </navigation>

@@ -56,14 +56,14 @@ public final class FirebaseManager {
     }
 
     public static void saveInsertedActivityTimeToFirebase(ActivityTime activityTime, String activityName, User user) {
-        DatabaseReference ref = database.getReference("activityTimes").child(userToType(user.getGender(), user.getAgeGroup()))
-                .child(activityName).child(String.valueOf(activityTime.getD()));
+        DatabaseReference ref = database.getReference("activityTimes").child(activityName).child(user.getGender())
+                .child(String.valueOf(user.getAgeGroup())).child(String.valueOf(activityTime.getD()));
         ref.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 ActivityTimeFirebase p = mutableData.getValue(ActivityTimeFirebase.class);
                 if (p == null) {
-                    mutableData.setValue(new ActivityTimeFirebase(activityTime.getD(), activityTime.getT(), 1));
+                    mutableData.setValue(new ActivityTimeFirebase(activityTime.getD(), activityTime.getT(), 1, user.getGenderInt(), user.getAgeGroup()));
                     return Transaction.success(mutableData);
                 }
 
@@ -83,15 +83,15 @@ public final class FirebaseManager {
     }
 
     public static void saveUpdateActivityTimeToFirebase(ActivityTime activityTime, String activityName, User user) {
-        DatabaseReference ref = database.getReference("activityTimes").child(userToType(user.getGender(), user.getAgeGroup()))
-                .child(activityName).child(String.valueOf(activityTime.getD()));
+        DatabaseReference ref = database.getReference("activityTimes").child(activityName).child(user.getGender())
+                .child(String.valueOf(user.getAgeGroup())).child(String.valueOf(activityTime.getD()));
         ref.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 ActivityTimeFirebase p = mutableData.getValue(ActivityTimeFirebase.class);
                 if (p == null) {
                     if(activityTime.getT() > 0L){
-                        mutableData.setValue(new ActivityTimeFirebase(activityTime.getD(), activityTime.getT(), 1));
+                        mutableData.setValue(new ActivityTimeFirebase(activityTime.getD(), activityTime.getT(), 1, user.getGenderInt(), user.getAgeGroup()));
                     }
                     return Transaction.success(mutableData);
                 }
@@ -109,4 +109,6 @@ public final class FirebaseManager {
             }
         });
     }
+
+
 }

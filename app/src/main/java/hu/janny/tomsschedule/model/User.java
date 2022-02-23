@@ -75,6 +75,15 @@ public class User {
         }
     }
 
+    @Exclude
+    public int getGenderInt() {
+        if(gender.equals("female")) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
+
     public String getGender() {return gender;}
 
     @Exclude

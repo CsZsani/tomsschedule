@@ -26,6 +26,8 @@ public class StatisticsViewModel extends AndroidViewModel {
 
     private int pPeriodType = 0;
     private int pActivityNum = 0;
+    private long fromTime = 0L;
+    private long toTime = 0L;
     private List<Long> actsList = new ArrayList<>();
     private List<Integer> colors = new ArrayList<>();
     private List<String> names = new ArrayList<>();
@@ -122,5 +124,21 @@ public class StatisticsViewModel extends AndroidViewModel {
 
     public void setNames(List<String> names) {
         this.names = names;
+    }
+
+    public void setFromTime(long fromTime) {
+        this.fromTime = fromTime;
+    }
+
+    public long getFromTime() {
+        return fromTime;
+    }
+
+    public long getToTime() {
+        return toTime;
+    }
+
+    public void setToTime(long toTime) {
+        this.toTime = toTime;
     }
 }

@@ -7,32 +7,42 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import hu.janny.tomsschedule.R;
+import hu.janny.tomsschedule.databinding.FragmentGlobalFilterBinding;
+import hu.janny.tomsschedule.databinding.FragmentGlobalStatisticsBinding;
+import hu.janny.tomsschedule.viewmodel.GlobalStatisticsViewModel;
 
 public class GlobalStatisticsFragment extends Fragment {
 
-
-
-    public static GlobalStatisticsFragment newInstance() {
-        return new GlobalStatisticsFragment();
-    }
+    private FragmentGlobalStatisticsBinding binding;
+    private GlobalStatisticsViewModel viewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_global_statistics, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(GlobalStatisticsViewModel.class);
+        binding = FragmentGlobalStatisticsBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        initFilterButton(root);
+
+        return root;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // TODO: Use the ViewModel
+    private void initFilterButton(View fragView) {
+        binding.gFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(fragView).navigate(R.id.action_nav_statistics_to_globalFilterFragment);
+            }
+        });
     }
+
 
 }

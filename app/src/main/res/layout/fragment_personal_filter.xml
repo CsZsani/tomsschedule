@@ -45,8 +45,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/today_chip"
+                    android:textSize="16sp"
                     app:chipBackgroundColor="@color/toms_100"
-                    app:rippleColor="@color/toms_400" />
+                    app:rippleColor="@color/toms_500" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/pYesterdayChip"
@@ -54,8 +55,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/yesterday_chip"
+                    android:textSize="16sp"
                     app:chipBackgroundColor="@color/toms_100"
-                    app:rippleColor="@color/toms_400" />
+                    app:rippleColor="@color/toms_500" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/pWeekChip"
@@ -63,8 +65,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/week_chip"
+                    android:textSize="16sp"
                     app:chipBackgroundColor="@color/toms_100"
-                    app:rippleColor="@color/toms_400" />
+                    app:rippleColor="@color/toms_500" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/pTwoWeeksChip"
@@ -72,8 +75,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/two_week_chip"
+                    android:textSize="16sp"
                     app:chipBackgroundColor="@color/toms_100"
-                    app:rippleColor="@color/toms_400" />
+                    app:rippleColor="@color/toms_500" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/pMonthChip"
@@ -81,8 +85,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/month_chip"
+                    android:textSize="16sp"
                     app:chipBackgroundColor="@color/toms_100"
-                    app:rippleColor="@color/toms_400" />
+                    app:rippleColor="@color/toms_500" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/pThreeMonthsChip"
@@ -90,8 +95,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/three_months_chip"
+                    android:textSize="16sp"
                     app:chipBackgroundColor="@color/toms_100"
-                    app:rippleColor="@color/toms_400" />
+                    app:rippleColor="@color/toms_500" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/pCustomDayChip"
@@ -99,8 +105,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/select_custom_day"
+                    android:textSize="16sp"
                     app:chipBackgroundColor="@color/toms_100"
-                    app:rippleColor="@color/toms_400" />
+                    app:rippleColor="@color/toms_500" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/pFromToChip"
@@ -108,8 +115,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/select_custom_from_to"
+                    android:textSize="16sp"
                     app:chipBackgroundColor="@color/toms_100"
-                    app:rippleColor="@color/toms_400" />
+                    app:rippleColor="@color/toms_500" />
 
             </com.google.android.material.chip.ChipGroup>
 
@@ -194,7 +202,8 @@
                     style="@style/Widget.MaterialComponents.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/all_activity_chip" />
+                    android:text="@string/all_activity_chip"
+                    android:textSize="16sp" />
             </com.google.android.material.chip.ChipGroup>
 
             <Button
