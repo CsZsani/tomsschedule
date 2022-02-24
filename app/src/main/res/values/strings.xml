@@ -193,4 +193,16 @@
     <string name="age_group_6" translatable="false">\u003E 60</string>
     <string name="both">Both</string>
     <string name="all_age_group_chip">All</string>
+    <string name="fe_0">Female \u003C20</string>
+    <string name="fe_1">Female 20–29</string>
+    <string name="fe_2">Female 30–39</string>
+    <string name="fe_3">Female 40–49</string>
+    <string name="fe_4">Female 50–59</string>
+    <string name="fe_5">Female \u003E60</string>
+    <string name="ma_0">Male \u003C20</string>
+    <string name="ma_1">Male 20–29</string>
+    <string name="ma_2">Male 30–39</string>
+    <string name="ma_3">Male 40–49</string>
+    <string name="ma_4">Male 50–59</string>
+    <string name="ma_5">Male \u003E60</string>
 </resources>

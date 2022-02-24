@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="16dp"
-                app:checkedChip="@id/gYesterdayChip"
+                app:checkedChip="@id/gWeekChip"
                 app:selectionRequired="true"
                 app:singleSelection="true">
 

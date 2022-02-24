@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.storage.FirebaseStorage;
 
 import hu.janny.tomsschedule.LoginActivity;
 import hu.janny.tomsschedule.R;
@@ -31,11 +32,13 @@ public final class FirebaseManager {
     public static FirebaseAuth auth;
     public static FirebaseDatabase database;
     public static FirebaseUser user;
+    public static FirebaseStorage storage;
 
     public static void onStart() {
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance("https://toms-schedule-2022-default-rtdb.europe-west1.firebasedatabase.app");
         user = FirebaseAuth.getInstance().getCurrentUser();
+        storage = FirebaseStorage.getInstance();
     }
 
     public static boolean isUserLoggedIn() {

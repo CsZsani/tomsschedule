@@ -73,4 +73,16 @@ public class ActivityTimeFirebase {
     public void setA(int a) {
         this.a = a;
     }
+
+    @Exclude
+    @Override
+    public String toString() {
+        return "ActivityTimeFirebase{" +
+                "d=" + d +
+                ", t=" + t +
+                ", c=" + c +
+                ", g=" + g +
+                ", a=" + a +
+                '}';
+    }
 }

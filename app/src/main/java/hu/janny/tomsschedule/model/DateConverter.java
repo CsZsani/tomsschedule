@@ -165,6 +165,10 @@ public final class DateConverter {
         return h + (m / 60f);
     }
 
+    public static int durationConverterForPieChart(float milliseconds) {
+        return Math.round(milliseconds / 1000 / 60);
+    }
+
     public static float durationConverterFromLongToChartInt(long milliseconds) {
         long hr = TimeUnit.MILLISECONDS.toHours(milliseconds)
                 - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(milliseconds));

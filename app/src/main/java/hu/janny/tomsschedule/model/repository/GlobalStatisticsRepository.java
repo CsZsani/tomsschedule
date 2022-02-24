@@ -61,9 +61,11 @@ public class GlobalStatisticsRepository {
                         List<ActivityTimeFirebase> list = new ArrayList<>();
                         for (DataSnapshot genderSnapshot: ds.getChildren()) {
                             for (DataSnapshot ageGroupSnapshot: genderSnapshot.getChildren()) {
-                                ActivityTimeFirebase time = ageGroupSnapshot.getValue(ActivityTimeFirebase.class);
-                                if(time != null && time.getD() >= prevMonth) {
-                                    list.add(time);
+                                for (DataSnapshot activitySnapshot: ageGroupSnapshot.getChildren()) {
+                                    ActivityTimeFirebase time = activitySnapshot.getValue(ActivityTimeFirebase.class);
+                                    if (time != null && time.getD() >= prevMonth) {
+                                        list.add(time);
+                                    }
                                 }
                             }
                         }
@@ -79,6 +81,7 @@ public class GlobalStatisticsRepository {
 
     public void getExactDayData(String name, long dayMillis) {
         counter[0] = 0;
+        System.out.println(name);
         List<ActivityTimeFirebase> list = new ArrayList<>();
         DatabaseReference ref = db.getReference().child("activityTimes").child(name).getRef();
         ref.child("female").child("0").child(String.valueOf(dayMillis)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -88,9 +91,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
+                    counter[0]++;
+                    dayReady(list);
                 }
             }
         });
@@ -101,9 +104,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
+                    counter[0]++;
+                    dayReady(list);
                 }
             }
         });
@@ -114,9 +117,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
+                    counter[0]++;
+                    dayReady(list);
                 }
             }
         });
@@ -127,9 +130,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
+                    counter[0]++;
+                    dayReady(list);
                 }
             }
         });
@@ -140,9 +143,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
+                    counter[0]++;
+                    dayReady(list);
                 }
             }
         });
@@ -153,9 +156,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
+                    counter[0]++;
+                    dayReady(list);
                 }
             }
         });
@@ -166,9 +169,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
+                    counter[0]++;
+                    dayReady(list);
                 }
             }
         });
@@ -179,10 +182,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
-                }
+                    counter[0]++;
+                    dayReady(list);}
             }
         });
         ref.child("male").child("2").child(String.valueOf(dayMillis)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -192,10 +194,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
-                }
+                    counter[0]++;
+                    dayReady(list);}
             }
         });
         ref.child("male").child("3").child(String.valueOf(dayMillis)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -205,10 +206,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
-                }
+                    counter[0]++;
+                    dayReady(list);}
             }
         });
         ref.child("male").child("4").child(String.valueOf(dayMillis)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -218,9 +218,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
+                    counter[0]++;
+                    dayReady(list);
                 }
             }
         });
@@ -231,9 +231,9 @@ public class GlobalStatisticsRepository {
                     ActivityTimeFirebase time = task.getResult().getValue(ActivityTimeFirebase.class);
                     if(time != null) {
                         list.add(time);
-                        counter[0]++;
-                        dayReady(list);
                     }
+                    counter[0]++;
+                    dayReady(list);
                 }
             }
         });
@@ -244,6 +244,7 @@ public class GlobalStatisticsRepository {
         if(counter[0] == 12) {
             activityTimesFilter = list;
             handlerFilter.sendEmptyMessage(0);
+            System.out.println(list);
         }
     }
 

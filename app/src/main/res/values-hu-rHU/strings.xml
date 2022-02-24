@@ -186,4 +186,5 @@
     <string name="select_age_group">Válassz korosztályt!</string>
     <string name="both">Mindekettő</string>
     <string name="all_age_group_chip">Összes</string>
+    <string name="fe_0">Nő \\u003C20</string>
 </resources>

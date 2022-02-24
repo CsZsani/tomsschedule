@@ -24,7 +24,7 @@ public abstract class ActivityRoomDatabase extends RoomDatabase {
             synchronized (ActivityRoomDatabase.class) {
                 if(INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            ActivityRoomDatabase.class, "activitydatabase").build();
+                            ActivityRoomDatabase.class, "activitydatabase.db").build();
                 }
             }
         }

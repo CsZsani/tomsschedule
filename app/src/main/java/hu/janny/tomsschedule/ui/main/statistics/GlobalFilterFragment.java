@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +41,7 @@ public class GlobalFilterFragment extends Fragment {
 
         initCalendars();
         initPeriodGroup();
-        initFilterButton();
+        initFilterButton(root);
 
         return root;
     }
@@ -77,22 +78,71 @@ public class GlobalFilterFragment extends Fragment {
         });
     }
 
-    private void initFilterButton() {
+    private void initFilterButton(View fragView) {
+        binding.gFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getGender();
+                getAgeGroup();
+                getData();
+                Navigation.findNavController(fragView).popBackStack();
+            }
+        });
+    }
+
+    private void getData() {
         String activity = CustomActivityHelper.getSelectedFixActivityName(binding.gSelectActivitySpinner.getSelectedItem().toString().trim());
+        viewModel.setName(activity);
         if(binding.gYesterdayChip.isChecked()) {
+            viewModel.setFrom(0L);
+            viewModel.setTo(CustomActivityHelper.minusDaysMillis(1));
             viewModel.findYesterdayData(activity);
         } else if(binding.gCustomDayChip.isChecked()) {
+            viewModel.setFrom(0L);
+            viewModel.setTo(calDay.getTimeInMillis());
             viewModel.findExactDayData(activity, calDay.getTimeInMillis());
         } else if(binding.gWeekChip.isChecked()) {
+            viewModel.setFrom(CustomActivityHelper.minusWeekMillis(1));
+            viewModel.setTo(CustomActivityHelper.todayMillis());
             viewModel.findActivity(activity);
         } else {
+            viewModel.setFrom(CustomActivityHelper.minusMonthMillis(1));
+            viewModel.setTo(CustomActivityHelper.todayMillis());
             viewModel.findActivity(activity);
         }
     }
 
+    private void getGender() {
+        if(binding.gBothGenderChip.isChecked()) {
+            viewModel.setGender(0);
+        } else if(binding.gFemaleChip.isChecked()) {
+            viewModel.setGender(2);
+        } else {
+            viewModel.setGender(1);
+        }
+    }
+
+    private void getAgeGroup() {
+        if(binding.gAgeGroupAllChip.isChecked()) {
+            viewModel.setAgeGroup(-1);
+        } else if(binding.gAgeGroup1.isChecked()) {
+            viewModel.setAgeGroup(0);
+        } else if(binding.gAgeGroup2.isChecked()) {
+            viewModel.setAgeGroup(1);
+        } else if(binding.gAgeGroup3.isChecked()) {
+            viewModel.setAgeGroup(2);
+        } else if(binding.gAgeGroup4.isChecked()) {
+            viewModel.setAgeGroup(3);
+        } else if(binding.gAgeGroup5.isChecked()) {
+            viewModel.setAgeGroup(4);
+        } else if(binding.gAgeGroup6.isChecked()) {
+            viewModel.setAgeGroup(5);
+        }
+    }
+
     private void hideChips() {
-        binding.gYesterdayChip.setVisibility(View.GONE);
-        binding.gCustomDayChip.setVisibility(View.GONE);
+        binding.gFemaleChip.setVisibility(View.GONE);
+        binding.gMaleChip.setVisibility(View.GONE);
         binding.gBothGenderChip.setChecked(true);
         binding.gAgeGroup1.setVisibility(View.GONE);
         binding.gAgeGroup2.setVisibility(View.GONE);
@@ -104,8 +154,8 @@ public class GlobalFilterFragment extends Fragment {
     }
 
     private void showChips() {
-        binding.gYesterdayChip.setVisibility(View.VISIBLE);
-        binding.gCustomDayChip.setVisibility(View.VISIBLE);
+        binding.gFemaleChip.setVisibility(View.VISIBLE);
+        binding.gMaleChip.setVisibility(View.VISIBLE);
         binding.gBothGenderChip.setChecked(true);
         binding.gAgeGroup1.setVisibility(View.VISIBLE);
         binding.gAgeGroup2.setVisibility(View.VISIBLE);

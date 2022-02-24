@@ -26,4 +26,16 @@
     <color name="red_notification">#F44336</color>
     <color name="orange_notification">#FFC107</color>
     <color name="green_notification">#4CAF50</color>
+    <color name="female_0">#FFB5E6</color>
+    <color name="female_1">#FF96DC</color>
+    <color name="female_2">#FF74D0</color>
+    <color name="female_3">#FF54C5</color>
+    <color name="female_4">#FF29B7</color>
+    <color name="female_5">#FF00A9</color>
+    <color name="male_0">#A7C5FF</color>
+    <color name="male_1">#84AEFF</color>
+    <color name="male_2">#6297FF</color>
+    <color name="male_3">#4A88FF</color>
+    <color name="male_4">#256FFF</color>
+    <color name="male_5">#0057FF</color>
 </resources>
