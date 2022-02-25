@@ -187,4 +187,16 @@
     <string name="both">Mindekettő</string>
     <string name="all_age_group_chip">Összes</string>
     <string name="fe_0">Nő \\u003C20</string>
+    <string name="tip">Javaslat</string>
+    <string name="fe_1">Nő 20-29</string>
+    <string name="fe_2">Nő 30-39</string>
+    <string name="fe_3">Nő 40-49</string>
+    <string name="fe_4">Nő 50-59</string>
+    <string name="fe_5">Nő \\u003E60</string>
+    <string name="ma_0">Férfi \\u003C20</string>
+    <string name="ma_1">Férfi 20-29</string>
+    <string name="ma_2">Férfi 30-39</string>
+    <string name="ma_3">Férfi 40-49</string>
+    <string name="ma_4">Férfi 50-59</string>
+    <string name="ma_5">Férfi \\u003E60</string>
 </resources>

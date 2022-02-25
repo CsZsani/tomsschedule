@@ -21,14 +21,18 @@ import hu.janny.tomsschedule.databinding.FragmentTipsBinding;
 import hu.janny.tomsschedule.model.ActivityWithTimes;
 import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.CustomActivityRecyclerAdapter;
+import hu.janny.tomsschedule.model.Tip;
 import hu.janny.tomsschedule.ui.main.details.DetailFragment;
+import hu.janny.tomsschedule.viewmodel.StatisticsViewModel;
+import hu.janny.tomsschedule.viewmodel.TipsViewModel;
 import hu.janny.tomsschedule.viewmodel.adapter.TipsRecyclerAdapter;
 
 public class TipsFragment extends Fragment {
 
-    private TipsViewModel mViewModel;
+
     private FragmentTipsBinding binding;
     private TipsRecyclerAdapter adapter;
+    private TipsViewModel viewModel;
 
     public static TipsFragment newInstance() {
         return new TipsFragment();
@@ -39,34 +43,28 @@ public class TipsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentTipsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        viewModel = new ViewModelProvider(requireActivity()).get(TipsViewModel.class);
+
+        recyclerSetup(root);
+        adapter.setActivityList(viewModel.getTips());
 
         return root;
     }
 
-    private void recyclerSetup() {
+    private void recyclerSetup(View fragView) {
         View.OnClickListener onClickListener = itemView -> {
-            ActivityWithTimes item = (ActivityWithTimes) itemView.getTag();
-            //System.out.println(item);
+            Tip item = (Tip) itemView.getTag();
             Bundle arguments = new Bundle();
-            arguments.putLong(DetailFragment.ARG_ITEM_ID, item.customActivity.getId());
-            long timeSpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(item.activityTimes);
-            arguments.putLong(DetailFragment.TODAY_SO_FAR, timeSpentToday);
-            //System.out.println(timeSpentToday);
-            Navigation.findNavController(itemView).navigate(R.id.action_nav_home_to_detailFragment, arguments);
+            arguments.putLong(TipDetailFragment.TIP_ITEM_ID, item.getId());
+            viewModel.findTip(item);
+            Navigation.findNavController(itemView).navigate(R.id.action_nav_statistics_to_tipDetailFragment, arguments);
         };
 
-        adapter = new TipsRecyclerAdapter(R.layout.custom_activity_list_item, onClickListener);
+        adapter = new TipsRecyclerAdapter(R.layout.tip_list_item, onClickListener, fragView.getContext());
         binding.tipsRecyclerView.setLayoutManager(
                 new LinearLayoutManager(getContext()));
         binding.tipsRecyclerView.setAdapter(adapter);
     }
 
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(TipsViewModel.class);
-        // TODO: Use the ViewModel
-    }
 
 }

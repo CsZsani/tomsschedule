@@ -80,6 +80,7 @@ public class DetailFragment extends Fragment {
         binding = DetailFragmentBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             long id = getArguments().getLong(ARG_ITEM_ID);
             //mainViewModel.findActivityByIdWithTimes(id);

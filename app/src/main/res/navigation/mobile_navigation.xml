@@ -33,6 +33,10 @@
             android:id="@+id/action_nav_statistics_to_globalFilterFragment"
             app:destination="@id/globalFilterFragment"
             app:popUpTo="@id/nav_statistics" />
+        <action
+            android:id="@+id/action_nav_statistics_to_tipDetailFragment"
+            app:destination="@id/tipDetailFragment"
+            app:popUpTo="@id/nav_statistics" />
     </fragment>
 
     <fragment
@@ -104,6 +108,11 @@
     <fragment
         android:id="@+id/globalFilterFragment"
         android:name="hu.janny.tomsschedule.ui.main.statistics.GlobalFilterFragment"
-        android:label="fragment_global_filter"
+        android:label="@string/filter"
         tools:layout="@layout/fragment_global_filter" />
+    <fragment
+        android:id="@+id/tipDetailFragment"
+        android:name="hu.janny.tomsschedule.ui.main.statistics.TipDetailFragment"
+        android:label="@string/tip"
+        tools:layout="@layout/fragment_tip_detail" />
 </navigation>

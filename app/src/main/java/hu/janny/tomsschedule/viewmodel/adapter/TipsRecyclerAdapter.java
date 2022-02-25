@@ -1,5 +1,7 @@
 package hu.janny.tomsschedule.viewmodel.adapter;
 
+import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,7 +9,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.util.List;
 
@@ -22,10 +28,12 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
     private final int listItemLayout;
     private final View.OnClickListener onClickListener;
     private List<Tip> tips;
+    private Context context;
 
-    public TipsRecyclerAdapter(int layoutId, View.OnClickListener onClickListener) {
+    public TipsRecyclerAdapter(int layoutId, View.OnClickListener onClickListener, Context context) {
         this.listItemLayout = layoutId;
         this.onClickListener = onClickListener;
+        this.context = context;
     }
 
     public void setActivityList(List<Tip> tips) {
@@ -41,20 +49,20 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView activityName;
-        TextView detailsText;
+        TextView tipTitle;
+        TextView tipText;
         View divider;
-        Button beginActivity;
-        TextView todayTime;
-        Button statusIndicator;
+        TextView tipAuthor;
+        TextView tipSource;
+        ChipGroup tipTags;
         ViewHolder(View itemView) {
             super(itemView);
-            activityName = itemView.findViewById(R.id.activityNameInList);
-            detailsText = itemView.findViewById(R.id.activityBasicInfosInList);
-            divider = itemView.findViewById(R.id.divider);
-            beginActivity = itemView.findViewById(R.id.beginActivityInList);
-            todayTime = itemView.findViewById(R.id.todayTime);
-            statusIndicator = itemView.findViewById(R.id.statusIndicatorInList);
+            tipTitle = itemView.findViewById(R.id.tipTitle);
+            tipText = itemView.findViewById(R.id.tipText);
+            divider = itemView.findViewById(R.id.tipCardDivider);
+            tipAuthor = itemView.findViewById(R.id.tipAuthor);
+            tipSource = itemView.findViewById(R.id.tipSource);
+            tipTags = itemView.findViewById(R.id.tipTags);
         }
     }
 
@@ -62,6 +70,20 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
     public void onBindViewHolder(@NonNull TipsRecyclerAdapter.ViewHolder viewHolder, int i) {
         viewHolder.itemView.setOnClickListener(onClickListener);
         viewHolder.itemView.setTag(tips.get(i));
+        viewHolder.tipTitle.setText(tips.get(i).getTitle());
+        viewHolder.tipText.setText(tips.get(i).getText().substring(0, Math.min(tips.get(i).getText().length(), 100)));
+        viewHolder.tipAuthor.setText(tips.get(i).getAuthor());
+        viewHolder.tipSource.setText(tips.get(i).getSource());
+        viewHolder.divider.setBackgroundColor(tips.get(i).getColorInt());
+        if(!tips.get(i).getTags().isEmpty()) {
+            for(String s : tips.get(i).getTags()) {
+                Chip chip = new Chip(context);
+                chip.setId(ViewCompat.generateViewId());
+                chip.setText(s);
+                chip.setCheckable(false);
+                viewHolder.tipTags.addView(chip);
+            }
+        }
     }
 
     @Override

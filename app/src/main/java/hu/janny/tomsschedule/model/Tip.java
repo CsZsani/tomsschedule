@@ -1,5 +1,9 @@
 package hu.janny.tomsschedule.model;
 
+import android.graphics.Color;
+
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,5 +99,26 @@ public class Tip {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    @Exclude
+    public int getColorInt() {
+        return Color.parseColor(hexColor);
+    }
+
+    @Exclude
+    @Override
+    public String toString() {
+        return "Tip{" +
+                "id=" + id +
+                ", time=" + time +
+                ", title='" + title + '\'' +
+                ", text='" + text + '\'' +
+                ", author='" + author + '\'' +
+                ", source='" + source + '\'' +
+                ", url='" + url + '\'' +
+                ", hexColor='" + hexColor + '\'' +
+                ", tags=" + tags +
+                '}';
     }
 }
