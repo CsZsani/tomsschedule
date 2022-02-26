@@ -18,11 +18,13 @@ public class TipsViewModel extends AndroidViewModel {
     private final TipsRepository repository;
     private List<Tip> tipsList;
     private final MutableLiveData<Tip> tip;
+    private final MutableLiveData<List<Tip>> tips;
 
     public TipsViewModel(@NonNull Application application) {
         super(application);
         repository = new TipsRepository(application);
         tip = repository.getTip();
+        tips = repository.getTipsList();
     }
 
     public void findTip(int id) {
@@ -37,11 +39,11 @@ public class TipsViewModel extends AndroidViewModel {
         return repository.getTips();
     }
 
-    public List<Tip> getTipsList() {
-        return tipsList;
-    }
-
     public MutableLiveData<Tip> getTip() {
         return tip;
+    }
+
+    public MutableLiveData<List<Tip>> getTipsList() {
+        return tips;
     }
 }

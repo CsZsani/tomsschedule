@@ -21,20 +21,12 @@ import hu.janny.tomsschedule.ui.main.MainViewModel;
 
 public class AccountFragment extends Fragment {
 
-    private AccountViewModel accountViewModel;
     private FragmentAccountBinding binding;
     private MainViewModel mainViewModel;
-
-    public static AccountFragment newInstance() {
-        return new AccountFragment();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        //return inflater.inflate(R.layout.account_fragment, container, false);
-        accountViewModel =
-                new ViewModelProvider(this).get(AccountViewModel.class);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         binding = FragmentAccountBinding.inflate(inflater, container, false);
@@ -45,7 +37,6 @@ public class AccountFragment extends Fragment {
             public void onChanged(@Nullable User u) {
                 if(u != null) {
                     binding.accountEmail.setText(u.getEmail());
-                    //binding.accountBirthDate.setText(DateConverter.longMillisToStringForSimpleDateDialog(DateConverter.stringMillisToLong(u.birthDate)));
                     binding.accountBirthDate.setText(u.getBirthDate());
                     binding.accountAgeGroup.setText(u.ageGroup());
                     binding.accountName.setText(u.getName());
@@ -61,15 +52,6 @@ public class AccountFragment extends Fragment {
         });
         return root;
     }
-
-
-
-    /*@Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        accountViewModel = new ViewModelProvider(this).get(AccountViewModel.class);
-        // TODO: Use the ViewModel
-    }*/
 
 
     @Override

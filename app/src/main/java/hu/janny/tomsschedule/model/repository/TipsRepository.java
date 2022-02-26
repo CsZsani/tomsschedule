@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +37,8 @@ import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 public class TipsRepository {
 
     private final MutableLiveData<Tip> tip = new MutableLiveData<>();
+    private final MutableLiveData<List<Tip>> tips = new MutableLiveData<>();
+    private List<Tip> allTips = new ArrayList<>();
     private Tip tipFilter;
     private List<Tip> fixTips = new ArrayList<>();
     private List<Tip> cache = new ArrayList<>();
@@ -45,13 +49,100 @@ public class TipsRepository {
     public TipsRepository(Application application) {
         db = FirebaseManager.storage;
         context = application.getApplicationContext();
-        loadTips();
+        loadFixTips();
+        loadFirebase();
     }
 
-    private void loadTips() {
+    Handler handlerTips = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            tips.setValue(allTips);
+        }
+    };
+
+    Handler handlerFilter = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            tip.setValue(tipFilter);
+        }
+    };
+
+    private void loadFirebase() {
+        System.out.println(cache + " cahce");
+        if(cache.isEmpty()) {
+            StorageReference storageReference = db.getReference().child("tips/tips.json");
+            loadFromFirebaseReference(storageReference);
+        }
+    }
+
+    private void loadFromFirebaseReference(StorageReference storageReference) {
         try {
-            JSONObject obj = new JSONObject(loadFromAsset());
-            JSONArray tips = obj.getJSONArray("tips");
+            File localFile = File.createTempFile("tips", ".json");
+
+            storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    // Local temp file has been created
+                    String json = readFromTempFile(localFile);
+                    if(json != null) {
+                        try {
+                            JSONObject obj = new JSONObject(json);
+                            loadTips(obj, cache);
+                            setAllTips();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setAllTips() {
+        List<Tip> list = new ArrayList<>(fixTips);
+        if(!cache.isEmpty()) {
+            list.addAll(cache);
+        }
+        allTips = list;
+        handlerTips.sendEmptyMessage(0);
+    }
+
+    private String readFromTempFile(File localFile) {
+        String json = null;
+        try {
+            InputStream is = new FileInputStream(localFile);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return json;
+    }
+
+    private void loadFixTips() {
+        if(fixTips.isEmpty()) {
+            try {
+                JSONObject obj = new JSONObject(loadFromAsset());
+                loadTips(obj, fixTips);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadTips(JSONObject jsonObject, List<Tip> list) {
+        try {
+            JSONArray tips = jsonObject.getJSONArray("tips");
 
             for (int i = 0; i < tips.length(); i++) {
                 JSONObject tip = tips.getJSONObject(i);
@@ -70,7 +161,7 @@ public class TipsRepository {
                     String tag = tags.getString(j);
                     newTip.addTag(tag);
                 }
-                fixTips.add(newTip);
+                list.add(newTip);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -85,20 +176,13 @@ public class TipsRepository {
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            json = new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
         return json;
     }
-
-    Handler handlerFilter = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            tip.setValue(tipFilter);
-        }
-    };
 
     public void findTipId(int id) {
         Tip tip = null;
@@ -135,13 +219,18 @@ public class TipsRepository {
     }
 
     public List<Tip> getTips() {
+        List<Tip> list = new ArrayList<>(fixTips);
         if(!cache.isEmpty()) {
-            fixTips.addAll(cache);
+            list.addAll(cache);
         }
-        return fixTips;
+        return list;
     }
 
     public MutableLiveData<Tip> getTip() {
         return tip;
+    }
+
+    public MutableLiveData<List<Tip>> getTipsList() {
+        return tips;
     }
 }

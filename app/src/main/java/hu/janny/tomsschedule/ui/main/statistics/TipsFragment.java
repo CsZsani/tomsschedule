@@ -1,5 +1,6 @@
 package hu.janny.tomsschedule.ui.main.statistics;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.List;
 
 import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
@@ -46,7 +49,13 @@ public class TipsFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(TipsViewModel.class);
 
         recyclerSetup(root);
-        adapter.setActivityList(viewModel.getTips());
+        viewModel.getTipsList().observe(getViewLifecycleOwner(), new Observer<List<Tip>>() {
+            @Override
+            public void onChanged(List<Tip> tips) {
+                adapter.setActivityList(tips);
+            }
+        });
+        //adapter.setActivityList(viewModel.getTips());
 
         return root;
     }
