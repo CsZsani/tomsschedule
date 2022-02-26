@@ -71,7 +71,8 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
         viewHolder.itemView.setOnClickListener(onClickListener);
         viewHolder.itemView.setTag(tips.get(i));
         viewHolder.tipTitle.setText(tips.get(i).getTitle());
-        viewHolder.tipText.setText(tips.get(i).getText().substring(0, Math.min(tips.get(i).getText().length(), 100)));
+        String text = tips.get(i).getText().substring(0, Math.min(tips.get(i).getText().length(), 100)) + "...";
+        viewHolder.tipText.setText(text);
         viewHolder.tipAuthor.setText(tips.get(i).getAuthor());
         viewHolder.tipSource.setText(tips.get(i).getSource());
         viewHolder.divider.setBackgroundColor(tips.get(i).getColorInt());

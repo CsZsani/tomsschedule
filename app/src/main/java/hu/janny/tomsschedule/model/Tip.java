@@ -121,4 +121,9 @@ public class Tip {
                 ", tags=" + tags +
                 '}';
     }
+
+    @Exclude
+    public void addTag(String tag) {
+        tags.add(tag);
+    }
 }
