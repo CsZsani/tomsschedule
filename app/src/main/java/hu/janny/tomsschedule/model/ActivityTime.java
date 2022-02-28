@@ -1,5 +1,7 @@
 package hu.janny.tomsschedule.model;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -9,7 +11,8 @@ import androidx.room.PrimaryKey;
 
 //@Entity(foreignKeys = {@ForeignKey(entity = CustomActivity.class,
  //parentColumns = "activityId", childColumns = "activityId", onDelete = ForeignKey.NO_ACTION, onUpdate = ForeignKey.RESTRICT)})
-@Entity(tableName = "activitytimes", primaryKeys = {"actId","date"})
+@Entity(tableName = "activitytimes", primaryKeys = {"actId","date"}, foreignKeys = {@ForeignKey(onDelete = CASCADE,entity = CustomActivity.class,
+        parentColumns = "activityId",childColumns = "actId")})
 public class ActivityTime implements Comparable<ActivityTime> {
 
     @NonNull
@@ -23,9 +26,9 @@ public class ActivityTime implements Comparable<ActivityTime> {
     @ColumnInfo(name = "time")
     public long t = 0L;
 
-    @Ignore
     public ActivityTime() {}
 
+    @Ignore
     public ActivityTime(@NonNull long aId,@NonNull long d, long t) {
         this.aId = aId;
         this.d = d;
@@ -36,7 +39,7 @@ public class ActivityTime implements Comparable<ActivityTime> {
         return aId;
     }
 
-    public void setaId(int aId) {
+    public void setaId(long aId) {
         this.aId = aId;
     }
 

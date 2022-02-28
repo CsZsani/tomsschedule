@@ -19,11 +19,14 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.List;
+
 import hu.janny.tomsschedule.LoginActivity;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.RegisterActivity;
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.ActivityTimeFirebase;
+import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
 
@@ -113,5 +116,25 @@ public final class FirebaseManager {
         });
     }
 
+    public static void saveToFirebaseActivities(List<CustomActivity> list) {
+        database.getReference().child("backups").child(user.getUid()).child("activities").setValue(list).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(!task.isSuccessful()) {
+                    System.out.println("Saved activities into firebase");
+                }
+            }
+        });
+    }
 
+    public static void saveToFirebaseTimes(List<ActivityTime> list) {
+        database.getReference().child("backups").child(user.getUid()).child("times").setValue(list).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(!task.isSuccessful()) {
+                    System.out.println("Saved times into firebase");
+                }
+            }
+        });
+    }
 }

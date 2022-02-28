@@ -90,6 +90,8 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
+
+
     public void logoutUserInDb(User user) {
         userRepository.updateUser(user);
     }

@@ -81,11 +81,11 @@ public class CustomActivity {
     @Embedded(prefix = "wd")
     public CustomWeekTime customWeekTime = new CustomWeekTime();
 
-    @Ignore
     public CustomActivity() {
     }
 
-    public CustomActivity(@NonNull long id, @NonNull String userId,@NonNull String name, int col, String note, int pr) {
+    @Ignore
+    public CustomActivity(long id, @NonNull String userId,@NonNull String name, int col, String note, int pr) {
         this.id = id;
         this.userId = userId;
         this.name = name;
@@ -93,6 +93,29 @@ public class CustomActivity {
         this.note = note;
         this.pr = pr;
 
+    }
+
+    @Ignore
+    public CustomActivity(long id, @NonNull String userId, @NonNull String name, int col, String note, int pr, int tT, long dur, int reg, boolean hFD, long sD, long eD, long sF, long re, long aT, long lD, int tN, boolean notif, CustomWeekTime customWeekTime) {
+        this.id = id;
+        this.userId = userId;
+        this.name = name;
+        this.col = col;
+        this.note = note;
+        this.pr = pr;
+        this.tT = tT;
+        this.dur = dur;
+        this.reg = reg;
+        this.hFD = hFD;
+        this.sD = sD;
+        this.eD = eD;
+        this.sF = sF;
+        this.re = re;
+        this.aT = aT;
+        this.lD = lD;
+        this.tN = tN;
+        this.notif = notif;
+        this.customWeekTime = customWeekTime;
     }
 
     public CustomWeekTime getCustomWeekTime() {
@@ -113,11 +136,13 @@ public class CustomActivity {
         this.customWeekTime.setSun(sun);
     }
 
+    @Exclude
     @Override
     public int hashCode() {
         return super.hashCode();
     }
 
+    @Exclude
     @Override
     public boolean equals(@Nullable Object obj) {
         return super.equals(obj);
@@ -127,7 +152,7 @@ public class CustomActivity {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -9,20 +9,20 @@
         android:roundIcon="@mipmap/logo_launcher_round_toms"
         android:supportsRtl="true"
         android:theme="@style/Theme.TomsSchedule">
+
         <service
-            android:name="hu.janny.tomsschedule.ui.timeractivity.CounterService"
+            android:name=".ui.timeractivity.CounterService"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true"></service>
         <service
-            android:name="hu.janny.tomsschedule.ui.timeractivity.MusicPlayerService"
+            android:name=".ui.timeractivity.MusicPlayerService"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true"></service>
+
         <activity
             android:name=".ui.timeractivity.TimerActivity"
             android:exported="false"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".RegisterActivity"
             android:exported="false"

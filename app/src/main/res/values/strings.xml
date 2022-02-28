@@ -206,4 +206,13 @@
     <string name="ma_3">Male 40–49</string>
     <string name="ma_4">Male 50–59</string>
     <string name="ma_5">Male \u003E60</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="create_backup">Create backup (internet connection required)</string>
+    <string name="save_data">Save data</string>
+    <string name="save_data_warning">Your last backup will be overwritten. Do you want to continue?</string>
+    <string name="restore_backup">Restore backup (internet connection required)</string>
+    <string name="download_data">Download data</string>
+    <string name="download_data_warning">Your local data will be overwritten. Do you want to continue?</string>
+    <string name="create_backup_progress">Creating backup is in progress. Please wait…</string>
+    <string name="restore_backup_progress">Restoring backup is in progress. Please wait…</string>
 </resources>

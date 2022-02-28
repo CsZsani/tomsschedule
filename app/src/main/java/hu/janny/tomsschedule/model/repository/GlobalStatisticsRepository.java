@@ -51,7 +51,8 @@ public class GlobalStatisticsRepository {
             handlerFilter.sendEmptyMessage(0);
         } else {
             long prevMonth = CustomActivityHelper.minusMonthMillis(1);
-            db.getReference().child("activityTimes").child(name).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            db.getReference().child("activityTimes").child(name).orderByKey().startAt(prevMonth)
+                    .get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                     if(!task.isSuccessful()) {

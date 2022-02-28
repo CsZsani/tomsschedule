@@ -22,6 +22,10 @@ public interface CustomActivityDao {
     @Insert
     long insertActivity(CustomActivity customActivity);
 
+    @Transaction
+    @Insert
+    void insertAll(List<CustomActivity> activityList);
+
     @Update
     void updateActivity(CustomActivity customActivity);
 
@@ -33,6 +37,10 @@ public interface CustomActivityDao {
 
     @Query("DELETE FROM customactivities WHERE activityId = :id")
     void deleteActivityById(long id);
+
+    @Transaction
+    @Query("DELETE FROM customactivities WHERE userId = :id")
+    void deleteActivityByUserId(String id);
 
     @Query("SELECT * FROM customactivities")
     LiveData<List<CustomActivity>> getActivitiesList();

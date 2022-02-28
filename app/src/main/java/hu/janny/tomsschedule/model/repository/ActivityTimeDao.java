@@ -1,5 +1,6 @@
 package hu.janny.tomsschedule.model.repository;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -20,6 +21,10 @@ public abstract class ActivityTimeDao {
 
     @Insert
     public abstract void insertActivityTime(ActivityTime activityTime);
+
+    @Transaction
+    @Insert
+    public abstract void insertAll(List<ActivityTime> activityTimes);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract long insertIgnore(ActivityTime activityTime);
@@ -77,6 +82,10 @@ public abstract class ActivityTimeDao {
     @Transaction
     @Query("select * from activitytimes")
     public abstract List<ActivityTime> getAllAllTheTime();
+
+    @Transaction
+    @Query("select * from activitytimes")
+    public abstract LiveData<List<ActivityTime>> getTimes();
 
     // For some act. all times
     @Transaction
