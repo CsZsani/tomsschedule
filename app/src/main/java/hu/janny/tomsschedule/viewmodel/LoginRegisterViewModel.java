@@ -1,4 +1,4 @@
-package hu.janny.tomsschedule;
+package hu.janny.tomsschedule.viewmodel;
 
 import android.app.Application;
 
@@ -30,12 +30,6 @@ public class LoginRegisterViewModel extends AndroidViewModel {
     public void updateUser(User user) {
         repository.updateUser(user);
     }
-
-    public User getUserById(String id) {
-        return repository.getUserByIdForUpdate(id);
-    }
-
-    public User isInDatabase(String id) {return repository.isInDatabase(id);}
 
     public void loginUser(String id) {
         repository.loginUser(id);

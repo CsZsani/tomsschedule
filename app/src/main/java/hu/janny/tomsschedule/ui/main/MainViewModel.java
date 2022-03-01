@@ -40,14 +40,12 @@ public class MainViewModel extends AndroidViewModel {
     private final LiveData<List<CustomActivity>> activitiesList;
     private final LiveData<List<CustomActivity>> activitiesListEntities;
     private final LiveData<List<ActivityWithTimes>> activitiesWithTimesList;
-    private User currentUser;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         repository = new Repository(application);
         userRepository = new UserRepository(application);
         user = userRepository.getCurrentUser();
-        currentUser = userRepository.getCurrentUserNoLiveData();
         allActivitiesWithTimes = repository.getAllActivitiesWithTimes();
         activityWithTimes = repository.getActivitiesWithTimesData();
         activitiesList = repository.getActivities();

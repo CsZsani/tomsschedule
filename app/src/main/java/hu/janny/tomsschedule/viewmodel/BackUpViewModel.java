@@ -35,6 +35,10 @@ public class BackUpViewModel extends AndroidViewModel {
         repository.restoreBackup(userId);
     }
 
+    public void setReady(boolean ready) {
+        repository.setReady(ready);
+    }
+
     public MutableLiveData<Boolean> getReady() {
         return ready;
     }

@@ -158,6 +158,10 @@ public class Repository {
         return ready;
     }
 
+    public void setReady(boolean ready) {
+        this.ready.setValue(ready);
+    }
+
     public void restoreBackup(String userId) {
         restoreReady[0] = 0;
         deleteActivitiesByUserId(userId);

@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentSettingsBinding;
 import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 import hu.janny.tomsschedule.viewmodel.BackUpViewModel;
 
 public class SettingsFragment extends Fragment {
@@ -49,6 +50,7 @@ public class SettingsFragment extends Fragment {
             public void onChanged(Boolean ready) {
                 if(ready) {
                     Toast.makeText(getActivity(), "Save/restore is done!", Toast.LENGTH_SHORT).show();
+                    viewModel.setReady(true);
                 }
             }
         });
@@ -76,7 +78,7 @@ public class SettingsFragment extends Fragment {
         builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(), "Saving is in progress!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.create_backup_progress, Toast.LENGTH_LONG).show();
                 viewModel.saveData(userId);
             }
         });
@@ -94,7 +96,7 @@ public class SettingsFragment extends Fragment {
         builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(), "Restoring is in progress!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.restore_backup_progress, Toast.LENGTH_LONG).show();
                 viewModel.restoreBackup(userId);
             }
         });
@@ -104,6 +106,9 @@ public class SettingsFragment extends Fragment {
             }
         });
         restoreDialog = builder.create();
+    }
+
+    public static void readySave() {
     }
 
     @Override

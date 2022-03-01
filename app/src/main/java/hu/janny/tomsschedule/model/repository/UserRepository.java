@@ -22,8 +22,6 @@ public class UserRepository {
     private final MutableLiveData<User> userData = new MutableLiveData<>();
     private final LiveData<User> currentUser;
     private final LiveData<List<User>> users;
-    private User user;
-    private User userById;
 
     private final UserDao userDao;
 
@@ -35,13 +33,6 @@ public class UserRepository {
         currentUser = userDao.getCurrentUser();
         users = userDao.getUsers();
     }
-
-    Handler handlerUser = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            userData.setValue(user);
-        }
-    };
 
     public void insertUser(User user) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -75,53 +66,8 @@ public class UserRepository {
         executor.shutdown();
     }
 
-    public void getUserById(String id) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            user = userDao.getUserById(id);
-            handlerUser.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public User isInDatabase(String id) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            user = userDao.getUserById(id);
-        });
-        executor.shutdown();
-        return user;
-    }
-
-    public void getUserByIdForUpd(String id) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            userById = userDao.getUserById(id);
-        });
-        executor.shutdown();
-    }
-
-    public User getUserByIdForUpdate(String id) {
-        this.getUserByIdForUpd(id);
-        return userById;
-    }
-
     public LiveData<User> getCurrentUser() {
         return currentUser;
-    }
-
-    public User getCurrentUserNoLiveData() {
-        final User[] user = new User[1];
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            user[0] = userDao.getCurrentUserNoLiveData();
-        });
-        executor.shutdown();
-        return user[0];
-    }
-
-    public MutableLiveData<User> getUserData() {
-        return userData;
     }
 
     public LiveData<List<User>> getUsers() {

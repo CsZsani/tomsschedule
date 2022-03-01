@@ -19,21 +19,31 @@ public interface UserDao {
     @Update
     void updateUser(User user);
 
-    @Query("SELECT * FROM users WHERE users.userId = :id")
-    User getUserById(String id);
-
+    /**
+     * Returns the logged in user.
+     * @return logged in user LiveData
+     */
     @Query("SELECT * FROM users WHERE users.isLoggedIn = 1 ")
     LiveData<User> getCurrentUser();
 
+    /**
+     * Returns all users in database.
+     * @return users in database as LiveData
+     */
     @Query("SELECT * FROM users")
     LiveData<List<User>> getUsers();
 
-    @Query("SELECT * FROM users WHERE users.isLoggedIn = 1 ")
-    User getCurrentUserNoLiveData();
-
+    /**
+     * Signs in the user by userId.
+     * @param id user id
+     */
     @Query("UPDATE users set isLoggedIn = 1 where users.userId = :id")
     void logIn(String id);
 
+    /**
+     * Signs out the user by userId.
+     * @param id user id
+     */
     @Query("UPDATE users set isLoggedIn = 0 where users.userId = :id")
     void logOut(String id);
 }

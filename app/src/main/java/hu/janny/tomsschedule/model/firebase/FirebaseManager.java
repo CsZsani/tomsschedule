@@ -1,14 +1,9 @@
 package hu.janny.tomsschedule.model.firebase;
 
-import android.content.Intent;
-import android.view.View;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,13 +16,9 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
-import hu.janny.tomsschedule.LoginActivity;
-import hu.janny.tomsschedule.R;
-import hu.janny.tomsschedule.RegisterActivity;
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.ActivityTimeFirebase;
 import hu.janny.tomsschedule.model.CustomActivity;
-import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
 
 public final class FirebaseManager {
@@ -53,8 +44,8 @@ public final class FirebaseManager {
     }
 
     public static void logoutUser() {
-        FirebaseManager.auth.signOut();
         FirebaseManager.user = null;
+        FirebaseManager.auth.signOut();
     }
 
     private static String userToType(String name, int ageGroup) {

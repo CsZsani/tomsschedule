@@ -18,8 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import hu.janny.tomsschedule.databinding.ActivityMainBinding;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
+import hu.janny.tomsschedule.ui.loginregister.LoginActivity;
 import hu.janny.tomsschedule.ui.main.addcustomactivity.AddCustomActivityFragment;
 import hu.janny.tomsschedule.ui.timeractivity.TimerActivity;
+import hu.janny.tomsschedule.viewmodel.LoginRegisterViewModel;
 
 public class MainActivity extends AppCompatActivity implements AddCustomActivityFragment.OnFragmentInteractionListener {
 

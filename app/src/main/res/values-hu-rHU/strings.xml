@@ -199,4 +199,13 @@
     <string name="ma_3">Férfi 40-49</string>
     <string name="ma_4">Férfi 50-59</string>
     <string name="ma_5">Férfi \\u003E60</string>
+    <string name="dark_mode">Sötét téma</string>
+    <string name="create_backup">"Adatok mentése felhőbe (internet kapcsolattal) "</string>
+    <string name="save_data">Feltöltés</string>
+    <string name="save_data_warning">Az utolsó mentésed felülíródik. Biztosan folytatod?</string>
+    <string name="restore_backup">Mentett adatok letöltése (internet kapcsolattal)</string>
+    <string name="download_data">Letöltés</string>
+    <string name="download_data_warning">A helyi adatok felülíródnak. Biztosan folytatod?</string>
+    <string name="create_backup_progress">Mentés folyamatban, kérlek várj...</string>
+    <string name="restore_backup_progress">Letöltés folyamatban, kérlek várj...</string>
 </resources>
