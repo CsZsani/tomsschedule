@@ -48,14 +48,29 @@
     <string name="forgot_password_email_required">Email is required!</string>
     <string name="forgot_password_valid_email">Please, provide valid email!</string>
 
-
-    <string name="age_group">Age group</string>
-    <string name="user_name">Name</string>
-    <string name="gender">Gender</string>
+    <!--  Account  -->
+    <string name="account_email">Email</string>
+    <string name="account_birth_date">Birth date</string>
+    <string name="account_age_group">Age group</string>
+    <string name="account_user_name">Name</string>
+    <string name="account_gender">Gender</string>
     <string name="contact">Contact</string>
     <string name="contact_email" translatable="false">tomsschedule.app@gmail.com</string>
     <string name="female">Female</string>
     <string name="male">Male</string>
+    <string name="account_edit">Edit</string>
+
+    <!-- Edit account -->
+    <string name="edit_name">Name</string>
+    <string name="edit_birth_date">Edit birth date</string>
+    <string name="edit_gender">Gender</string>
+    <string name="password_warning">If you want to change your password, please, click on Forgot password during login.</string>
+    <string name="edit_account_button">Save</string>
+    <string name="edit_was_successful">Update user data is finished!</string>
+    <string name="edit_was_fail">Fail! Check your Internet connection and tra again editing account!</string>
+    <string name="label_edit_account">Edit user data</string>
+
+
     <string name="add_new_activity_fragment_label">Add new activity</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
@@ -86,6 +101,8 @@
     <string name="is_weekly_time">The same duration for each week</string>
     <string name="has_fixed_days">Has fixed days in every week?</string>
     <string name="select_fixed_days_times">Set the times for each day</string>
+
+    <!--  Days of week  -->
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>
@@ -93,6 +110,7 @@
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
+
     <string name="monday_short">M</string>
     <string name="tuesday_short">TU</string>
     <string name="wednesday_short">W</string>
@@ -100,6 +118,8 @@
     <string name="friday_short">F</string>
     <string name="saturday_short">SA</string>
     <string name="sunday_short">SU</string>
+
+
     <string name="activity_name">Activity name</string>
     <string name="name_of_activity">Name</string>
     <string name="color">Color</string>
@@ -161,7 +181,6 @@
     <string name="fab_edit">Edit activity</string>
     <string name="fab_delete">Delete activity</string>
     <string name="sure_delete_acitvity">Do you really want to delete this activity?</string>
-    <string name="error">Error</string>
     <string name="global_activity_name_immutable">Activity name (global activity names are immutable)</string>
     <string name="edit">Edit</string>
     <string name="add_time_to_activity">Add time</string>
@@ -243,4 +262,11 @@
     <string name="create_backup_progress">Creating backup is in progress. Please wait…</string>
     <string name="restore_backup_progress">Restoring backup is in progress. Please wait…</string>
     <string name="connect_to_stable_internet">Please, connect to stable Internet!</string>
+
+    <!-- Other -->
+    <string name="age_group">Age group</string>
+    <string name="user_name">Name</string>
+    <string name="gender">Gender</string>
+    <string name="error">Error</string>
+
 </resources>

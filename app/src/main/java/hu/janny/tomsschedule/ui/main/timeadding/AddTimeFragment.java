@@ -1,6 +1,5 @@
 package hu.janny.tomsschedule.ui.main.timeadding;
 
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -26,7 +25,6 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import hu.janny.tomsschedule.R;
-import hu.janny.tomsschedule.databinding.DetailFragmentBinding;
 import hu.janny.tomsschedule.databinding.FragmentAddTimeBinding;
 import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.CustomActivity;
@@ -34,7 +32,7 @@ import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
-import hu.janny.tomsschedule.ui.main.MainViewModel;
+import hu.janny.tomsschedule.viewmodel.MainViewModel;
 
 public class AddTimeFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 

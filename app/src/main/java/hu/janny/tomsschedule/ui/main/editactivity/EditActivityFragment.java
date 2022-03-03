@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -34,21 +33,14 @@ import com.skydoves.colorpickerview.ColorPickerDialog;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
 import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.CustomTimePickerForOneDayBinding;
-import hu.janny.tomsschedule.databinding.DetailFragmentBinding;
 import hu.janny.tomsschedule.databinding.FragmentEditActivityBinding;
-import hu.janny.tomsschedule.model.ActivityTime;
 import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.DateConverter;
-import hu.janny.tomsschedule.model.User;
-import hu.janny.tomsschedule.ui.main.MainViewModel;
-import hu.janny.tomsschedule.ui.main.details.DetailFragment;
+import hu.janny.tomsschedule.viewmodel.MainViewModel;
 
 public class EditActivityFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 

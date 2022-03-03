@@ -2,8 +2,6 @@ package hu.janny.tomsschedule.ui.main.statistics;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -42,19 +40,13 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentPersonalStatisticsBinding;
-import hu.janny.tomsschedule.databinding.FragmentStatisticsBinding;
 import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.DateConverter;
-import hu.janny.tomsschedule.ui.main.MainViewModel;
 import hu.janny.tomsschedule.viewmodel.StatisticsViewModel;
 
 public class PersonalStatisticsFragment extends Fragment {

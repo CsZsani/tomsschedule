@@ -55,6 +55,27 @@
             android:text="@string/download_data"
             android:textSize="16sp"
             android:textStyle="bold" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="24dp"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:id="@+id/contactText"
+            android:layout_width="match_parent"
+            android:layout_height="19dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/contact" />
+
+        <TextView
+            android:id="@+id/contactEmail"
+            android:layout_width="match_parent"
+            android:layout_height="19dp"
+            android:text="@string/contact_email"
+            android:textStyle="italic" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

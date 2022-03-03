@@ -16,28 +16,33 @@ import androidx.lifecycle.ViewModelProvider;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentSettingsBinding;
 import hu.janny.tomsschedule.model.User;
-import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 import hu.janny.tomsschedule.viewmodel.BackUpViewModel;
 
 public class SettingsFragment extends Fragment {
 
     private FragmentSettingsBinding binding;
+    private BackUpViewModel viewModel;
+
+    // Dialogs for creating or restoring backup confirmation
     private AlertDialog saveDialog;
     private AlertDialog restoreDialog;
-    private BackUpViewModel viewModel;
+    // Current user's id
     private String userId;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+        // Binds layout
         binding = FragmentSettingsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Gets a BackUpViewModel instance
         viewModel = new ViewModelProvider(this).get(BackUpViewModel.class);
 
         setUpSaveDialog();
         setUpRestoreDialog();
 
+        // Gets the current user's id
         viewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
             public void onChanged(User user) {
@@ -45,10 +50,11 @@ public class SettingsFragment extends Fragment {
             }
         });
 
+        // Gets the state of creating an restoring backup
         viewModel.getReady().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean ready) {
-                if(ready) {
+                if (ready) {
                     Toast.makeText(getActivity(), "Save/restore is done!", Toast.LENGTH_SHORT).show();
                     viewModel.setReady(true);
                 }
@@ -72,6 +78,9 @@ public class SettingsFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Sets up the confirmation dialog for creating backup. Has two button: confirm and cancel
+     */
     private void setUpSaveDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.save_data_warning);
@@ -90,6 +99,9 @@ public class SettingsFragment extends Fragment {
         saveDialog = builder.create();
     }
 
+    /**
+     * Sets up the confirmation dialog for restoring backup. Has two button: confirm and cancel
+     */
     private void setUpRestoreDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.download_data_warning);
@@ -106,9 +118,6 @@ public class SettingsFragment extends Fragment {
             }
         });
         restoreDialog = builder.create();
-    }
-
-    public static void readySave() {
     }
 
     @Override

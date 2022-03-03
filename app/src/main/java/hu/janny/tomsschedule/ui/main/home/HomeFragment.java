@@ -4,36 +4,24 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentHomeBinding;
 import hu.janny.tomsschedule.model.ActivityWithTimes;
-import hu.janny.tomsschedule.model.CustomActivity;
 import hu.janny.tomsschedule.model.CustomActivityHelper;
 import hu.janny.tomsschedule.model.CustomActivityRecyclerAdapter;
-import hu.janny.tomsschedule.model.firebase.FirebaseManager;
-import hu.janny.tomsschedule.ui.main.MainViewModel;
+import hu.janny.tomsschedule.viewmodel.MainViewModel;
 import hu.janny.tomsschedule.ui.main.details.DetailFragment;
 
 public class HomeFragment extends Fragment {

@@ -11,6 +11,7 @@ import com.google.firebase.database.Exclude;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import hu.janny.tomsschedule.R;
@@ -63,6 +64,41 @@ public class User {
     }
 
     @Exclude
+    public String birthDateToAgeGroupInt() {
+        Calendar birthDateCal = Calendar.getInstance();
+        birthDateCal.set(Integer.parseInt(birthDate.split(" ")[2]), getMonthIntFromMonthFormat(birthDate.split(" ")[0]),
+                Integer.parseInt(birthDate.split(" ")[1]));
+
+        Calendar today = Calendar.getInstance();
+        today.setTimeInMillis(System.currentTimeMillis());
+
+        today.add(Calendar.YEAR, -20);
+        int group = 0;
+        while(!birthDateCal.after(today) && group <= 4) {
+            today.add(Calendar.YEAR, -10);
+            group++;
+        }
+        return ageGroup(group);
+    }
+
+    @Exclude
+    public String ageGroup(int ageGroup) {
+        switch (ageGroup) {
+            case 0: return "<20";
+            case 1: return "20-30";
+            case 2: return "30-40";
+            case 3: return "40-50";
+            case 4: return "50-60";
+            case 5: return ">60";
+            default: return "?";
+        }
+    }
+
+    /**
+     * Returns the string for age group from age group integer (0-5).
+     * @return age group string for UI
+     */
+    @Exclude
     public String ageGroup() {
         switch (ageGroup) {
             case 0: return "<20";
@@ -75,6 +111,57 @@ public class User {
         }
     }
 
+    /**
+     * Returns the month int from 3 letter string, JAN is 1, and DEC is 12.
+     * @param s 3 letter string in capital letters which is short for months
+     * @return integer for months from 1 to 12
+     */
+    @Exclude
+    private int getMonthIntFromMonthFormat(String s) {
+        if(s.equals("JAN")) {
+            return 1;
+        }
+        if(s.equals("FEB")) {
+            return 2;
+        }
+        if(s.equals("MAR")) {
+            return 3;
+        }
+        if(s.equals("APR")) {
+            return 4;
+        }
+        if(s.equals("MAY")) {
+            return 5;
+        }
+        if(s.equals("JUN")) {
+            return 6;
+        }
+        if(s.equals("JUL")) {
+            return 7;
+        }
+        if(s.equals("AUG")) {
+            return 8;
+        }
+        if(s.equals("SEP")) {
+            return 9;
+        }
+        if(s.equals("OKT")) {
+            return 10;
+        }
+        if(s.equals("NOV")) {
+            return 11;
+        }
+        if(s.equals("DEC")) {
+            return 12;
+        }
+
+        return 1;
+    }
+
+    /**
+     * Returns the gender int, male is , female is 2.
+     * @return gender int for user
+     */
     @Exclude
     public int getGenderInt() {
         if(gender.equals("female")) {
@@ -84,8 +171,10 @@ public class User {
         }
     }
 
-    public String getGender() {return gender;}
-
+    /**
+     * Returns the gender string resource.
+     * @return string resource for gender of user
+     */
     @Exclude
     public int getGenderForAccount() {
         if(gender.equals("female")) {
@@ -93,11 +182,6 @@ public class User {
         } else {
             return R.string.male;
         }
-    }
-
-    @Exclude
-    public String getGenderString() {
-        return gender;
     }
 
     @NonNull
@@ -144,6 +228,8 @@ public class User {
     public void setGender(String gender) {
         this.gender = gender;
     }
+
+    public String getGender() {return gender;}
 
     public long getLastSeenSer() {
         return lastSeenSer;

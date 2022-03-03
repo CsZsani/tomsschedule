@@ -51,34 +51,6 @@ public class MainActivity extends AppCompatActivity implements AddCustomActivity
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
-        /*binding.fragmentHome.addCustomActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Navigation.findNavController(view).navigate(
-                        R.id.action_nav_home_to_add_custom_activity);
-                *//*String key = FirebaseManager.database.getReference("customactivities")
-                        .child(FirebaseManager.user.getUid()).push().getKey();
-                CustomActivity activity = new CustomActivity("name", "#FF00FF", "note", 5, false, false, false);
-
-                Map<String, Object> activityValues = activity.toMap();
-                FirebaseManager.database.getReference().child("customactivities").child(FirebaseManager.auth.getUid()).child(key).setValue(activity)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(MainActivity.this,"Added to db!",Toast.LENGTH_LONG).show();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                e.printStackTrace();
-                                Toast.makeText(MainActivity.this,"Failed adding to db!",Toast.LENGTH_LONG).show();
-                            }
-                        });
-*//*
-            }
-        });*/
     }
 
     public void addNewCustomActivity(View view) {

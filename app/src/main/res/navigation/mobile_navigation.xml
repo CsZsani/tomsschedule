@@ -48,7 +48,12 @@
         android:id="@+id/nav_account"
         android:name="hu.janny.tomsschedule.ui.main.account.AccountFragment"
         android:label="@string/menu_account"
-        tools:layout="@layout/fragment_account" />
+        tools:layout="@layout/fragment_account" >
+        <action
+            android:id="@+id/action_nav_account_to_editAccountFragment"
+            app:destination="@id/editAccountFragment"
+            app:popUpTo="@id/nav_account" />
+    </fragment>
     <fragment
         android:id="@+id/add_custom_activity"
         android:name="hu.janny.tomsschedule.ui.main.addcustomactivity.AddCustomActivityFragment"
@@ -115,4 +120,9 @@
         android:name="hu.janny.tomsschedule.ui.main.statistics.TipDetailFragment"
         android:label="@string/tip"
         tools:layout="@layout/fragment_tip_detail" />
+    <fragment
+        android:id="@+id/editAccountFragment"
+        android:name="hu.janny.tomsschedule.ui.main.account.EditAccountFragment"
+        android:label="@string/label_edit_account"
+        tools:layout="@layout/fragment_edit_account" />
 </navigation>

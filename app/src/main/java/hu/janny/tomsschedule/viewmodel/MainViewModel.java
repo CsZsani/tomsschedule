@@ -1,4 +1,4 @@
-package hu.janny.tomsschedule.ui.main;
+package hu.janny.tomsschedule.viewmodel;
 
 import android.app.Application;
 

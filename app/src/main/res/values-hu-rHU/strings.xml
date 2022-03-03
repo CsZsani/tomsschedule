@@ -208,4 +208,24 @@
     <string name="download_data_warning">A helyi adatok felülíródnak. Biztosan folytatod?</string>
     <string name="create_backup_progress">Mentés folyamatban, kérlek várj...</string>
     <string name="restore_backup_progress">Letöltés folyamatban, kérlek várj...</string>
+    <string name="registration_in_progress">Regisztráció folyamatban. Kérlek, várj…</string>
+    <string name="registration_email_required">Email cím megadása kötelező!</string>
+    <string name="registration_valid_email">Kérlek, valós email címet adj meg!</string>
+    <string name="registration_password_required">Jelszó megadása kötelező!</string>
+    <string name="registration_password_length">Minimum 6 karakter!</string>
+    <string name="registration_name_required">Név megadása kötelező!</string>
+    <string name="registration_birth_date_required">Születési dátum megadása kötelező!</string>
+    <string name="login_went_wrong">Nem sikerült belépni. Kérlek, próbáld újra!</string>
+    <string name="login_in_progress">Bejelentkezés folyamatban. Kérlek, várj…</string>
+    <string name="login_email_required">Email cím megadása kötelező!</string>
+    <string name="login_valid_email">Kérlek, valós email címet adj meg!</string>
+    <string name="login_password_required">Jelszó megadása kötelező!</string>
+    <string name="login_password_length">Minimum 6 karakter!</string>
+    <string name="send_email">Küldés</string>
+    <string name="email_sending_in_progress">Email küldése folyamatban. Kérlek, várj…</string>
+    <string name="email_sending_fail">Nem sikerült elküldeni az emailt. Kérlek, próbáld újra!</string>
+    <string name="email_sending_successful">Nyisd meg az emailed! Mostantól megadhatod az új jelszót.</string>
+    <string name="forgot_password_email_required">Email cím megadása szükséges!</string>
+    <string name="forgot_password_valid_email">Kérlek, valós email címet adj meg!</string>
+    <string name="connect_to_stable_internet">Kérlek, csatlakozz egy stabil internethez!</string>
 </resources>

@@ -2,11 +2,16 @@ package hu.janny.tomsschedule.model;
 
 public class TimerAsset {
 
-    private int nameResId;
-    private int bgResId;
-    private int color;
-    private int colorOfText;
-    private int musicResId;
+    // Resource id of the asset name in R.string
+    private final int nameResId;
+    // Resource id of the asset background picture in R.drawable
+    private final int bgResId;
+    // Theme color it of the asset, it can be resource R.color
+    private final int color;
+    // Text color it of the asset, it can be resource R.color
+    private final int colorOfText;
+    // Music resource of the asset in R.raw
+    private final int musicResId;
 
     public TimerAsset(int nameResId, int bgResId, int color, int colorOfText, int musicResId) {
         this.nameResId = nameResId;

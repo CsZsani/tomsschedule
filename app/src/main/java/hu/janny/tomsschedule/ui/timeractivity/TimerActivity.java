@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -31,7 +30,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.Locale;
 
 import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
@@ -43,7 +41,7 @@ import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.TimerAssets;
 import hu.janny.tomsschedule.model.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
-import hu.janny.tomsschedule.ui.main.MainViewModel;
+import hu.janny.tomsschedule.viewmodel.MainViewModel;
 
 public class TimerActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;

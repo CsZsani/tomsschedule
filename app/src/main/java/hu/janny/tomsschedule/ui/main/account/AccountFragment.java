@@ -8,16 +8,16 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentAccountBinding;
-import hu.janny.tomsschedule.model.DateConverter;
 import hu.janny.tomsschedule.model.User;
-import hu.janny.tomsschedule.ui.main.MainViewModel;
+import hu.janny.tomsschedule.viewmodel.MainViewModel;
 
 public class AccountFragment extends Fragment {
 
@@ -27,29 +27,42 @@ public class AccountFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
+        // Binds layout
         binding = FragmentAccountBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Gets a MainViewModel instance
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        // Displays the logged in user's data
         mainViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
             public void onChanged(@Nullable User u) {
                 if(u != null) {
                     binding.accountEmail.setText(u.getEmail());
                     binding.accountBirthDate.setText(u.getBirthDate());
-                    binding.accountAgeGroup.setText(u.ageGroup());
+                    binding.accountAgeGroup.setText(u.birthDateToAgeGroupInt());
                     binding.accountName.setText(u.getName());
                     binding.accountGender.setText(u.getGenderForAccount());
                 } else {
-                    binding.accountEmail.setText("ERROR");
-                    binding.accountBirthDate.setText("ERROR");
-                    binding.accountAgeGroup.setText("ERROR");
-                    binding.accountName.setText("ERROR");
-                    binding.accountGender.setText("ERROR");
+                    binding.accountEmail.setText(getString(R.string.error));
+                    binding.accountBirthDate.setText(getString(R.string.error));
+                    binding.accountAgeGroup.setText(getString(R.string.error));
+                    binding.accountName.setText(getString(R.string.error));
+                    binding.accountGender.setText(getString(R.string.error));
                 }
             }
         });
+
+        // Navigates to edit user data fragment
+        binding.editAccoutFragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_nav_account_to_editAccountFragment);
+            }
+        });
+
         return root;
     }
 

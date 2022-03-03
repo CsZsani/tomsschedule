@@ -19,8 +19,9 @@ import hu.janny.tomsschedule.model.User;
 
 public class UserRepository {
 
-    private final MutableLiveData<User> userData = new MutableLiveData<>();
+    // The logged in user
     private final LiveData<User> currentUser;
+    // All users
     private final LiveData<List<User>> users;
 
     private final UserDao userDao;
@@ -34,6 +35,11 @@ public class UserRepository {
         users = userDao.getUsers();
     }
 
+    /**
+     * Inserts a new user into the database
+     *
+     * @param user new user
+     */
     public void insertUser(User user) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -42,6 +48,11 @@ public class UserRepository {
         executor.shutdown();
     }
 
+    /**
+     * Updates the given user in the database
+     *
+     * @param user user to update
+     */
     public void updateUser(User user) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -50,6 +61,11 @@ public class UserRepository {
         executor.shutdown();
     }
 
+    /**
+     * Signs in the user in database, means that it sets isLoggedIn field to 1 (true).
+     *
+     * @param id user id
+     */
     public void loginUser(String id) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -58,6 +74,11 @@ public class UserRepository {
         executor.shutdown();
     }
 
+    /**
+     * Signs out the user in database, means that it sets isLoggedIn field to 0 (false).
+     *
+     * @param id user id
+     */
     public void logoutUser(String id) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -66,10 +87,20 @@ public class UserRepository {
         executor.shutdown();
     }
 
+    /**
+     * Returns the logged in user LiveData
+     *
+     * @return the logged in user LiveData
+     */
     public LiveData<User> getCurrentUser() {
         return currentUser;
     }
 
+    /**
+     * Returns all users from the database with LiveData
+     *
+     * @return all user from database LiveData
+     */
     public LiveData<List<User>> getUsers() {
         return users;
     }
