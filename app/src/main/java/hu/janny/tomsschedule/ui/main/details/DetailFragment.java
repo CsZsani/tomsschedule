@@ -40,12 +40,12 @@ import java.util.Random;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.DetailFragmentBinding;
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.ActivityWithTimes;
-import hu.janny.tomsschedule.model.CustomActivity;
-import hu.janny.tomsschedule.model.CustomActivityHelper;
-import hu.janny.tomsschedule.model.CustomWeekTime;
-import hu.janny.tomsschedule.model.DateConverter;
+import hu.janny.tomsschedule.model.entities.ActivityTime;
+import hu.janny.tomsschedule.model.entities.ActivityWithTimes;
+import hu.janny.tomsschedule.model.entities.CustomActivity;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
+import hu.janny.tomsschedule.model.entities.CustomWeekTime;
+import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.viewmodel.MainViewModel;
 import hu.janny.tomsschedule.ui.main.editactivity.EditActivityFragment;
 import hu.janny.tomsschedule.ui.main.timeadding.AddTimeFragment;

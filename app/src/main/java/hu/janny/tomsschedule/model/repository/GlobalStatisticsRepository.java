@@ -20,9 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import hu.janny.tomsschedule.model.ActivityTimeFirebase;
-import hu.janny.tomsschedule.model.ActivityWithTimes;
-import hu.janny.tomsschedule.model.CustomActivityHelper;
+import hu.janny.tomsschedule.model.entities.ActivityTimeFirebase;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 
 public class GlobalStatisticsRepository {
@@ -51,7 +50,9 @@ public class GlobalStatisticsRepository {
             handlerFilter.sendEmptyMessage(0);
         } else {
             long prevMonth = CustomActivityHelper.minusMonthMillis(1);
-            db.getReference().child("activityTimes").child(name).orderByKey().startAt(prevMonth)
+            long today = CustomActivityHelper.todayMillis();
+            //db.getReference().child("activityTimes").child(name).startAt(prevMonth).endAt(today).orderByKey()
+            db.getReference().child("activityTimes").child(name)
                     .get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {

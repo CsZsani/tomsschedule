@@ -1,91 +1,147 @@
-package hu.janny.tomsschedule.model;
+package hu.janny.tomsschedule.model.entities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.firebase.database.Exclude;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-//@Entity(foreignKeys = {@ForeignKey(entity = User.class,
-//    parentColumns = "userId", childColumns = "userId", onDelete = ForeignKey.NO_ACTION, onUpdate = ForeignKey.RESTRICT)})
 @Entity(tableName = "customactivities")
 public class CustomActivity {
 
+    // Id of activity - usually the creation time of the activity
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "activityId")
     public long id;
 
+    // Id of user who adds this activity
     @NonNull
     @ColumnInfo(name = "userId")
     public String userId;
 
+    // Name
     @NonNull
     @ColumnInfo(name = "name")
     public String name;
+
+    // Colour theme of activity
     @ColumnInfo(name = "color")
     public int col;
 
+    // Note
     @ColumnInfo(name = "note")
     public String note;
 
+    // Priority - ranging from 1 to 10 (10 is the highest priority, the most important)
     @ColumnInfo(name = "priority")
     public int pr;
 
+    // Type of duration we set to the activity
+    // 0 - we do not want to give a special duration
+    // 1 - when we give all time
+    // 2 - when we give the same duration for every day
+    // 3 - when we give the same duration for every week
+    // 4 - when we give the same duration for every month
+    // 5 - when we give different custom duration for every selected day in a week
     @ColumnInfo(name = "timeType")
     public int tT = 0;
 
+    // The length of duration in long millis
     @ColumnInfo(name = "duration")
     public long dur = 0L;
 
+    // Regularity
+    // 0 - when we do not choose that this is a regular activity
+    // 1 - daily
+    // 2 - weekly
+    // 3 - monthly
     @ColumnInfo(name = "regularity")
     public int reg = 0;
 
+    // Info about whether fixed days were set or did not
+    // true - when we selected fixed days of week
+    // false - otherwise
     @ColumnInfo(name = "hasFixedDays")
     public boolean hFD = false;
 
+    // Start day of interval in long millis
+    // If it is 0L that means we do not choose that this is an "interval" activity
+    // (If it is 0L, but eD is not, that means it is an end date)
     @ColumnInfo(name = "startDay")
     public long sD = 0L;
 
+    // End day of interval in long millis
+    // If it is 0L that means we do not choose that this is an "interval" activity
+    // If it is not 0L, but sD is, then it is an end date
     @ColumnInfo(name = "endDay")
     public long eD = 0L;
 
+    // How many time the user have spent on this activity so far
     @ColumnInfo(name = "soFar")
     public long sF = 0L;
 
+    // How many time is remaining to the goal duration
     @ColumnInfo(name = "remaining")
     public long re = 0L;
 
+    // All time spent in the current activity
     @ColumnInfo(name = "allTime")
     public long aT = 0L;
 
+    // The last day when the user added time to this activity
     @ColumnInfo(name = "lastDayAdded")
     public long lD = 0L;
 
+    // The type of activity - makes easier to decide how to display some details
+    /**
+     * 1 - neither, no duration
+     * - regular, daily, no dur.
+     * - regular, weekly, fixed days, no end date, no duration
+     * - regular, weekly, fixed days, end date, no duration
+     * 2 - interval, duration, daily
+     * - regular, daily, duration, daily
+     * - regular, weekly, fixed days, no end date, duration, daily
+     * - regular, weekly, fixed days, end date, duration, daily
+     * 3 - regular, monthly, no end date
+     * - regular, monthly, end date
+     * 4 - regular, weekly, no fixed days, no end date
+     * - regular, weekly, no fixed days, end date
+     * - regular, weekly, fixed days, no end date, duration, weekly
+     * - regular, weekly, fixed days, end date, duration, weekly
+     * 5 - neither, duration
+     * - regular, weekly, fixed days, end date, duration, all time
+     * 6 - interval, no duration
+     * 7 - interval, duration, all time
+     * 8 - regular, weekly, fixed days, no end date, duration, custom
+     * - regular, weekly, fixed days, end date, duration, custom
+     */
     @ColumnInfo(name = "typeNumber")
     public int tN = 0;
 
+    // Do you want notification about this activity?
+    // NOT USED
     @ColumnInfo(name = "notification")
     public boolean notif = false;
 
+    // The selected days of week
+    // -1 - that day is not selected
+    // 0 - that day is selected, but no given duration
+    // greater than 0 - that day is selected and duration in long millis
     @Embedded(prefix = "wd")
     public CustomWeekTime customWeekTime = new CustomWeekTime();
+
+    // Constructors
 
     public CustomActivity() {
     }
 
     @Ignore
-    public CustomActivity(long id, @NonNull String userId,@NonNull String name, int col, String note, int pr) {
+    public CustomActivity(long id, @NonNull String userId, @NonNull String name, int col, String note, int pr) {
         this.id = id;
         this.userId = userId;
         this.name = name;
@@ -118,6 +174,8 @@ public class CustomActivity {
         this.customWeekTime = customWeekTime;
     }
 
+    // Getters and setters
+
     public CustomWeekTime getCustomWeekTime() {
         return customWeekTime;
     }
@@ -134,18 +192,6 @@ public class CustomActivity {
         this.customWeekTime.setFri(fri);
         this.customWeekTime.setSat(sat);
         this.customWeekTime.setSun(sun);
-    }
-
-    @Exclude
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Exclude
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        return super.equals(obj);
     }
 
     public long getId() {
@@ -294,6 +340,19 @@ public class CustomActivity {
         this.notif = notif;
     }
 
+    @Exclude
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Exclude
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return super.equals(obj);
+    }
+
+
     @Override
     public String toString() {
         return "CustomActivity{" +
@@ -319,6 +378,7 @@ public class CustomActivity {
                 '}';
     }
 
+    // Sets everything activity feature to default
     @Exclude
     public void setEverythingToDefault() {
         tT = 0;

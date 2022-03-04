@@ -6,10 +6,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.CustomActivity;
-import hu.janny.tomsschedule.model.CustomWeekTime;
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.entities.ActivityTime;
+import hu.janny.tomsschedule.model.entities.CustomActivity;
+import hu.janny.tomsschedule.model.entities.CustomWeekTime;
+import hu.janny.tomsschedule.model.entities.User;
 
 @Database(entities = {User.class, CustomActivity.class, CustomWeekTime.class, ActivityTime.class}, version = 1)
 public abstract class ActivityRoomDatabase extends RoomDatabase {

@@ -1,4 +1,4 @@
-package hu.janny.tomsschedule.model;
+package hu.janny.tomsschedule.model.helper;
 
 public class TimerAsset {
 
@@ -20,6 +20,8 @@ public class TimerAsset {
         this.colorOfText = colorOfText;
         this.musicResId = musicResId;
     }
+
+    // Getters
 
     public int getNameResId() {
         return nameResId;

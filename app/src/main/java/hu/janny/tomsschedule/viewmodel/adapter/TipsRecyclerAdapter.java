@@ -1,11 +1,9 @@
 package hu.janny.tomsschedule.viewmodel.adapter;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,11 +15,8 @@ import com.google.android.material.chip.ChipGroup;
 
 import java.util.List;
 
-import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
-import hu.janny.tomsschedule.model.ActivityWithTimes;
-import hu.janny.tomsschedule.model.CustomActivityRecyclerAdapter;
-import hu.janny.tomsschedule.model.Tip;
+import hu.janny.tomsschedule.model.entities.Tip;
 
 public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapter.ViewHolder>{
 

@@ -2,14 +2,10 @@ package hu.janny.tomsschedule.ui.timeractivity;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
-
-import hu.janny.tomsschedule.model.TimerAssets;
 
 public class MusicPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener{
 

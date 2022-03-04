@@ -8,9 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.ActivityTimeFirebase;
-import hu.janny.tomsschedule.model.CustomActivityHelper;
+import hu.janny.tomsschedule.model.entities.ActivityTimeFirebase;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
 import hu.janny.tomsschedule.model.repository.GlobalStatisticsRepository;
 
 public class GlobalStatisticsViewModel extends AndroidViewModel {

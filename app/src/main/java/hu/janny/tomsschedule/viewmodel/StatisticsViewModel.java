@@ -10,9 +10,9 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
 
-import hu.janny.tomsschedule.model.ActivityFilter;
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.helper.ActivityFilter;
+import hu.janny.tomsschedule.model.entities.ActivityTime;
+import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.model.repository.Repository;
 import hu.janny.tomsschedule.model.repository.UserRepository;
 

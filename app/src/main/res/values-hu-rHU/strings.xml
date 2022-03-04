@@ -228,4 +228,18 @@
     <string name="forgot_password_email_required">Email cím megadása szükséges!</string>
     <string name="forgot_password_valid_email">Kérlek, valós email címet adj meg!</string>
     <string name="connect_to_stable_internet">Kérlek, csatlakozz egy stabil internethez!</string>
+    <string name="account_email">Email</string>
+    <string name="account_birth_date">Születési dátum</string>
+    <string name="account_age_group">Korosztály</string>
+    <string name="account_user_name">Név</string>
+    <string name="account_gender">Nem</string>
+    <string name="account_edit">Szerkeszt</string>
+    <string name="edit_name">Név</string>
+    <string name="edit_birth_date">Születési dátum</string>
+    <string name="edit_gender">Nem</string>
+    <string name="password_warning">A jelszó megváltoztatásához, kérlek, válaszd az Elfelejtett jelszó-t a bejelentkezés oldalon.</string>
+    <string name="edit_account_button">Mentés</string>
+    <string name="edit_was_successful">Felhasználói adatok frissítése befejeződött!</string>
+    <string name="edit_was_fail">Hiba! Ellenőrizd az internet kapcsolatot és próbáld újra a szerkesztést!</string>
+    <string name="label_edit_account">Szerkesztés</string>
 </resources>

@@ -1,4 +1,4 @@
-package hu.janny.tomsschedule.model;
+package hu.janny.tomsschedule.model.entities;
 
 import android.graphics.Color;
 

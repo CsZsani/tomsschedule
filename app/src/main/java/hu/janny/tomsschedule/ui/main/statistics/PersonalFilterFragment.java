@@ -4,10 +4,8 @@ import android.app.DatePickerDialog;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -22,18 +20,15 @@ import android.widget.Toast;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentPersonalFilterBinding;
-import hu.janny.tomsschedule.model.ActivityFilter;
-import hu.janny.tomsschedule.model.CustomActivityHelper;
-import hu.janny.tomsschedule.model.DateConverter;
+import hu.janny.tomsschedule.model.helper.ActivityFilter;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
+import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.viewmodel.StatisticsViewModel;
 
 public class PersonalFilterFragment extends Fragment {

@@ -26,14 +26,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import hu.janny.tomsschedule.model.ActivityFilter;
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.ActivityTimeFirebase;
-import hu.janny.tomsschedule.model.ActivityWithTimes;
-import hu.janny.tomsschedule.model.CustomActivity;
+import hu.janny.tomsschedule.model.helper.ActivityFilter;
+import hu.janny.tomsschedule.model.entities.ActivityTime;
+import hu.janny.tomsschedule.model.entities.ActivityWithTimes;
+import hu.janny.tomsschedule.model.entities.CustomActivity;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 
 public class Repository {

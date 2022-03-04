@@ -1,4 +1,4 @@
-package hu.janny.tomsschedule.model;
+package hu.janny.tomsschedule.model.entities;
 
 import static androidx.room.ForeignKey.CASCADE;
 
@@ -7,33 +7,38 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
 
-//@Entity(foreignKeys = {@ForeignKey(entity = CustomActivity.class,
- //parentColumns = "activityId", childColumns = "activityId", onDelete = ForeignKey.NO_ACTION, onUpdate = ForeignKey.RESTRICT)})
-@Entity(tableName = "activitytimes", primaryKeys = {"actId","date"}, foreignKeys = {@ForeignKey(onDelete = CASCADE,entity = CustomActivity.class,
-        parentColumns = "activityId",childColumns = "actId")})
+@Entity(tableName = "activitytimes", primaryKeys = {"actId", "date"}, foreignKeys = {@ForeignKey(onDelete = CASCADE, entity = CustomActivity.class,
+        parentColumns = "activityId", childColumns = "actId")})
 public class ActivityTime implements Comparable<ActivityTime> {
 
+    // Id of activity to which the ActivityTime belongs
     @NonNull
     @ColumnInfo(name = "actId")
     public long aId;
 
+    // Date
     @NonNull
     @ColumnInfo(name = "date")
     public long d;
 
+    // Time spent with this activity on the given date
     @ColumnInfo(name = "time")
     public long t = 0L;
 
-    public ActivityTime() {}
+    // Constructors
+
+    public ActivityTime() {
+    }
 
     @Ignore
-    public ActivityTime(@NonNull long aId,@NonNull long d, long t) {
+    public ActivityTime(@NonNull long aId, @NonNull long d, long t) {
         this.aId = aId;
         this.d = d;
         this.t = t;
     }
+
+    // Getters and setters
 
     public long getaId() {
         return aId;
@@ -64,7 +69,6 @@ public class ActivityTime implements Comparable<ActivityTime> {
     public String toString() {
         return "activityId: " + aId + ", date: " + d + ", time: " + t;
     }
-
 
     @Override
     public int compareTo(ActivityTime activityTime) {

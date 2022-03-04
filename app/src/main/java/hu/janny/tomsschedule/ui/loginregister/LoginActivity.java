@@ -24,7 +24,7 @@ import hu.janny.tomsschedule.viewmodel.LoginRegisterViewModel;
 import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.ActivityLoginBinding;
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 
 public class LoginActivity extends AppCompatActivity {

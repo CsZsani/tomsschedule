@@ -20,10 +20,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.List;
 
 import hu.janny.tomsschedule.R;
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.ActivityTimeFirebase;
-import hu.janny.tomsschedule.model.CustomActivity;
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.entities.ActivityTime;
+import hu.janny.tomsschedule.model.entities.ActivityTimeFirebase;
+import hu.janny.tomsschedule.model.entities.CustomActivity;
+import hu.janny.tomsschedule.model.entities.User;
 
 public final class FirebaseManager {
 

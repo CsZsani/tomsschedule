@@ -17,13 +17,10 @@ import com.google.android.material.chip.ChipGroup;
 
 import java.util.Calendar;
 
-import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentGlobalFilterBinding;
-import hu.janny.tomsschedule.databinding.FragmentPersonalFilterBinding;
-import hu.janny.tomsschedule.model.CustomActivityHelper;
-import hu.janny.tomsschedule.model.DateConverter;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
+import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.viewmodel.GlobalStatisticsViewModel;
-import hu.janny.tomsschedule.viewmodel.StatisticsViewModel;
 
 public class GlobalFilterFragment extends Fragment {
 

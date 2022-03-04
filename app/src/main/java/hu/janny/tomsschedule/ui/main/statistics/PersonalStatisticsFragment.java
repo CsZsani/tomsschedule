@@ -45,8 +45,8 @@ import java.util.Locale;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentPersonalStatisticsBinding;
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.DateConverter;
+import hu.janny.tomsschedule.model.entities.ActivityTime;
+import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.viewmodel.StatisticsViewModel;
 
 public class PersonalStatisticsFragment extends Fragment {

@@ -10,9 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentTipDetailBinding;
-import hu.janny.tomsschedule.model.Tip;
+import hu.janny.tomsschedule.model.entities.Tip;
 import hu.janny.tomsschedule.viewmodel.TipsViewModel;
 
 public class TipDetailFragment extends Fragment {

@@ -1,21 +1,14 @@
 package hu.janny.tomsschedule.model.repository;
 
 import android.app.Application;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.CustomActivity;
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.entities.User;
 
 public class UserRepository {
 

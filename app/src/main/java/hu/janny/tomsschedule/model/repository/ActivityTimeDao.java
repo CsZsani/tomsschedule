@@ -11,7 +11,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import hu.janny.tomsschedule.model.ActivityTime;
+import hu.janny.tomsschedule.model.entities.ActivityTime;
 
 @Dao
 public abstract class ActivityTimeDao {

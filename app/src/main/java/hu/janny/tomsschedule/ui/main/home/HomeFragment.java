@@ -18,9 +18,9 @@ import java.util.List;
 import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentHomeBinding;
-import hu.janny.tomsschedule.model.ActivityWithTimes;
-import hu.janny.tomsschedule.model.CustomActivityHelper;
-import hu.janny.tomsschedule.model.CustomActivityRecyclerAdapter;
+import hu.janny.tomsschedule.model.entities.ActivityWithTimes;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
+import hu.janny.tomsschedule.viewmodel.adapter.CustomActivityRecyclerAdapter;
 import hu.janny.tomsschedule.viewmodel.MainViewModel;
 import hu.janny.tomsschedule.ui.main.details.DetailFragment;
 

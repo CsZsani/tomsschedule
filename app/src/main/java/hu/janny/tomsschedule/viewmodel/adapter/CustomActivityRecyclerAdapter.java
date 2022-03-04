@@ -1,4 +1,4 @@
-package hu.janny.tomsschedule.model;
+package hu.janny.tomsschedule.viewmodel.adapter;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -17,6 +17,10 @@ import java.util.List;
 
 import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
+import hu.janny.tomsschedule.model.helper.DateConverter;
+import hu.janny.tomsschedule.model.entities.ActivityWithTimes;
+import hu.janny.tomsschedule.model.entities.CustomActivity;
 
 public class CustomActivityRecyclerAdapter
         extends RecyclerView.Adapter<CustomActivityRecyclerAdapter.ViewHolder>

@@ -19,8 +19,8 @@ import java.util.Calendar;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentEditAccountBinding;
-import hu.janny.tomsschedule.model.DateConverter;
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.helper.DateConverter;
+import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.viewmodel.LoginRegisterViewModel;
 
 public class EditAccountFragment extends Fragment implements AdapterView.OnItemSelectedListener {

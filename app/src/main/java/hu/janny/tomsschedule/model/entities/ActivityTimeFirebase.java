@@ -1,4 +1,4 @@
-package hu.janny.tomsschedule.model;
+package hu.janny.tomsschedule.model.entities;
 
 import com.google.firebase.database.Exclude;
 
@@ -7,13 +7,22 @@ import java.util.Map;
 
 public class ActivityTimeFirebase {
 
+    // Date in long millis
     public long d;
+    // Time in long millis
     public long t;
+    // Count of users who added time to this activity the given day
     public int c;
+    // Gender of the users
     public int g;
+    // Age group of the users
     public int a;
 
-    public ActivityTimeFirebase() {}
+    /// Constructors
+
+    public ActivityTimeFirebase() {
+    }
+
     public ActivityTimeFirebase(long d, long t, int c, int g, int a) {
         this.d = d;
         this.t = t;
@@ -22,17 +31,7 @@ public class ActivityTimeFirebase {
         this.a = a;
     }
 
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("d", d);
-        result.put("t", t);
-        result.put("c", c);
-        result.put("g", g);
-        result.put("a", a);
-
-        return result;
-    }
+    // Getters and setters
 
     public long getD() {
         return d;
@@ -85,4 +84,17 @@ public class ActivityTimeFirebase {
                 ", a=" + a +
                 '}';
     }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("d", d);
+        result.put("t", t);
+        result.put("c", c);
+        result.put("g", g);
+        result.put("a", a);
+
+        return result;
+    }
+
 }

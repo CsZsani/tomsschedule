@@ -1,21 +1,17 @@
-package hu.janny.tomsschedule.model;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.view.View;
+package hu.janny.tomsschedule.model.helper;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import hu.janny.tomsschedule.R;
+import hu.janny.tomsschedule.model.entities.ActivityTime;
+import hu.janny.tomsschedule.model.entities.CustomActivity;
+import hu.janny.tomsschedule.model.entities.CustomWeekTime;
 
 public final class CustomActivityHelper {
 

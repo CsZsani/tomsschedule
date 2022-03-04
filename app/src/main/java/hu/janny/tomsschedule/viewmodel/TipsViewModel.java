@@ -5,12 +5,10 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
-import hu.janny.tomsschedule.model.Tip;
-import hu.janny.tomsschedule.model.repository.Repository;
+import hu.janny.tomsschedule.model.entities.Tip;
 import hu.janny.tomsschedule.model.repository.TipsRepository;
 
 public class TipsViewModel extends AndroidViewModel {

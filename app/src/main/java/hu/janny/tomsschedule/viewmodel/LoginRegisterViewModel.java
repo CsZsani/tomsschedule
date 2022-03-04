@@ -9,9 +9,8 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
-import hu.janny.tomsschedule.model.repository.Repository;
 import hu.janny.tomsschedule.model.repository.UserRepository;
 
 public class LoginRegisterViewModel extends AndroidViewModel {

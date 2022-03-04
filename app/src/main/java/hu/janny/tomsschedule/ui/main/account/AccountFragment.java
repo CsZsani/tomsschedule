@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentAccountBinding;
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.viewmodel.MainViewModel;
 
 public class AccountFragment extends Fragment {

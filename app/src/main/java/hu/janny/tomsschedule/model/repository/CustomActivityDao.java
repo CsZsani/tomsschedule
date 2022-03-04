@@ -11,10 +11,10 @@ import androidx.room.Update;
 import java.util.List;
 import java.util.Map;
 
-import hu.janny.tomsschedule.model.ActivityFilter;
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.ActivityWithTimes;
-import hu.janny.tomsschedule.model.CustomActivity;
+import hu.janny.tomsschedule.model.helper.ActivityFilter;
+import hu.janny.tomsschedule.model.entities.ActivityTime;
+import hu.janny.tomsschedule.model.entities.ActivityWithTimes;
+import hu.janny.tomsschedule.model.entities.CustomActivity;
 
 @Dao
 public interface CustomActivityDao {

@@ -34,12 +34,12 @@ import java.util.Calendar;
 import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.ActivityTimerBinding;
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.CustomActivity;
-import hu.janny.tomsschedule.model.CustomActivityHelper;
-import hu.janny.tomsschedule.model.DateConverter;
-import hu.janny.tomsschedule.model.TimerAssets;
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.entities.ActivityTime;
+import hu.janny.tomsschedule.model.entities.CustomActivity;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
+import hu.janny.tomsschedule.model.helper.DateConverter;
+import hu.janny.tomsschedule.model.helper.TimerAssets;
+import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 import hu.janny.tomsschedule.viewmodel.MainViewModel;
 

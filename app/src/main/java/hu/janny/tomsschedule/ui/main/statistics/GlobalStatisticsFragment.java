@@ -2,7 +2,6 @@ package hu.janny.tomsschedule.ui.main.statistics;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
-import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,7 +22,6 @@ import android.widget.Toast;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -45,11 +43,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 import hu.janny.tomsschedule.R;
-import hu.janny.tomsschedule.databinding.FragmentGlobalFilterBinding;
 import hu.janny.tomsschedule.databinding.FragmentGlobalStatisticsBinding;
-import hu.janny.tomsschedule.model.ActivityTime;
-import hu.janny.tomsschedule.model.ActivityTimeFirebase;
-import hu.janny.tomsschedule.model.DateConverter;
+import hu.janny.tomsschedule.model.entities.ActivityTimeFirebase;
+import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.viewmodel.GlobalStatisticsViewModel;
 
 public class GlobalStatisticsFragment extends Fragment {

@@ -62,12 +62,12 @@
 
     <!-- Edit account -->
     <string name="edit_name">Name</string>
-    <string name="edit_birth_date">Edit birth date</string>
+    <string name="edit_birth_date">Birth date</string>
     <string name="edit_gender">Gender</string>
     <string name="password_warning">If you want to change your password, please, click on Forgot password during login.</string>
     <string name="edit_account_button">Save</string>
     <string name="edit_was_successful">Update user data is finished!</string>
-    <string name="edit_was_fail">Fail! Check your Internet connection and tra again editing account!</string>
+    <string name="edit_was_fail">Fail! Check your Internet connection and try again editing account!</string>
     <string name="label_edit_account">Edit user data</string>
 
 

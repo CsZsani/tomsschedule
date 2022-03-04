@@ -17,16 +17,9 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import hu.janny.tomsschedule.MainActivity;
 import hu.janny.tomsschedule.R;
-import hu.janny.tomsschedule.databinding.FragmentHomeBinding;
 import hu.janny.tomsschedule.databinding.FragmentTipsBinding;
-import hu.janny.tomsschedule.model.ActivityWithTimes;
-import hu.janny.tomsschedule.model.CustomActivityHelper;
-import hu.janny.tomsschedule.model.CustomActivityRecyclerAdapter;
-import hu.janny.tomsschedule.model.Tip;
-import hu.janny.tomsschedule.ui.main.details.DetailFragment;
-import hu.janny.tomsschedule.viewmodel.StatisticsViewModel;
+import hu.janny.tomsschedule.model.entities.Tip;
 import hu.janny.tomsschedule.viewmodel.TipsViewModel;
 import hu.janny.tomsschedule.viewmodel.adapter.TipsRecyclerAdapter;
 

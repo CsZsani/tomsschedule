@@ -15,9 +15,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentSettingsBinding;
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.viewmodel.BackUpViewModel;
 
+/**
+ * Settings of the application.
+ * Includes creating and restoring backups.
+ */
 public class SettingsFragment extends Fragment {
 
     private FragmentSettingsBinding binding;

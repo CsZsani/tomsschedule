@@ -1,4 +1,4 @@
-package hu.janny.tomsschedule.model;
+package hu.janny.tomsschedule.model.entities;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -17,39 +17,55 @@ import java.util.Date;
 import hu.janny.tomsschedule.R;
 
 @Entity(tableName = "users")
-@TypeConverters(DateTypeConverter.class)
 public class User {
 
+    // User id (basically from Firebase)
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "userId")
     public String uid;
 
+    // Email address
     @ColumnInfo(name = "email")
     public String email;
 
+    // Name (basically it is just a username)
     @ColumnInfo(name = "name")
     public String name;
 
+    // Birth date of the user
     @ColumnInfo(name = "birthDate")
     public String birthDate;
 
+    /* Age group of user. It can be from 0 to 5.
+     * 0 - under 20
+     * 1 - 20-29
+     * 2 - 30-39
+     * 3 - 40-49
+     * 4 - 50-59
+     * 5 - above 60
+     */
     @ColumnInfo(name = "ageGroup")
     public int ageGroup;
 
+    // Gender of the user. It can be female or male. Required.
     @ColumnInfo(name = "gender")
     public String gender;
 
+    // NOT USED
     @ColumnInfo(name = "lastSeenSer")
     public long lastSeenSer = 0L;
 
+    // NOT USED
     @ColumnInfo(name = "lastSeenSys")
     public long lastSeenSys = 0L;
 
+    // User state - signed in or dout
     @ColumnInfo(name = "isLoggedIn")
     public boolean isLoggedIn = false;
 
-    //@Ignore
+    // Constructors
+
     public User() {
 
     }
@@ -63,6 +79,11 @@ public class User {
         this.gender = gender;
     }
 
+    /**
+     * Returns the string for age group from birth date string.
+     *
+     * @return age group string for UI
+     */
     @Exclude
     public String birthDateToAgeGroupInt() {
         Calendar birthDateCal = Calendar.getInstance();
@@ -74,84 +95,106 @@ public class User {
 
         today.add(Calendar.YEAR, -20);
         int group = 0;
-        while(!birthDateCal.after(today) && group <= 4) {
+        while (!birthDateCal.after(today) && group <= 4) {
             today.add(Calendar.YEAR, -10);
             group++;
         }
         return ageGroup(group);
     }
 
+    /**
+     * Returns the string for age group from the given age group integer (0-5).
+     *
+     * @param ageGroup age group integer from 0 to 5
+     * @return age group string for UI
+     */
     @Exclude
     public String ageGroup(int ageGroup) {
         switch (ageGroup) {
-            case 0: return "<20";
-            case 1: return "20-30";
-            case 2: return "30-40";
-            case 3: return "40-50";
-            case 4: return "50-60";
-            case 5: return ">60";
-            default: return "?";
+            case 0:
+                return "<20";
+            case 1:
+                return "20-30";
+            case 2:
+                return "30-40";
+            case 3:
+                return "40-50";
+            case 4:
+                return "50-60";
+            case 5:
+                return ">60";
+            default:
+                return "?";
         }
     }
 
     /**
      * Returns the string for age group from age group integer (0-5).
+     *
      * @return age group string for UI
      */
     @Exclude
     public String ageGroup() {
         switch (ageGroup) {
-            case 0: return "<20";
-            case 1: return "20-30";
-            case 2: return "30-40";
-            case 3: return "40-50";
-            case 4: return "50-60";
-            case 5: return ">60";
-            default: return "?";
+            case 0:
+                return "<20";
+            case 1:
+                return "20-30";
+            case 2:
+                return "30-40";
+            case 3:
+                return "40-50";
+            case 4:
+                return "50-60";
+            case 5:
+                return ">60";
+            default:
+                return "?";
         }
     }
 
     /**
      * Returns the month int from 3 letter string, JAN is 1, and DEC is 12.
+     *
      * @param s 3 letter string in capital letters which is short for months
      * @return integer for months from 1 to 12
      */
     @Exclude
     private int getMonthIntFromMonthFormat(String s) {
-        if(s.equals("JAN")) {
+        if (s.equals("JAN")) {
             return 1;
         }
-        if(s.equals("FEB")) {
+        if (s.equals("FEB")) {
             return 2;
         }
-        if(s.equals("MAR")) {
+        if (s.equals("MAR")) {
             return 3;
         }
-        if(s.equals("APR")) {
+        if (s.equals("APR")) {
             return 4;
         }
-        if(s.equals("MAY")) {
+        if (s.equals("MAY")) {
             return 5;
         }
-        if(s.equals("JUN")) {
+        if (s.equals("JUN")) {
             return 6;
         }
-        if(s.equals("JUL")) {
+        if (s.equals("JUL")) {
             return 7;
         }
-        if(s.equals("AUG")) {
+        if (s.equals("AUG")) {
             return 8;
         }
-        if(s.equals("SEP")) {
+        if (s.equals("SEP")) {
             return 9;
         }
-        if(s.equals("OKT")) {
+        if (s.equals("OKT")) {
             return 10;
         }
-        if(s.equals("NOV")) {
+        if (s.equals("NOV")) {
             return 11;
         }
-        if(s.equals("DEC")) {
+        if (s.equals("DEC")) {
             return 12;
         }
 
@@ -160,11 +203,12 @@ public class User {
 
     /**
      * Returns the gender int, male is , female is 2.
+     *
      * @return gender int for user
      */
     @Exclude
     public int getGenderInt() {
-        if(gender.equals("female")) {
+        if (gender.equals("female")) {
             return 2;
         } else {
             return 1;
@@ -173,16 +217,19 @@ public class User {
 
     /**
      * Returns the gender string resource.
+     *
      * @return string resource for gender of user
      */
     @Exclude
     public int getGenderForAccount() {
-        if(gender.equals("female")) {
+        if (gender.equals("female")) {
             return R.string.female;
         } else {
             return R.string.male;
         }
     }
+
+    // Getters and setters
 
     @NonNull
     public String getUid() {
@@ -229,7 +276,9 @@ public class User {
         this.gender = gender;
     }
 
-    public String getGender() {return gender;}
+    public String getGender() {
+        return gender;
+    }
 
     public long getLastSeenSer() {
         return lastSeenSer;

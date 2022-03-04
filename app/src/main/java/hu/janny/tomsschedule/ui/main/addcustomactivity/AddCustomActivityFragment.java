@@ -37,10 +37,10 @@ import java.util.Calendar;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.CustomTimePickerForOneDayBinding;
 import hu.janny.tomsschedule.databinding.FragmentAddCustomActivityBinding;
-import hu.janny.tomsschedule.model.CustomActivity;
-import hu.janny.tomsschedule.model.CustomActivityHelper;
-import hu.janny.tomsschedule.model.DateConverter;
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.entities.CustomActivity;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
+import hu.janny.tomsschedule.model.helper.DateConverter;
+import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.viewmodel.MainViewModel;
 
 public class AddCustomActivityFragment extends Fragment implements AdapterView.OnItemSelectedListener{

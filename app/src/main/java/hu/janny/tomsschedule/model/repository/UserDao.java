@@ -8,7 +8,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import hu.janny.tomsschedule.model.User;
+import hu.janny.tomsschedule.model.entities.User;
 
 @Dao
 public interface UserDao {
