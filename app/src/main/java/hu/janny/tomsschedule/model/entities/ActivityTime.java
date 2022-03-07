@@ -8,6 +8,10 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 
+/**
+ * This entity is for counting the time for each activity in each day.
+ * It has a one-to-many relationshp with CustomActivity and when an activity is deleted the times belonging to that should be, too.
+ */
 @Entity(tableName = "activitytimes", primaryKeys = {"actId", "date"}, foreignKeys = {@ForeignKey(onDelete = CASCADE, entity = CustomActivity.class,
         parentColumns = "activityId", childColumns = "actId")})
 public class ActivityTime implements Comparable<ActivityTime> {

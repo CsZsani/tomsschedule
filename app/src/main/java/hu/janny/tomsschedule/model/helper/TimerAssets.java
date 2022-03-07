@@ -5,8 +5,12 @@ import java.util.List;
 
 import hu.janny.tomsschedule.R;
 
+/**
+ * This final class includes the fix timer assets.
+ */
 public final class TimerAssets {
 
+    // Timer assets
     private final static List<TimerAsset> timerAssets = new ArrayList<TimerAsset>() {
         {
             add(new TimerAsset(R.string.colourful, R.drawable.colorful_timer_bg, R.color.colourful, R.color.white, 0));
@@ -20,6 +24,12 @@ public final class TimerAssets {
         }
     };
 
+    /**
+     * Returns the asset on the given index.
+     *
+     * @param i index
+     * @return asset on the index
+     */
     public static TimerAsset getAsset(int i) {
         if (i > timerAssets.size() - 1) {
             return timerAssets.get(timerAssets.size() - 1);
@@ -27,6 +37,11 @@ public final class TimerAssets {
         return timerAssets.get(i);
     }
 
+    /**
+     * Returns how many asset is available.
+     *
+     * @return how many asset is available
+     */
     public static int maxAssetNum() {
         return timerAssets.size();
     }

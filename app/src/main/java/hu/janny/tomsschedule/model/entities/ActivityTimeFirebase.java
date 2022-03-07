@@ -5,6 +5,9 @@ import com.google.firebase.database.Exclude;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This entity is for counting the time added by users to the fix activities in Firebase.
+ */
 public class ActivityTimeFirebase {
 
     // Date in long millis

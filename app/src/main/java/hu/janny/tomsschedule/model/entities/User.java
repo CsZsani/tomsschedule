@@ -3,19 +3,17 @@ package hu.janny.tomsschedule.model.entities;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
 
 import com.google.firebase.database.Exclude;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import hu.janny.tomsschedule.R;
 
+/**
+ * This entity of for saving users data into database. Used in local and Firebase database.
+ */
 @Entity(tableName = "users")
 public class User {
 

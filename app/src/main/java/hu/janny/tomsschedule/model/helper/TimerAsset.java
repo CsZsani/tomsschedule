@@ -1,5 +1,8 @@
 package hu.janny.tomsschedule.model.helper;
 
+/**
+ * The class if for timer assets to set background, sound, colours.
+ */
 public class TimerAsset {
 
     // Resource id of the asset name in R.string

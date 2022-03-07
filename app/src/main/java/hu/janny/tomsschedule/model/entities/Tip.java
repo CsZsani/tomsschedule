@@ -7,16 +7,28 @@ import com.google.firebase.database.Exclude;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This entity is for tips for the fix activities.
+ */
 public class Tip {
 
+    // Tip id
     private int id;
+    // The time when it is added in long millis
     private long time;
+    // Title
     private String title;
+    // Text
     private String text;
+    // Author - book, article on the Internet...
     private String author;
+    // Source - name of the book...
     private String source;
+    // URL of a site which is a source of the tip
     private String url = "";
+    // Colour hex string for the tip card colour
     private String hexColor;
+    // Tags - to which fix activity(es) belongs to the tip
     private List<String> tags = new ArrayList<>();
 
     public Tip(int id, long time, String title, String text, String author, String source, String hexColor) {
@@ -101,6 +113,11 @@ public class Tip {
         this.tags = tags;
     }
 
+    /**
+     * Returns the colour of the tip in int.
+     *
+     * @return color int
+     */
     @Exclude
     public int getColorInt() {
         return Color.parseColor(hexColor);
@@ -122,6 +139,11 @@ public class Tip {
                 '}';
     }
 
+    /**
+     * Adds a tag to the tip.
+     *
+     * @param tag the tag be added to the tip, usually it is name of a fix activity
+     */
     @Exclude
     public void addTag(String tag) {
         tags.add(tag);

@@ -26,7 +26,6 @@ import hu.janny.tomsschedule.ui.main.details.DetailFragment;
 
 public class HomeFragment extends Fragment {
 
-//    private HomeViewModel homeViewModel;
     private MainViewModel mainViewModel;
     private FragmentHomeBinding binding;
     private CustomActivityRecyclerAdapter adapter;

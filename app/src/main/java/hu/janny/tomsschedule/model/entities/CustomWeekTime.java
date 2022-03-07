@@ -2,22 +2,19 @@ package hu.janny.tomsschedule.model.entities;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.ForeignKey;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.firebase.database.Exclude;
 
-//@Entity(foreignKeys = {@ForeignKey(entity = CustomActivity.class,
-//parentColumns = "activityId", childColumns = "activityId", onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.RESTRICT)})
-@Entity(tableName = "customweektime")
+/**
+ * This entity is for supporting the CustomActivity class and recording the duration added to
+ * days of week when it has fixed days.
+ * It is -1L if the day is not selected, 1L if it is selected but no duration set, and >0L
+ * if it is selected and duration added (in long millis).
+ */
 public class CustomWeekTime {
 
-    /*@NonNull
-    @ColumnInfo(name = "activityId")
-    public int activityId;
-    */
+    // Id of the custom week time
     @PrimaryKey(autoGenerate = true)
     @NonNull
     public int id;
@@ -38,21 +35,8 @@ public class CustomWeekTime {
     public long sun = -1L;
 
     public CustomWeekTime() {}
-    /*public CustomWeekTime(int activityId) {
-        this.activityId = activityId;
-    }*/
 
-    /*public CustomWeekTime(@NonNull int activityId) {
-        this.activityId = activityId;
-    }
-
-    public int getActivityId() {
-        return activityId;
-    }
-
-    public void setActivityId(int activityId) {
-        this.activityId = activityId;
-    }*/
+    // Getters and setters
 
     public long getMon() {
         return mon;
@@ -110,11 +94,18 @@ public class CustomWeekTime {
         this.sun = sun;
     }
 
+    /**
+     * Returns true if no day is selected (all -1L), false otherwise.
+     * @return true if no day is selected, false otherwise
+     */
     @Exclude
     public boolean nothingSet() {
-        return mon == -1 && tue == -1 && wed == -1 && thu == -1 && fri == -1 && sat == -1 && sun == -1;
+        return mon == -1L && tue == -1L && wed == -1L && thu == -1L && fri == -1L && sat == -1L && sun == -1L;
     }
 
+    /**
+     * Sets every day to default -1L.
+     */
     @Exclude
     public void setEverythingToDefault() {
         mon = -1L;

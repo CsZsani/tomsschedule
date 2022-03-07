@@ -244,7 +244,7 @@ public class EditActivityFragment extends Fragment implements AdapterView.OnItem
             binding.activitySumTimePicker.minutes.requestFocus();
             return true;
         }
-        customActivity.setDur(DateConverter.durationTimeConverterFromStringToLong(days, hours, minutes));
+        customActivity.setDur(DateConverter.durationTimeConverterFromIntToLong(day, hour, minute));
         return false;
     }
 
