@@ -2,6 +2,7 @@ package hu.janny.tomsschedule.model.entities;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
+import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.firebase.database.Exclude;
@@ -12,6 +13,7 @@ import com.google.firebase.database.Exclude;
  * It is -1L if the day is not selected, 1L if it is selected but no duration set, and >0L
  * if it is selected and duration added (in long millis).
  */
+@Entity
 public class CustomWeekTime {
 
     // Id of the custom week time

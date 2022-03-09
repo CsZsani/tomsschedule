@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base theme colors -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -15,6 +16,9 @@
     <color name="brown_200">#c28c55</color>
     <color name="brown_400">#a86b2c</color>
     <color name="brown_700">#7a440b</color>
+    <color name="base_activity">#F6AA9C</color>
+
+    <!-- Timer assets -->
     <color name="water">#0887EC</color>
     <color name="green">#009644</color>
     <color name="blue">#04A4B8</color>
@@ -23,9 +27,13 @@
     <color name="milky_way">#004378</color>
     <color name="colourful">#7617CA</color>
     <color name="coffee">#855948</color>
+
+    <!-- Notifications in home fragment -->
     <color name="red_notification">#F44336</color>
     <color name="orange_notification">#FFC107</color>
     <color name="green_notification">#4CAF50</color>
+
+    <!-- Statistics colours -->
     <color name="female_0">#FFB5E6</color>
     <color name="female_1">#FF96DC</color>
     <color name="female_2">#FF74D0</color>

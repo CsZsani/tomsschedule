@@ -1,5 +1,6 @@
 package hu.janny.tomsschedule.ui.main.addcustomactivity;
 
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -43,36 +44,43 @@ import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.viewmodel.MainViewModel;
 
-public class AddCustomActivityFragment extends Fragment implements AdapterView.OnItemSelectedListener{
+public class AddCustomActivityFragment extends Fragment {
 
-    private AddCustomActivityViewModel mViewModel;
     private MainViewModel mainViewModel;
     private FragmentAddCustomActivityBinding binding;
+
     private AlertDialog colorPickerDialog;
     final Calendar calStartDay= Calendar.getInstance();
     final Calendar calEndDay= Calendar.getInstance();
     final Calendar calEndDate= Calendar.getInstance();
+    // Beginning colour
+    int color; //Color.rgb(255, 164, 119);
+
+    // The new activity
     private CustomActivity customActivity;
     private long activityId;
-    int color = Color.rgb(255, 164, 119);
-    private User currentUser;
 
-    public static AddCustomActivityFragment newInstance() {
-        return new AddCustomActivityFragment();
-    }
+    private User currentUser;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
+        // Binds layout
         binding = FragmentAddCustomActivityBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        //return inflater.inflate(R.layout.fragment_add_custom_activity, container, false);
+
+        color = ContextCompat.getColor(root.getContext(), R.color.base_activity);
+
+        // Gets a MainViewModel instance
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        // Initializes color picker and the priority and fix activity spinners
         intiColorPicker();
         prioritySpinnerListener();
         fixActivitySpinnerListener();
 
-        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-
+        // Gets user data due to saving the activity with the user id
         mainViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
             public void onChanged(User user) {
@@ -80,15 +88,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             }
         });
 
-        binding.activityColor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                colorPickerDialog.show();
-            }
-        });
-
-        //customActivity = new CustomActivity();
-
+        // Initializes the UI, the on click listeners, and defines changes which occur when an item is selected
         initCalendars();
         initNameChooserRadioButtonGroup();
         initNotifyTypeRadioButtonGroup();
@@ -99,72 +99,61 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         initSelectDurationTypeRadioGroups();
         initFixedDaysTimePickerListeners();
 
+        // Sets on click listener of saving activity
         saveOnClickListener(root);
 
         return root;
     }
 
+    /**
+     * Initializes priority choosing spinner. Sets its onItemSelectedListener.
+     */
     private void prioritySpinnerListener() {
         binding.activityPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {}
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
     }
 
+    /**
+     * Initializes fix activity choosing spinner. Sets its onItemSelectedListener.
+     */
     private void fixActivitySpinnerListener() {
         binding.selectFixActivitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {}
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
     }
 
-    private void saveOnClickListener(View fragview) {
+    /**
+     * Initializes the save button's onClickListener.
+     * @param fragView view of fragment
+     */
+    private void saveOnClickListener(View fragView) {
         binding.saveActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveActivity(fragview);
+                saveActivity(fragView);
             }
         });
     }
 
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(AddCustomActivityViewModel.class);
-        // TODO: Use the ViewModel
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
-
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Saves the activity if there is no error or inconsistency in data.
+     * @param fragView view of fragment
+     */
     private void saveActivity(View fragView) {
+        // Name of activity
         String name;
         if(binding.selectFixActivityOption.isChecked()) {
             name = CustomActivityHelper.getSelectedFixActivityName(binding.selectFixActivitySpinner.getSelectedItem().toString().trim());
@@ -172,60 +161,77 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             name = binding.activityName.getText().toString().trim();
         }
         if(name.isEmpty()) {
-            binding.activityName.setError("Name is required");
+            binding.activityName.setError(getString(R.string.new_activity_name_is_required));
             binding.activityName.requestFocus();
             return;
         }
+        // Colour, note, priority of activity
         int col = color;
         String note = binding.activityNote.getText().toString().trim();
         int priority = Integer.parseInt(binding.activityPriority.getSelectedItem().toString());
 
-        if(mainViewModel.getUser().getValue() != null) {
+        // Creates the activity
+        if(currentUser != null) {
             activityId = System.currentTimeMillis();
             customActivity = new CustomActivity(activityId, currentUser.uid, name, col, note, priority);
         } else {
-            Toast.makeText(getActivity(), "Error in saving activity, no user detected!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), getString(R.string.error_saving_no_user), Toast.LENGTH_LONG).show();
             return;
         }
-
+        // Sets other fields of the activity
         decideWhichMainType(fragView);
     }
 
+    /**
+     * Sets the main type of the activity. Interval, regular activity or neither of them.
+     * @param fragView view of fragment
+     */
     private void decideWhichMainType(View fragView) {
         if(binding.activityIsInterval.isChecked()) {
-            String from = binding.activityStartDay.getText().toString().trim();
-            String to = binding.activityEndDay.getText().toString().trim();
-            if(from.isEmpty()) {
-                binding.activityStartDay.setError("Start day is required for interval option!");
-                binding.activityStartDay.requestFocus();
-                return;
-            }
-            if(to.isEmpty()) {
-                binding.activityEndDay.setError("Start day is required for interval option!");
-                binding.activityEndDay.requestFocus();
-                return;
-            }
-            if(!setInterval(from, to)) {return;}
+            // Interval
+            if(!setInterval()) {return;}
         } else if(binding.activityCustom.isChecked()) {
+            // Neither
             if(!setNeither()) {return;}
-        } else {
+        } else if(binding.activityRegularity.isChecked()) {
+            // Regular
             if(!setRegularity()) {return;}
+        } else {
+            Toast.makeText(getActivity(), getString(R.string.new_act_must_choose_type), Toast.LENGTH_LONG).show();
+            return;
         }
         addActivityToDb(fragView);
     }
 
-    private boolean setInterval(String from, String to) {
-        //customActivity.setsD(DateConverter.stringFromSimpleDateDialogToLongMillis(from));
+    /**
+     * Sets the interval start day, end day, and duration if it is set.
+     * @return true if there was not error, false otherwise
+     */
+    private boolean setInterval() {
+        // Checks if start day and end day is given
+        String from = binding.activityStartDay.getText().toString().trim();
+        String to = binding.activityEndDay.getText().toString().trim();
+        if(from.isEmpty()) {
+            Toast.makeText(getActivity(), getString(R.string.new_act_start_day_required), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if(to.isEmpty()) {
+            Toast.makeText(getActivity(), getString(R.string.new_act_end_day_required), Toast.LENGTH_LONG).show();
+            return false;
+        }
         customActivity.setsD(calStartDay.getTimeInMillis());
-        //customActivity.seteD(DateConverter.stringFromSimpleDateDialogToLongMillis(to));
         customActivity.seteD(calEndDay.getTimeInMillis());
         customActivity.settN(6);
         if(binding.activityIsTimeMeasured.isChecked()) {
-            if(!setIntervalMeasuredTime()) {return false;}
+            return setIntervalMeasuredTime();
         }
         return true;
     }
 
+    /**
+     * Sets duration of interval.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setIntervalMeasuredTime() {
         if(binding.activityIsSumTime.isChecked()) {
             customActivity.settT(1);
@@ -246,8 +252,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         String hours = binding.activitySumTimePicker.hours.getText().toString().trim();
         String minutes = binding.activitySumTimePicker.minutes.getText().toString().trim();
         if(days.isEmpty() || hours.isEmpty() || minutes.isEmpty()) {
-            binding.activitySumTimePicker.minutes.setError("You must add days, hours and minutes (however it can be 0)!");
-            binding.activitySumTimePicker.minutes.requestFocus();
+            Toast.makeText(getActivity(), getString(R.string.new_act_must_add_time), Toast.LENGTH_LONG).show();
             return true;
         }
         int day = 0;
@@ -262,58 +267,76 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             return true;
         }
         if(day < 0 || hour > 23 || hour < 0 || minute > 59 || minute < 0) {
-            binding.activitySumTimePicker.minutes.setError("Hours must be whole number between 0-23, minutes 0-59 and days >=0!");
-            binding.activitySumTimePicker.minutes.requestFocus();
+            Toast.makeText(getActivity(), getString(R.string.new_act_format_add_time), Toast.LENGTH_LONG).show();
             return true;
         }
         customActivity.setDur(DateConverter.durationTimeConverterFromIntToLong(day, hour, minute));
         return false;
     }
 
+    /**
+     * Sets "neither" and duration of it is set.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setNeither() {
         customActivity.settN(1);
         if(binding.activityIsTimeMeasured.isChecked()) {
             customActivity.settT(1);
             customActivity.settN(5);
-            if(setTimeFromSumTime()) {return false;}
+            return !setTimeFromSumTime();
         }
         return true;
     }
 
+    /**
+     * Sets the regularity of the activity and duration if it is set.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setRegularity() {
         if(binding.activityDaily.isChecked()) {
-            if(!setDaily()) {return false;}
+            return setDaily();
         } else if(binding.activityWeekly.isChecked()) {
-            if(!setWeekly()) {return false;}
+            return setWeekly();
         } else if(binding.activityMonthly.isChecked()) {
-            if(!setMonthly()) {return false;}
+            return setMonthly();
         } else {
+            Toast.makeText(getActivity(), getString(R.string.new_act_must_choose_reg_type), Toast.LENGTH_LONG).show();
             return false;
         }
-        return true;
     }
 
+    /**
+     * Sets daily regularity and duration if it is set.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setDaily() {
         customActivity.setReg(1);
         customActivity.settN(1);
         if(binding.activityIsTimeMeasured.isChecked()) {
             customActivity.settT(2);
             customActivity.settN(2);
-            if(setTimeFromSumTime()) {return false;}
+            return !setTimeFromSumTime();
         }
         return true;
     }
 
+    /**
+     * Sets weekly regularity and duration if it is set.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setWeekly() {
         customActivity.setReg(2);
         if(binding.activityHasFixedWeeks.isChecked()) {
-            if(!setFixedWeeks()) {return false;}
+            return setFixedWeeks();
         } else {
-            if(!setWeeklyWithoutFixedDays()) {return false;}
+            return setWeeklyWithoutFixedDays();
         }
-        return true;
     }
 
+    /**
+     * Sets weekly parameters if fix days are not selected.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setWeeklyWithoutFixedDays() {
         if(!setAnEndDate()) {return false;}
         customActivity.settT(3);
@@ -321,6 +344,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         return !setTimeFromSumTime();
     }
 
+    /**
+     * Sets weekly parameters if fix days are selected, including end date, exact days and duration.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setFixedWeeks() {
         if(!setAnEndDate()) {return false;}
         customActivity.settN(1);
@@ -329,7 +356,7 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             if(binding.activityCustomTime.isChecked()) {
                 customActivity.settT(5);
                 customActivity.settN(8);
-                if(!setTimeForFixedDays()) {return false;}
+                return setTimeForFixedDays();
             } else {
                 if(binding.activityIsSumTime.isChecked()) {
                     customActivity.settT(1);
@@ -355,6 +382,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         return true;
     }
 
+    /**
+     * Sets the exact fix days if they were selected.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setFixedDays() {
         if(binding.monday.isChecked()) {
             customActivity.getCustomWeekTime().setMon(0);
@@ -378,14 +409,17 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             customActivity.getCustomWeekTime().setSun(0);
         }
         if(customActivity.getCustomWeekTime().nothingSet()) {
-            binding.monday.setError("You must set at least one day!");
-            binding.monday.requestFocus();
+            Toast.makeText(getActivity(), getString(R.string.new_act_must_set_one_day), Toast.LENGTH_LONG).show();
             return false;
         }
         customActivity.sethFD(true);
         return true;
     }
 
+    /**
+     * Sets the time for fix days if they were selected.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setTimeForFixedDays() {
         long i;
         if(binding.monday.isChecked()) {
@@ -433,12 +467,16 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         return true;
     }
 
+    /**
+     * Sets time for the given day from a custom time picker for one day.
+     * @param tp custom time picker for one day binding (to reach this layout's items)
+     * @return the time given for the day
+     */
     private long setTimeForDay(CustomTimePickerForOneDayBinding tp) {
         String hours = tp.oneDayHours.getText().toString().trim();
         String minutes = tp.oneDayMinutes.getText().toString().trim();
         if(hours.isEmpty() || minutes.isEmpty()) {
-            tp.oneDayHours.setError("Setting hours and minutes is required (it can be 0)!");
-            tp.oneDayHours.requestFocus();
+            Toast.makeText(getActivity(), getString(R.string.new_act_must_add_time_for_a_day), Toast.LENGTH_LONG).show();
             return -1L;
         }
         int hour = 0;
@@ -451,13 +489,16 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             return -1L;
         }
         if(hour > 23 || hour < 0 || minute > 59 || minute < 0) {
-            tp.oneDayHours.setError("Hours must be whole number between 0-23 and minutes 0-59!");
-            tp.oneDayHours.requestFocus();
+            Toast.makeText(getActivity(), getString(R.string.new_act_format_add_time_for_a_day), Toast.LENGTH_LONG).show();
             return -1L;
         }
         return DateConverter.durationTimeConverterFromIntToLongForDays(hour, minute);
     }
 
+    /**
+     * Sets monthly regularity and duration if it is set.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setMonthly() {
         customActivity.setReg(3);
         customActivity.settN(3);
@@ -466,32 +507,38 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         return !setTimeFromSumTime();
     }
 
+    /**
+     * Sets the end date for the activity.
+     * @return true if there was not error, false otherwise
+     */
     private boolean setAnEndDate() {
         if(binding.activityHasAnEndDate.isChecked()) {
+            // Checks if end date is set
             String ed = binding.activityEndDate.getText().toString().trim();
             if(ed.isEmpty()) {
-                binding.activityEndDate.setError("End date is required!");
-                binding.activityEndDate.requestFocus();
+                Toast.makeText(getActivity(), getString(R.string.new_act_format_add_time), Toast.LENGTH_LONG).show();
                 return false;
             }
-            //customActivity.seteD(DateConverter.stringFromSimpleDateDialogToLongMillis(ed));
             customActivity.seteD(calEndDate.getTimeInMillis());
         }
         return true;
     }
 
+    /**
+     * Saves the new activity to local database.
+     * @param fragView root view of fragment
+     */
     private void addActivityToDb(View fragView) {
         mainViewModel.insertActivity(customActivity);
-        mainViewModel.insertFirstActivityTime(activityId);
-        System.out.println(customActivity);
-        //Navigation.findNavController(this.getView()).navigate(R.id.action_add_custom_activity_to_nav_home);
-        //Navigation.findNavController(this.getView()).popBackStack();
         Navigation.findNavController(fragView).popBackStack();
     }
 
+    /**
+     * Initializes the color picker.
+     */
     private void intiColorPicker() {
         colorPickerDialog = new ColorPickerDialog.Builder(getActivity())
-                .setTitle(R.string.nav_header_title)
+                .setTitle(R.string.select_color_for_activity)
                 .setPreferenceName("MyColorPickerDialog")
                 .setPositiveButton(getString(R.string.confirm),
                         new ColorEnvelopeListener() {
@@ -512,110 +559,131 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                 .attachBrightnessSlideBar(true)
                 .setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
                 .create();
+        // Sets onClickListener for opening dialog
+        binding.activityColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                colorPickerDialog.show();
+            }
+        });
     }
 
+    /**
+     * Initializes name chooser radio button group. If fix activity is selected, we show
+     * activity spinner, if custom activity name is selected, an edit text becomes visible
+     * and we are able to type the name we want.
+     */
     private void initNameChooserRadioButtonGroup() {
         binding.selectActivityNameRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i) {
-                    case R.id.selectFixActivityOption:
-                        binding.selectFixActivitySpinner.setVisibility(View.VISIBLE);
-                        binding.activityName.setVisibility(View.GONE);
-                        break;
-                    case R.id.selectCustomActivityOption:
-                        binding.selectFixActivitySpinner.setVisibility(View.GONE);
-                        binding.activityName.setVisibility(View.VISIBLE);
-                        break;
+                if(binding.selectFixActivityOption.isChecked()) {
+                    binding.selectFixActivitySpinner.setVisibility(View.VISIBLE);
+                    binding.activityName.setVisibility(View.GONE);
+                } else if(binding.selectCustomActivityOption.isChecked()) {
+                    binding.selectFixActivitySpinner.setVisibility(View.GONE);
+                    binding.activityName.setVisibility(View.VISIBLE);
                 }
             }
         });
     }
 
+    /**
+     * Initializes the radio group where we can select if we want regular activity, an interval or neither of them.
+     * Displays the corresponding UI items based on our choice.
+     */
     private void initNotifyTypeRadioButtonGroup() {
         binding.selectNotifTypeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i) {
-                    case R.id.activityRegularity:
-                        setIntervalGone();
-                        setEndDateGone();
-                        binding.activityRegularityTypeText.setVisibility(View.VISIBLE);
-                        binding.selectExactRegularity.setVisibility(View.VISIBLE);
-                        setDurationGone();
-                        binding.activityHasFixedWeeks.setVisibility(View.GONE);
-                        binding.activityIsTimeMeasured.setVisibility(View.GONE);
-                        binding.activityHasAnEndDate.setVisibility(View.GONE);
-                        break;
-                    case R.id.activityIsInterval:
-                        setIntervalVisible();
-                        setEndDateGone();
-                        setRegularityGone();
-                        setDurationGone();
-                        setRegularityRadiosFalse();
-                        binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
-                        binding.activityHasFixedWeeks.setVisibility(View.GONE);
-                        binding.activityHasAnEndDate.setVisibility(View.GONE);
-                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
-                        binding.durationText.setVisibility(View.GONE);
-                        break;
-                    case R.id.activityCustom:
-                        setIntervalGone();
-                        setEndDateGone();
-                        setRegularityGone();
-                        setDurationGone();
-                        setRegularityRadiosFalse();
-                        binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
-                        binding.activityHasFixedWeeks.setVisibility(View.GONE);
-                        binding.activityHasAnEndDate.setVisibility(View.GONE);
-                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
-                        binding.durationText.setVisibility(View.GONE);
-                        break;
+                if(binding.activityRegularity.isChecked()) {
+                    // Regular
+                    setIntervalGone();
+                    setEndDateGone();
+                    binding.activityRegularityTypeText.setVisibility(View.VISIBLE);
+                    binding.selectExactRegularity.setVisibility(View.VISIBLE);
+                    setDurationGone();
+                    binding.activityHasFixedWeeks.setVisibility(View.GONE);
+                    binding.activityIsTimeMeasured.setVisibility(View.GONE);
+                    binding.activityHasAnEndDate.setVisibility(View.GONE);
+                } else if(binding.activityIsInterval.isChecked()) {
+                    // Interval
+                    setIntervalVisible();
+                    setEndDateGone();
+                    setRegularityGone();
+                    setDurationGone();
+                    setRegularityRadiosFalse();
+                    binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                    binding.activityHasFixedWeeks.setVisibility(View.GONE);
+                    binding.activityHasAnEndDate.setVisibility(View.GONE);
+                    binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                    binding.durationText.setVisibility(View.GONE);
+                } else if(binding.activityCustom.isChecked()) {
+                    // Neither
+                    setIntervalGone();
+                    setEndDateGone();
+                    setRegularityGone();
+                    setDurationGone();
+                    setRegularityRadiosFalse();
+                    binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                    binding.activityHasFixedWeeks.setVisibility(View.GONE);
+                    binding.activityHasAnEndDate.setVisibility(View.GONE);
+                    binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                    binding.durationText.setVisibility(View.GONE);
                 }
             }
         });
     }
 
+    /**
+     * Clears regularity radio group checks.
+     */
     private void setRegularityRadiosFalse() {
         binding.selectExactRegularity.clearCheck();
     }
 
+    /**
+     * Initializes the radio button group where we can choose the regularity of the activity,
+     * daily, weekly or monthly. Displays the corresponding UI items based on our choice.
+     */
     private void initRegularityTypeRadioButtonGroup() {
         binding.selectExactRegularity.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i) {
-                    case R.id.activityDaily:
-                        setWeeklyStuffGone();
-                        setEndDateGone();
-                        setDurationGone();
-                        binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
-                        break;
-                    case R.id.activityWeekly:
-                        binding.activityHasFixedWeeks.setChecked(false);
-                        binding.activityHasFixedWeeks.setVisibility(View.VISIBLE);
-                        binding.activityHasAnEndDate.setChecked(false);
-                        binding.activityHasAnEndDate.setVisibility(View.VISIBLE);
-                        setDurationGone();
-                        binding.activityIsTimeMeasured.setVisibility(View.GONE);
-                        binding.durationText.setText(R.string.choose_one_weekly_time);
-                        binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
-                        break;
-                    case R.id.activityMonthly:
-                        setWeeklyStuffGone();
-                        binding.activityHasAnEndDate.setVisibility(View.VISIBLE);
-                        setDurationGone();
-                        binding.activityIsTimeMeasured.setVisibility(View.GONE);
-                        binding.durationText.setText(R.string.choose_monthly_time);
-                        binding.durationText.setVisibility(View.VISIBLE);
-                        setSumTimePickerDefault();
-                        break;
+                if(binding.activityDaily.isChecked()) {
+                    // Daily
+                    setWeeklyStuffGone();
+                    setEndDateGone();
+                    setDurationGone();
+                    binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                } else if(binding.activityWeekly.isChecked()) {
+                    // Weekly
+                    binding.activityHasFixedWeeks.setChecked(false);
+                    binding.activityHasFixedWeeks.setVisibility(View.VISIBLE);
+                    binding.activityHasAnEndDate.setChecked(false);
+                    binding.activityHasAnEndDate.setVisibility(View.VISIBLE);
+                    setDurationGone();
+                    binding.activityIsTimeMeasured.setVisibility(View.GONE);
+                    binding.durationText.setText(R.string.choose_one_weekly_time);
+                    binding.durationText.setVisibility(View.VISIBLE);
+                    setSumTimePickerDefault();
+                } else if(binding.activityMonthly.isChecked()) {
+                    // Monthly
+                    setWeeklyStuffGone();
+                    binding.activityHasAnEndDate.setVisibility(View.VISIBLE);
+                    setDurationGone();
+                    binding.activityIsTimeMeasured.setVisibility(View.GONE);
+                    binding.durationText.setText(R.string.choose_monthly_time);
+                    binding.durationText.setVisibility(View.VISIBLE);
+                    setSumTimePickerDefault();
                 }
             }
         });
     }
 
+    /**
+     * Initializes the "has fix days" switch.
+     */
     private void initHasFixedDaysSwitch() {
         binding.activityHasFixedWeeks.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -630,17 +698,18 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                     binding.allDaysOfWeek.setVisibility(View.GONE);
                     setDurationGone();
                     binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
-                    //if(binding.activityWeekly.isChecked()) {
                     binding.durationText.setText(R.string.choose_one_weekly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
                     setSumTimePickerDefault();
                     binding.activityIsTimeMeasured.setVisibility(View.GONE);
-                    //}
                 }
             }
         });
     }
 
+    /**
+     * Initializes the "has end date" switch.
+     */
     private void initHasEndDateSwitch() {
         binding.activityHasAnEndDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -669,6 +738,9 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         });
     }
 
+    /**
+     * Initializes the "is time measured" switch.
+     */
     private void initIsTimeMeasuredSwitch() {
         binding.activityIsTimeMeasured.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -727,57 +799,62 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         });
     }
 
+    /**
+     * Clears check in duration type radio button group.
+     */
     private void setDurationTypeRadiosToFalse() {
         binding.selectDurationType.clearCheck();
     }
 
+    /**
+     * Initializes the duration type radio group where we can choose from sum time, daily, weekly or custom time.
+     * Displays the corresponding UI items based on our choice.
+     */
     private void initSelectDurationTypeRadioGroups() {
         binding.selectDurationType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i) {
-                    case R.id.activityIsSumTime:
-                        binding.fixedDaysTimes.setVisibility(View.GONE);
-                        if(binding.activityIsInterval.isChecked()) {
-                            binding.durationText.setText(R.string.choose_sum_time_for_interval);
-                            binding.durationText.setVisibility(View.VISIBLE);
-                            setSumTimePickerDefault();
-                        } else {
-                            binding.durationText.setText(R.string.choose_sum_time_for_fixed_week_days);
-                            binding.durationText.setVisibility(View.VISIBLE);
-                            setSumTimePickerDefault();
-                        }
-                        break;
-                    case R.id.activityIsTime:
-                        binding.fixedDaysTimes.setVisibility(View.GONE);
-                        if(binding.activityIsInterval.isChecked()) {
-                            binding.durationText.setText(R.string.choose_daily_time_for_interval);
-                        } else {
-                            binding.durationText.setText(R.string.choose_daily_time);
-                        }
+                if(binding.activityIsSumTime.isChecked()) {
+                    binding.fixedDaysTimes.setVisibility(View.GONE);
+                    if(binding.activityIsInterval.isChecked()) {
+                        binding.durationText.setText(R.string.choose_sum_time_for_interval);
                         binding.durationText.setVisibility(View.VISIBLE);
                         setSumTimePickerDefault();
-                        binding.activitySumTimePicker.days.setEnabled(false);
-                        binding.activitySumTimePicker.days.setBackgroundColor(Color.LTGRAY);
-                        binding.activitySumTimePicker.days.setTypeface(null, Typeface.ITALIC);
-                        break;
-                    case R.id.activityCustomTime:
-                        binding.durationText.setVisibility(View.GONE);
-                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
-                        resetFixedDaysTimePickers();
-                        binding.fixedDaysTimes.setVisibility(View.VISIBLE);
-                        break;
-                    case R.id.activityIsWeeklyTime:
-                        binding.fixedDaysTimes.setVisibility(View.GONE);
-                        binding.durationText.setText(R.string.choose_one_weekly_time);
+                    } else {
+                        binding.durationText.setText(R.string.choose_sum_time_for_fixed_week_days);
                         binding.durationText.setVisibility(View.VISIBLE);
                         setSumTimePickerDefault();
-                        break;
+                    }
+                } else if(binding.activityIsTime.isChecked()) {
+                    binding.fixedDaysTimes.setVisibility(View.GONE);
+                    if(binding.activityIsInterval.isChecked()) {
+                        binding.durationText.setText(R.string.choose_daily_time_for_interval);
+                    } else {
+                        binding.durationText.setText(R.string.choose_daily_time);
+                    }
+                    binding.durationText.setVisibility(View.VISIBLE);
+                    setSumTimePickerDefault();
+                    binding.activitySumTimePicker.days.setEnabled(false);
+                    binding.activitySumTimePicker.days.setBackgroundColor(Color.LTGRAY);
+                    binding.activitySumTimePicker.days.setTypeface(null, Typeface.ITALIC);
+                } else if(binding.activityCustomTime.isChecked()) {
+                    binding.durationText.setVisibility(View.GONE);
+                    binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                    resetFixedDaysTimePickers();
+                    binding.fixedDaysTimes.setVisibility(View.VISIBLE);
+                } else if(binding.activityIsWeeklyTime.isChecked()) {
+                    binding.fixedDaysTimes.setVisibility(View.GONE);
+                    binding.durationText.setText(R.string.choose_one_weekly_time);
+                    binding.durationText.setVisibility(View.VISIBLE);
+                    setSumTimePickerDefault();
                 }
             }
         });
     }
 
+    /**
+     * Sets time picker to default data.
+     */
     private  void setSumTimePickerDefault() {
         binding.activitySumTimePicker.getRoot().setVisibility(View.VISIBLE);
         binding.activitySumTimePicker.days.setText("0");
@@ -788,15 +865,16 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         binding.activitySumTimePicker.days.setTypeface(null, Typeface.NORMAL);
     }
 
+    /**
+     * Initializes date picker dialogs and set on click listeners to these date picker dialogs.
+     */
     private void initCalendars() {
-
+        // Initializes date picker dialogs' onDateSetListener and after that it sets the UI according to
+        // the new date
         DatePickerDialog.OnDateSetListener dateStartday = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 calStartDay.clear();
-                /*calStartDay.set(Calendar.YEAR, year);
-                calStartDay.set(Calendar.MONTH,month);
-                calStartDay.set(Calendar.DAY_OF_MONTH,day);*/
                 calStartDay.set(year, month, day);
                 updateLabelStartDay();
             }
@@ -806,9 +884,6 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 calEndDay.clear();
-                /*calEndDay.set(Calendar.YEAR, year);
-                calEndDay.set(Calendar.MONTH,month);
-                calEndDay.set(Calendar.DAY_OF_MONTH,day);*/
                 calEndDay.set(year, month, day);
                 updateLabelEndDay();
             }
@@ -818,14 +893,12 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 calEndDate.clear();
-                /*calEndDate.set(Calendar.YEAR, year);
-                calEndDate.set(Calendar.MONTH,month);
-                calEndDate.set(Calendar.DAY_OF_MONTH,day);*/
                 calEndDate.set(year, month, day);
                 updateLabelEndDate();
             }
         };
 
+        // Sets onClickListeners for date pickers
         binding.activityStartDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -844,7 +917,13 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
                 new DatePickerDialog(getActivity(),dateEndDate,calEndDate.get(Calendar.YEAR),calEndDate.get(Calendar.MONTH),calEndDate.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+        initTodayDate();
+    }
 
+    /**
+     * Initializes start day picker dialog for today date and shows on the UI as well.
+     */
+    private void initTodayDate() {
         Calendar helper = Calendar.getInstance();
         int year = helper.get(Calendar.YEAR);
         int month = helper.get(Calendar.MONTH);
@@ -854,21 +933,33 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         updateLabelStartDay();
     }
 
+    /**
+     * Displays start day's date.
+     */
     private void updateLabelStartDay(){
         binding.activityStartDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 calStartDay.get(Calendar.DATE), calStartDay.get(Calendar.MONTH) + 1, calStartDay.get(Calendar.YEAR)));
     }
 
+    /**
+     * Displays end day's date.
+     */
     private void updateLabelEndDay(){
         binding.activityEndDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 calEndDay.get(Calendar.DATE), calEndDay.get(Calendar.MONTH) + 1, calEndDay.get(Calendar.YEAR)));
     }
 
+    /**
+     * Displays end date's date.
+     */
     private void updateLabelEndDate(){
         binding.activityEndDate.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 calEndDate.get(Calendar.DATE), calEndDate.get(Calendar.MONTH) + 1, calEndDate.get(Calendar.YEAR)));
     }
 
+    /**
+     * Sets UI items belonging to interval to gone.
+     */
     private void setIntervalGone() {
         binding.startDayText.setVisibility(View.GONE);
         binding.activityStartDay.setVisibility(View.GONE);
@@ -876,6 +967,9 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         binding.activityEndDay.setVisibility(View.GONE);
     }
 
+    /**
+     * Sets UI items belonging to interval to visible.
+     */
     private void setIntervalVisible() {
         binding.startDayText.setVisibility(View.VISIBLE);
         binding.activityStartDay.setVisibility(View.VISIBLE);
@@ -883,26 +977,39 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         binding.activityEndDay.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Set UI items belonging to regularity to gone.
+     */
     private void setRegularityGone() {
         binding.activityRegularityTypeText.setVisibility(View.GONE);
         binding.selectExactRegularity.setVisibility(View.GONE);
+        binding.activityHasFixedWeeks.setChecked(false);
         binding.activityHasFixedWeeks.setVisibility(View.GONE);
         binding.activityWeeklyDays.setVisibility(View.GONE);
         binding.allDaysOfWeek.setVisibility(View.GONE);
     }
 
+    /**
+     * Set UI items belonging to end date to gone.
+     */
     private void setEndDateGone() {
         binding.activityHasAnEndDate.setChecked(false);
         binding.activityHasAnEndDate.setVisibility(View.GONE);
         binding.activityEndDate.setVisibility(View.GONE);
     }
 
+    /**
+     * Set UI items belonging to weekly regularity to gone.
+     */
     private void setWeeklyStuffGone() {
         binding.activityHasFixedWeeks.setVisibility(View.GONE);
         binding.activityWeeklyDays.setVisibility(View.GONE);
         binding.allDaysOfWeek.setVisibility(View.GONE);
     }
 
+    /**
+     * Set UI items belonging to duration to gone.
+     */
     private void setDurationGone() {
         binding.activityIsTimeMeasured.setChecked(false);
         binding.selectDurationType.setVisibility(View.GONE);
@@ -911,6 +1018,9 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         binding.fixedDaysTimes.setVisibility(View.GONE);
     }
 
+    /**
+     * Resets fix day time pickers.
+     */
     private void resetFixedDaysTimePickers() {
         setFixedDayTimePicker(binding.monday, binding.activityMondayPicker);
         setFixedDayTimePicker(binding.tuesday, binding.activityTuesdayPicker);
@@ -921,6 +1031,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         setFixedDayTimePicker(binding.sunday, binding.activitySundayPicker);
     }
 
+    /**
+     * Resets fix day time picker field for picking.
+     * @param et the field EditText
+     */
     private void resetTimePickerFieldForPicking(EditText et) {
         et.setText("0");
         et.setBackgroundColor(Color.WHITE);
@@ -928,6 +1042,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         et.setTypeface(null, Typeface.NORMAL);
     }
 
+    /**
+     * Resets fix day time picker field for not picking.
+     * @param et the field EditText
+     */
     private void resetTimePickerFieldForNotPicking(EditText et) {
         et.setText("0");
         et.setBackgroundColor(Color.LTGRAY);
@@ -935,6 +1053,11 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         et.setTypeface(null, Typeface.ITALIC);
     }
 
+    /**
+     * Resets a given fix day time picker based on if its checkbox is checked or not.
+     * @param rb checkbox of the day
+     * @param b custom time picker binding
+     */
     private void setFixedDayTimePicker(CheckBox rb, CustomTimePickerForOneDayBinding b) {
         if(rb.isChecked()) {
             resetTimePickerFieldForPicking(b.oneDayHours);
@@ -945,6 +1068,11 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         }
     }
 
+    /**
+     * Sets on change listener on a given fix day time picker.
+     * @param rb checkbox of the day
+     * @param tp custom time picker binding
+     */
     private void setOnChangeListenersOnFixedDayTimePicker(CheckBox rb, CustomTimePickerForOneDayBinding tp) {
         rb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -960,6 +1088,10 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         });
     }
 
+    /**
+     * Initializes fix days time pickers.
+     * It uses setOnChangeListenersOnFixedDayTimePicker(CheckBox rb, CustomTimePickerForOneDayBinding tp) method.
+     */
     private void initFixedDaysTimePickerListeners() {
         setOnChangeListenersOnFixedDayTimePicker(binding.monday, binding.activityMondayPicker);
         setOnChangeListenersOnFixedDayTimePicker(binding.tuesday, binding.activityTuesdayPicker);
@@ -970,4 +1102,9 @@ public class AddCustomActivityFragment extends Fragment implements AdapterView.O
         setOnChangeListenersOnFixedDayTimePicker(binding.sunday, binding.activitySundayPicker);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        binding = null;
+    }
 }

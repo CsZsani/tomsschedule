@@ -20,7 +20,8 @@
                 android:id="@+id/activityNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/activity_name" />
+                android:text="@string/activity_name"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/activityName"
@@ -37,8 +38,10 @@
                 android:id="@+id/activityColorText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:text="@string/color" />
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/color"
+                android:textStyle="bold" />
 
             <ImageButton
                 android:id="@+id/activityColor"
@@ -51,8 +54,9 @@
                 android:id="@+id/activityNoteText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:text="@string/note" />
+                android:layout_marginTop="16dp"
+                android:text="@string/note"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/activityNote"
@@ -68,8 +72,9 @@
                 android:id="@+id/activityPriorityText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:text="@string/priority" />
+                android:layout_marginTop="16dp"
+                android:text="@string/priority"
+                android:textStyle="bold" />
 
             <Spinner
                 android:id="@+id/activityPriority"
@@ -83,8 +88,9 @@
                 android:id="@+id/activityRegularityText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:text="@string/notification_type" />
+                android:layout_marginTop="16dp"
+                android:text="@string/notification_type"
+                android:textStyle="bold" />
 
             <RadioGroup
                 android:id="@+id/selectNotifTypeRadioGroup"
@@ -96,18 +102,21 @@
                     android:id="@+id/activityRegularity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/regularity" />
 
                 <RadioButton
                     android:id="@+id/activityIsInterval"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/just_interval" />
 
                 <RadioButton
                     android:id="@+id/activityCustom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/just_time_measure" />
             </RadioGroup>
 
@@ -115,8 +124,9 @@
                 android:id="@+id/startDayText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/custom_interval_from"
+                android:textStyle="bold"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -137,8 +147,9 @@
                 android:id="@+id/endDayText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/custom_interval_to"
+                android:textStyle="bold"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -159,8 +170,9 @@
                 android:id="@+id/activityRegularityTypeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/dates_type"
+                android:textStyle="bold"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -177,18 +189,21 @@
                     android:id="@+id/activityDaily"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/daily" />
 
                 <RadioButton
                     android:id="@+id/activityWeekly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/weekly" />
 
                 <RadioButton
                     android:id="@+id/activityMonthly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/monthly" />
             </RadioGroup>
 
@@ -196,8 +211,8 @@
                 android:id="@+id/activityHasFixedWeeks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:minHeight="48dp"
-                android:paddingTop="16dp"
                 android:text="@string/has_fixed_days"
                 android:visibility="gone"
                 tools:visibility="visible" />
@@ -206,8 +221,10 @@
                 android:id="@+id/activityWeeklyDays"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/weekly_days"
+                android:textStyle="bold"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -223,6 +240,7 @@
                     android:id="@+id/monday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/monday"
                     android:visibility="visible" />
 
@@ -230,6 +248,7 @@
                     android:id="@+id/tuesday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/tuesday"
                     android:visibility="visible" />
 
@@ -237,6 +256,7 @@
                     android:id="@+id/wednesday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/wednesday"
                     android:visibility="visible" />
 
@@ -244,6 +264,7 @@
                     android:id="@+id/thursday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/thursday"
                     android:visibility="visible" />
 
@@ -251,6 +272,7 @@
                     android:id="@+id/friday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/friday"
                     android:visibility="visible" />
 
@@ -258,6 +280,7 @@
                     android:id="@+id/saturday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/saturday"
                     android:visibility="visible" />
 
@@ -265,6 +288,7 @@
                     android:id="@+id/sunday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/sunday"
                     android:visibility="visible" />
             </LinearLayout>
@@ -273,8 +297,8 @@
                 android:id="@+id/activityHasAnEndDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:minHeight="48dp"
-                android:paddingTop="16dp"
                 android:text="@string/has_an_end_date"
                 android:visibility="gone"
                 tools:visibility="visible" />
@@ -297,8 +321,8 @@
                 style="@style/Theme.TomsSchedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:minHeight="48dp"
-                android:paddingTop="16dp"
                 android:text="@string/is_time_measured"
                 android:textSize="14sp"
                 android:visibility="visible"
@@ -316,24 +340,28 @@
                     android:id="@+id/activityIsSumTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/sum_time" />
 
                 <RadioButton
                     android:id="@+id/activityIsTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/simple_time" />
 
                 <RadioButton
                     android:id="@+id/activityCustomTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/custom_time" />
 
                 <RadioButton
                     android:id="@+id/activityIsWeeklyTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:text="@string/is_weekly_time" />
             </RadioGroup>
 
@@ -341,8 +369,9 @@
                 android:id="@+id/durationText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
+                android:layout_marginTop="16dp"
                 android:text="Duration text..."
+                android:textStyle="bold"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -366,17 +395,18 @@
                     android:id="@+id/activityFixedDayTimeEachDayText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
-                    android:text="@string/select_fixed_days_times" />
+                    android:layout_marginTop="16dp"
+                    android:text="@string/select_fixed_days_times"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/activityMondayText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:paddingLeft="16dp"
-                    android:paddingTop="16dp"
                     android:text="@string/monday"
-                    android:textStyle="italic" />
+                    android:textStyle="bold|italic" />
 
                 <include
                     android:id="@+id/activityMondayPicker"
@@ -388,10 +418,10 @@
                     android:id="@+id/activityTuesdayText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:paddingLeft="16dp"
-                    android:paddingTop="16dp"
                     android:text="@string/tuesday"
-                    android:textStyle="italic" />
+                    android:textStyle="bold|italic" />
 
                 <include
                     android:id="@+id/activityTuesdayPicker"
@@ -403,10 +433,10 @@
                     android:id="@+id/activityWednesdayText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:paddingLeft="16dp"
-                    android:paddingTop="16dp"
                     android:text="@string/wednesday"
-                    android:textStyle="italic" />
+                    android:textStyle="bold|italic" />
 
                 <include
                     android:id="@+id/activityWednesdayPicker"
@@ -418,10 +448,10 @@
                     android:id="@+id/activityThursdayText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:paddingLeft="16dp"
-                    android:paddingTop="16dp"
                     android:text="@string/thursday"
-                    android:textStyle="italic" />
+                    android:textStyle="bold|italic" />
 
                 <include
                     android:id="@+id/activityThursdayPicker"
@@ -433,10 +463,10 @@
                     android:id="@+id/activityFridayText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:paddingLeft="16dp"
-                    android:paddingTop="16dp"
                     android:text="@string/friday"
-                    android:textStyle="italic" />
+                    android:textStyle="bold|italic" />
 
                 <include
                     android:id="@+id/activityFridayPicker"
@@ -448,10 +478,10 @@
                     android:id="@+id/activitySaturdayText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:paddingLeft="16dp"
-                    android:paddingTop="16dp"
                     android:text="@string/saturday"
-                    android:textStyle="italic" />
+                    android:textStyle="bold|italic" />
 
                 <include
                     android:id="@+id/activitySaturdayPicker"
@@ -463,10 +493,10 @@
                     android:id="@+id/activitySundayText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:paddingLeft="16dp"
-                    android:paddingTop="16dp"
                     android:text="@string/sunday"
-                    android:textStyle="italic" />
+                    android:textStyle="bold|italic" />
 
                 <include
                     android:id="@+id/activitySundayPicker"
@@ -479,6 +509,7 @@
                 android:id="@+id/saveActivity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:text="@string/save"
                 android:textAlignment="center"
                 android:textSize="16sp"

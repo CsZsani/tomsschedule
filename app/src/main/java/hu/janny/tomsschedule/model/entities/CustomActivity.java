@@ -387,10 +387,6 @@ public class CustomActivity {
         hFD = false;
         sD = 0L;
         eD = 0L;
-        sF = 0L;
-        re = 0L;
-        aT = 0L;
-        lD = 0L;
         tN = 0;
         notif = false;
         customWeekTime.setEverythingToDefault();

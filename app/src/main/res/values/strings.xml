@@ -70,7 +70,20 @@
     <string name="edit_was_fail">Fail! Check your Internet connection and try again editing account!</string>
     <string name="label_edit_account">Edit user data</string>
 
-
+    <!-- Add custom activity fragment -->
+    <string name="select_color_for_activity">Select color</string>
+    <string name="error_saving_no_user">Error in saving activity, no user detected! Please, try to login again!</string>
+    <string name="new_activity_name_is_required">Name is required!</string>
+    <string name="new_act_start_day_required">Start day is required for interval option!</string>
+    <string name="new_act_end_day_required">End day is required for interval option!</string>
+    <string name="new_act_must_add_time">You must add days, hours and minutes (however it can be 0)!</string>
+    <string name="new_act_must_add_time_for_a_day">Setting hours and minutes is required (it can be 0)!</string>
+    <string name="new_act_format_add_time"><![CDATA[Hours must be whole number between 0–23, minutes 0–59 and days >=0!]]></string>
+    <string name="new_act_format_add_time_for_a_day">Hours must be whole number between 0–23 and minutes 0–59!</string>
+    <string name="new_act_must_set_one_day">You must set at least one day!</string>
+    <string name="new_act_must_choose_reg_type">You must choose regularity type for regular activity!</string>
+    <string name="new_act_must_choose_type">You must choose type of activity!</string>
+    <string name="new_act_must_add_end_date">End date is required!</string>
     <string name="add_new_activity_fragment_label">Add new activity</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
@@ -101,6 +114,20 @@
     <string name="is_weekly_time">The same duration for each week</string>
     <string name="has_fixed_days">Has fixed days in every week?</string>
     <string name="select_fixed_days_times">Set the times for each day</string>
+
+    <!-- Edit activity fragment -->
+    <string name="edit_act_no_act">I can\'t find this activity!</string>
+    <string name="edit_act_name_required">Name is required!</string>
+    <string name="edit_act_start_day_required">Start day is required for interval option!</string>
+    <string name="edit_act_end_day_required">End day is required for interval option!</string>
+    <string name="edit_act_must_add_time">You must add days, hours and minutes (however it can be 0)!</string>
+    <string name="edit_act_must_add_time_for_a_day">Setting hours and minutes is required (it can be 0)!</string>
+    <string name="edit_act_format_add_time"><![CDATA[Hours must be whole number between 0–23, minutes 0–59 and days >=0!]]></string>
+    <string name="edit_act_format_add_time_for_a_day">Hours must be whole number between 0–23 and minutes 0–59!</string>
+    <string name="edit_act_must_set_one_day">You must set at least one day!</string>
+    <string name="edit_act_must_choose_reg_type">You must choose regularity type for regular activity!</string>
+    <string name="edit_act_must_choose_type">You must choose type of activity!</string>
+    <string name="edit_act_must_add_end_date">End date is required!</string>
 
     <!--  Days of week  -->
     <string name="monday">Monday</string>

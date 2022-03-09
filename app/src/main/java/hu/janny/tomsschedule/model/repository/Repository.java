@@ -16,6 +16,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -79,6 +82,104 @@ public class Repository {
         activitiesWithTimesEntities = customActivityDao.getActivitiesWithTimes();
         filterActivities = customActivityDao.getActivityFilter();
     }
+
+    //**********//
+    // Handlers //
+    //**********//
+
+    Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            activitiesWithTimesData.setValue(activitiesWithTimes);
+        }
+    };
+
+    Handler handlerSingleActivity = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            activitiesData.setValue(activity);
+        }
+    };
+
+    Handler handlerSingleActivityWithTimesEntity = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            activityWithTimesEntity.setValue(activityWithTimes);
+        }
+    };
+
+    Handler handlerFilter = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            activityWithTimesFilterList.setValue(activityWithTimesFilter);
+        }
+    };
+
+    Handler handlerSingleActivityWithTimes = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            activityByIdWithTimesData.setValue(activityByIdWithTimes);
+        }
+    };
+
+    Handler handlerAllTimes = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            allActivitiesTime.setValue(allTimes);
+        }
+    };
+
+    Handler handlerOneTimes = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            oneActivitiesTime.setValue(oneTimes);
+        }
+    };
+
+    //************************//
+    // Insert, update, delete //
+    //************************//
+
+    /**
+     * Inserts new activity with the first activity time because it is necessary for showing the deteails.
+     * @param customActivity the activity to be inserted
+     */
+    public void insertActivity(CustomActivity customActivity) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            customActivityDao.insertActivity(customActivity);
+            LocalDate localDate = LocalDate.now();
+            Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            long todayMillis = instant.toEpochMilli();
+            activityTimeDao.insertActivityTime(new ActivityTime(customActivity.getId(), todayMillis, 0L));
+        });
+        executor.shutdown();
+    }
+
+    //********//
+    // Search //
+    //********//
+
+    /**
+     * Gets an activity based on id. Then it adds to a mutable live data to present in the UI.
+     * @param id id of activity we search for
+     */
+    public void getActivityById(long id) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            activity = customActivityDao.getActivityById(id);
+            handlerSingleActivity.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    //***************//
+    // Getting lists //
+    //***************//
+
+    //*******************************//
+    // Creating and restoring backup //
+    //*******************************//
 
     public static <T> T getValue(LiveData<T> liveData) throws InterruptedException {
         final Object[] objects = new Object[1];
@@ -233,100 +334,10 @@ public class Repository {
         }
     }
 
-    Handler handler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            activitiesWithTimesData.setValue(activitiesWithTimes);
-        }
-    };
-
-    Handler handlerSingleActivity = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            activitiesData.setValue(activity);
-        }
-    };
-
-    Handler handlerSingleActivityWithTimesEntity = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            activityWithTimesEntity.setValue(activityWithTimes);
-        }
-    };
-
-    Handler handlerFilter = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            activityWithTimesFilterList.setValue(activityWithTimesFilter);
-        }
-    };
-
-    Handler handlerSingleActivityWithTimes = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            activityByIdWithTimesData.setValue(activityByIdWithTimes);
-        }
-    };
-
-    Handler handlerAllTimes = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            allActivitiesTime.setValue(allTimes);
-        }
-    };
-
-    Handler handlerOneTimes = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            oneActivitiesTime.setValue(oneTimes);
-        }
-    };
-
-    public long insertActivity(CustomActivity customActivity) {
-        final long[] id = new long[1];
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            id[0] = customActivityDao.insertActivity(customActivity);
-        });
-        executor.shutdown();
-        return id[0];
-    }
-
-    public void insertFirstActivityTime(long id) {
-        Calendar cal = Calendar.getInstance();
-        int year  = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int date  = cal.get(Calendar.DATE);
-        cal.clear();
-        cal.set(year, month, date);
-        long todayMillis = cal.getTimeInMillis();
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activityTimeDao.insertActivityTime(new ActivityTime(id, todayMillis, 0L));
-        });
-        executor.shutdown();
-    }
-
-    public void deleteActivity(CustomActivity customActivity) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            customActivityDao.deleteActivity(customActivity);
-        });
-        executor.shutdown();
-    }
-
     public void updateActivity(CustomActivity customActivity) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             customActivityDao.updateActivity(customActivity);
-        });
-        executor.shutdown();
-    }
-
-    public void deleteActivityByName(String name) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            customActivityDao.deleteActivityByName(name);
         });
         executor.shutdown();
     }
@@ -384,15 +395,6 @@ public class Repository {
         executor.shutdown();
     }
 
-    public void getActivityByName(String name) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activity = customActivityDao.getActivityByName(name);
-            handlerSingleActivity.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
     public int getActivityIdByName(String name) {
         final int[] id = new int[1];
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -403,27 +405,10 @@ public class Repository {
         return id[0];
     }
 
-    public void getActivityById(long id) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activity = customActivityDao.getActivityById(id);
-            handlerSingleActivity.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
     public void insertTime(ActivityTime activityTime) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             activityTimeDao.insertActivityTime(activityTime);
-        });
-        executor.shutdown();
-    }
-
-    public void updateTime(ActivityTime activityTime) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activityTimeDao.updateActivityTime(activityTime);
         });
         executor.shutdown();
     }
@@ -443,14 +428,6 @@ public class Repository {
     public void updateOrInsertTimeSingle(ActivityTime activityTime) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<Boolean> future = executor.submit(() -> activityTimeDao.insertOrUpdateTime(activityTime));
-        executor.shutdown();
-    }
-
-    public void deleteTime(ActivityTime activityTime) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activityTimeDao.deleteActivityTime(activityTime);
-        });
         executor.shutdown();
     }
 
@@ -551,6 +528,10 @@ public class Repository {
         });
         executor.shutdown();
     }
+
+    //*********//
+    // Getters //
+    //*********//
 
     public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivitiesWithTimesData() {
         return activitiesWithTimesData;

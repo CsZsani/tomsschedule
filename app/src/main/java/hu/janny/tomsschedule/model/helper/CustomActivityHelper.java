@@ -31,10 +31,7 @@ public final class CustomActivityHelper {
      * @return true if it is a fix activity, false otherwise
      */
     public static boolean isFixActivity(String string) {
-        if (list.contains(string)) {
-            return true;
-        }
-        return false;
+        return list.contains(string);
     }
 
     /**

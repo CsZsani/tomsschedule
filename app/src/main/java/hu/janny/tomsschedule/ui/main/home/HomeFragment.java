@@ -24,32 +24,32 @@ import hu.janny.tomsschedule.viewmodel.adapter.CustomActivityRecyclerAdapter;
 import hu.janny.tomsschedule.viewmodel.MainViewModel;
 import hu.janny.tomsschedule.ui.main.details.DetailFragment;
 
+/**
+ * This fragment displays the added activities list in a recycler view
+ * and includes a fab icon for adding new activity.
+ */
 public class HomeFragment extends Fragment {
 
     private MainViewModel mainViewModel;
     private FragmentHomeBinding binding;
     private CustomActivityRecyclerAdapter adapter;
 
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-
+        // Binds layout
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Gets a MainViewModel instance
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        // Displays add activity fab icon
         binding.addCustomActivity.setVisibility(View.VISIBLE);
 
         recyclerSetup();
 
-        //mainViewModel.getAllActivitiesInList()
-        /*mainViewModel.getActivitiesListEntities().observe(getViewLifecycleOwner(), new Observer<List<CustomActivity>>() {
-            @Override
-            public void onChanged(List<CustomActivity> customActivities) {
-                adapter.setActivityList(customActivities);
-            }
-        });*/
+        // Observes the activity list with the corresponding times
         mainViewModel.getActivitiesWithTimesList().observe(getViewLifecycleOwner(), new Observer<List<ActivityWithTimes>>() {
             @Override
             public void onChanged(List<ActivityWithTimes> customActivities) {
@@ -64,27 +64,33 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    /**
+     * Sets up the recycler adapter fot he activity list.
+     * Includes an onClickListener for navigating to the detail fragment of the clicked activity.
+     */
     private void recyclerSetup() {
         View.OnClickListener onClickListener = itemView -> {
             ActivityWithTimes item = (ActivityWithTimes) itemView.getTag();
-            //System.out.println(item);
+
             Bundle arguments = new Bundle();
             arguments.putLong(DetailFragment.ARG_ITEM_ID, item.customActivity.getId());
             long timeSpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(item.activityTimes);
             arguments.putLong(DetailFragment.TODAY_SO_FAR, timeSpentToday);
-            //System.out.println(timeSpentToday);
+
             Navigation.findNavController(itemView).navigate(R.id.action_nav_home_to_detailFragment, arguments);
         };
-
-        adapter = new CustomActivityRecyclerAdapter(R.layout.custom_activity_list_item, onClickListener, (MainActivity)getActivity());
-        binding.activitiesListRecyclerView.setLayoutManager(
-                new LinearLayoutManager(getContext()));
+        // Creates a new adapter with layout of the activity list, item onClickListener and MainActivity context
+        adapter = new CustomActivityRecyclerAdapter(R.layout.custom_activity_list_item,
+                onClickListener, (MainActivity)getActivity());
+        // Sets the layout recycler view of the activity
+        binding.activitiesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.activitiesListRecyclerView.setAdapter(adapter);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Sets add activity fab icon to gone
         binding.addCustomActivity.setVisibility(View.GONE);
         binding = null;
     }

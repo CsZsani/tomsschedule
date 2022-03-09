@@ -23,6 +23,7 @@
         android:layout_marginBottom="16dp"
         android:clickable="true"
         android:contentDescription="Add activity"
+        android:minHeight="48dp"
         android:onClick="addNewCustomActivity"
         android:src="@drawable/ic_add_entry"
         android:tint="@color/toms_400"

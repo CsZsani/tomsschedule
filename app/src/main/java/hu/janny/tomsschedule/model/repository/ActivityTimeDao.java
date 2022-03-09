@@ -16,9 +16,10 @@ import hu.janny.tomsschedule.model.entities.ActivityTime;
 @Dao
 public abstract class ActivityTimeDao {
 
-    /*@Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertOrUpdate(ActivityTime activityTime);*/
-
+    /**
+     * Inserts a new activity time into the database.
+     * @param activityTime the activity time to be inserted
+     */
     @Insert
     public abstract void insertActivityTime(ActivityTime activityTime);
 

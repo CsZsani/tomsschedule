@@ -23,6 +23,10 @@ import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 import hu.janny.tomsschedule.model.repository.Repository;
 import hu.janny.tomsschedule.model.repository.UserRepository;
 
+/**
+ * This view model is for doing the repository changes connected with activities
+ * and providing data about activities and times.
+ */
 public class MainViewModel extends AndroidViewModel {
 
     private final Repository repository;
@@ -85,7 +89,29 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
+    //************************//
+    // Insert, update, delete //
+    //************************//
 
+    /**
+     * Inserts the given activity into the local database.
+     * @param customActivity the activity to be inserted
+     */
+    public void insertActivity(CustomActivity customActivity) {
+        repository.insertActivity(customActivity);
+    }
+
+    /**
+     * Updates the given activity in the local database.
+     * @param customActivity the activity to be updated
+     */
+    public void updateActivity(CustomActivity customActivity) {
+        repository.updateActivity(customActivity);
+    }
+
+    //********//
+    // Search //
+    //********//
 
     public void logoutUserInDb(User user) {
         userRepository.updateUser(user);
@@ -111,21 +137,12 @@ public class MainViewModel extends AndroidViewModel {
         return activityWithTimes;
     }
 
-    public long insertActivity(CustomActivity customActivity) {
-        return repository.insertActivity(customActivity);
-    }
+
 
     public void insertActivityTime(ActivityTime activityTime) {
         repository.insertTime(activityTime);
     }
 
-    public void insertFirstActivityTime(long activityId) {
-        repository.insertFirstActivityTime(activityId);
-    }
-
-    public void updateActivity(CustomActivity customActivity) {
-        repository.updateActivity(customActivity);
-    }
 
     public void deleteActivityById(long id) {
         repository.deleteActivityById(id);

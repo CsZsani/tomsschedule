@@ -19,8 +19,12 @@ import hu.janny.tomsschedule.model.entities.CustomActivity;
 @Dao
 public interface CustomActivityDao {
 
+    /**
+     * Inserts a new activity into the database.
+     * @param customActivity the activity to be inserted
+     */
     @Insert
-    long insertActivity(CustomActivity customActivity);
+    void insertActivity(CustomActivity customActivity);
 
     @Transaction
     @Insert
