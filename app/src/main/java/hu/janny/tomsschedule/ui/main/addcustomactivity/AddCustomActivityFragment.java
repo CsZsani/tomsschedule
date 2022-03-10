@@ -716,18 +716,18 @@ public class AddCustomActivityFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b) {
                     binding.activityEndDate.setVisibility(View.VISIBLE);
-                    setDurationGone();
-                    binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
                 } else {
                     binding.activityEndDate.setVisibility(View.GONE);
-                    setDurationGone();
-                    binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
                 }
+                setDurationGone();
+                binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                // If it is regular weekly and no fix days
                 if(binding.activityWeekly.isChecked() && !binding.activityHasFixedWeeks.isChecked()) {
                     binding.durationText.setText(R.string.choose_one_weekly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
                     setSumTimePickerDefault();
                     binding.activityIsTimeMeasured.setVisibility(View.GONE);
+                    // If it is regular monthly
                 } else if(binding.activityMonthly.isChecked()) {
                     binding.durationText.setText(R.string.choose_monthly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
@@ -745,25 +745,25 @@ public class AddCustomActivityFragment extends Fragment {
         binding.activityIsTimeMeasured.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    if(binding.activityCustom.isChecked()) {
+                if (b) { // Checked
+                    if(binding.activityCustom.isChecked()) { // Neither
                         binding.durationText.setText(R.string.choose_sum_time_for_neither);
                         binding.durationText.setVisibility(View.VISIBLE);
                         setSumTimePickerDefault();
-                    } else if(binding.activityIsInterval.isChecked()) {
+                    } else if(binding.activityIsInterval.isChecked()) { // Interval
                         binding.selectDurationType.setVisibility(View.VISIBLE);
                         binding.activityIsSumTime.setVisibility(View.VISIBLE);
                         binding.activityIsTime.setVisibility(View.VISIBLE);
                         binding.activityCustomTime.setVisibility(View.GONE);
                         binding.activityIsWeeklyTime.setVisibility(View.GONE);
-                    } else if(binding.activityDaily.isChecked()) {
+                    } else if(binding.activityDaily.isChecked()) { // Regular - daily
                         binding.durationText.setText(R.string.choose_daily_time);
                         binding.durationText.setVisibility(View.VISIBLE);
                         setSumTimePickerDefault();
                         binding.activitySumTimePicker.days.setEnabled(false);
                         binding.activitySumTimePicker.days.setBackgroundColor(Color.LTGRAY);
                         binding.activitySumTimePicker.days.setTypeface(null, Typeface.ITALIC);
-                    } else if(binding.activityWeekly.isChecked()) {
+                    } else if(binding.activityWeekly.isChecked()) { // Regular - weekly
                         if (binding.activityHasFixedWeeks.isChecked()) {
                             if(binding.activityHasAnEndDate.isChecked()) {
                                 binding.selectDurationType.setVisibility(View.VISIBLE);
@@ -783,12 +783,12 @@ public class AddCustomActivityFragment extends Fragment {
                             binding.durationText.setVisibility(View.VISIBLE);
                             setSumTimePickerDefault();
                         }
-                    } else if(binding.activityMonthly.isChecked()) {
+                    } else if(binding.activityMonthly.isChecked()) { // Regular - monthly
                         binding.durationText.setText(R.string.choose_monthly_time);
                         binding.durationText.setVisibility(View.VISIBLE);
                         setSumTimePickerDefault();
                     }
-                } else {
+                } else { // Unchecked
                     setDurationTypeRadiosToFalse();
                     binding.durationText.setVisibility(View.GONE);
                     binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);

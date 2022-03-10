@@ -85,8 +85,6 @@
     <string name="new_act_must_choose_type">You must choose type of activity!</string>
     <string name="new_act_must_add_end_date">End date is required!</string>
     <string name="add_new_activity_fragment_label">Add new activity</string>
-    <string name="confirm">Confirm</string>
-    <string name="cancel">Cancel</string>
     <string name="color_pick">Choose a color</string>
     <string name="priority">Priority (1–10)</string>
     <string name="priority_detail">Priority</string>
@@ -114,6 +112,30 @@
     <string name="is_weekly_time">The same duration for each week</string>
     <string name="has_fixed_days">Has fixed days in every week?</string>
     <string name="select_fixed_days_times">Set the times for each day</string>
+    <string name="activity_name">Activity name</string>
+    <string name="name_of_activity">Name</string>
+    <string name="color">Color</string>
+    <string name="note">Note (optional)</string>
+    <string name="note_detail">Note</string>
+    <string name="select_color">Select color</string>
+    <string name="add_custom_name">Do you want to add custom activity?</string>
+    <string name="fix_activities">No, I want global statistics</string>
+    <string name="custom_activity">Yes</string>
+    <string name="notification_type">Select notification type</string>
+    <string name="days">Days (>=0)</string>
+    <string name="hours">Hours (0–23)</string>
+    <string name="minutes">Minutes (0–59)</string>
+    <string name="days_hint">Days</string>
+    <string name="hours_hint">Hours</string>
+    <string name="minutes_hint">Minutes</string>
+    <string name="choose_one_weekly_time">Set how much time you want weekly</string>
+    <string name="choose_sum_time_for_deadline">Set how much time you want till deadline</string>
+    <string name="choose_sum_time_for_neither">Set how much time you want altogether</string>
+    <string name="choose_monthly_time">Set how much time you want monthly</string>
+    <string name="choose_sum_time_for_interval">Set how much time you want till end day</string>
+    <string name="choose_sum_time_for_fixed_week_days">Set how much time you want till end date</string>
+    <string name="choose_daily_time_for_interval">Set how much time you want daily till end day</string>
+    <string name="choose_daily_time">Set how much time you want daily</string>
 
     <!-- Edit activity fragment -->
     <string name="edit_act_no_act">I can\'t find this activity!</string>
@@ -128,6 +150,7 @@
     <string name="edit_act_must_choose_reg_type">You must choose regularity type for regular activity!</string>
     <string name="edit_act_must_choose_type">You must choose type of activity!</string>
     <string name="edit_act_must_add_end_date">End date is required!</string>
+    <string name="global_activity_name_immutable">Activity name (global activity names are immutable)</string>
 
     <!--  Days of week  -->
     <string name="monday">Monday</string>
@@ -146,16 +169,7 @@
     <string name="saturday_short">SA</string>
     <string name="sunday_short">SU</string>
 
-
-    <string name="activity_name">Activity name</string>
-    <string name="name_of_activity">Name</string>
-    <string name="color">Color</string>
-    <string name="note">Note (optional)</string>
-    <string name="note_detail">Note</string>
-    <string name="select_color">Select color</string>
-    <string name="add_custom_name">Do you want to add custom activity?</string>
-    <string name="fix_activities">No, I want global statistics</string>
-    <string name="custom_activity">Yes</string>
+    <!-- Fix activities -->
     <string name="fa_workout">Workout</string>
     <string name="fa_sleeping">Sleeping</string>
     <string name="fa_housework">Housework</string>
@@ -168,24 +182,8 @@
     <string name="fa_hobby">Hobby</string>
     <string name="fa_relaxation">Relaxation</string>
     <string name="fa_reading">Reading</string>
-    <string name="notification_type">Select notification type</string>
-    <string name="days">Days (>=0)</string>
-    <string name="hours">Hours (0–23)</string>
-    <string name="minutes">Minutes (0–59)</string>
-    <string name="days_hint">Days</string>
-    <string name="hours_hint">Hours</string>
-    <string name="minutes_hint">Minutes</string>
-    <string name="choose_one_weekly_time">Set how much time you want weekly</string>
-    <string name="choose_sum_time_for_deadline">Set how much time you want till deadline</string>
-    <string name="choose_sum_time_for_neither">Set how much time you want altogether</string>
-    <string name="choose_monthly_time">Set how much time you want monthly</string>
-    <string name="choose_sum_time_for_interval">Set how much time you want till end day</string>
-    <string name="choose_sum_time_for_fixed_week_days">Set how much time you want till end date</string>
-    <string name="choose_daily_time_for_interval">Set how much time you want daily till end day</string>
-    <string name="choose_daily_time">Set how much time you want daily</string>
-    <string name="save">Save</string>
-    <string name="turn_off_notifications">Do you want…?</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Detail fragment -->
     <string name="detail_fragment_label">Details</string>
     <string name="details_daily">daily</string>
     <string name="details_weekly">weekly</string>
@@ -202,14 +200,20 @@
     <string name="detail_days">days</string>
     <string name="detail_hours">hours</string>
     <string name="detail_minutes">minutes</string>
+    <string name="detail_all_time">All time</string>
+    <string name="detail_so_far">So far</string>
+    <string name="detail_remaining">Remaining</string>
     <string name="fab_start_timer">Start timer</string>
     <string name="fab_minus_time">Reduce time</string>
     <string name="fab_plus_time">Add time</string>
     <string name="fab_edit">Edit activity</string>
     <string name="fab_delete">Delete activity</string>
     <string name="sure_delete_acitvity">Do you really want to delete this activity?</string>
-    <string name="global_activity_name_immutable">Activity name (global activity names are immutable)</string>
-    <string name="edit">Edit</string>
+    <string name="detail_act_no_act">I can\'t find this activity!</string>
+    <string name="detail_bar_chart_label">Time spent on this activity in the last week in hours</string>
+    <string name="detail_bar_chart_no_data">No data is available!</string>
+
+
     <string name="add_time_to_activity">Add time</string>
     <string name="add_time_date">Set the date</string>
     <string name="add_time_time">Set the amount of time</string>
@@ -222,17 +226,6 @@
     <string name="today">Today:</string>
     <string name="remaining">Remaining:</string>
     <string name="so_far">So far:</string>
-    <string name="blue">Blue</string>
-    <string name="green">Green</string>
-    <string name="water">Water</string>
-    <string name="morning">Morning</string>
-    <string name="forest">Forest</string>
-    <string name="fire">Fire</string>
-    <string name="milky_way">Milky way</string>
-    <string name="colourful">Colourful</string>
-    <string name="detail_all_time">All time</string>
-    <string name="detail_so_far">So far</string>
-    <string name="detail_remaining">Remaining</string>
     <string name="personal_statistics">Personal</string>
     <string name="global_statistics">Global</string>
     <string name="tips">Tips</string>
@@ -290,10 +283,26 @@
     <string name="restore_backup_progress">Restoring backup is in progress. Please wait…</string>
     <string name="connect_to_stable_internet">Please, connect to stable Internet!</string>
 
+    <!-- Timer assets -->
+    <string name="blue">Blue</string>
+    <string name="green">Green</string>
+    <string name="water">Water</string>
+    <string name="morning">Morning</string>
+    <string name="forest">Forest</string>
+    <string name="fire">Fire</string>
+    <string name="milky_way">Milky way</string>
+    <string name="colourful">Colourful</string>
+
     <!-- Other -->
     <string name="age_group">Age group</string>
     <string name="user_name">Name</string>
     <string name="gender">Gender</string>
     <string name="error">Error</string>
+    <string name="save">Save</string>
+    <string name="turn_off_notifications">Do you want…?</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="edit">Edit</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

@@ -92,6 +92,7 @@ public class EditActivityFragment extends Fragment{
         }
 
         // mainViewModel.getSingleActivity()
+        // Observer of the activity to get the data from the database
         mainViewModel.getActivityByIdWithTimesEntity().observe(getViewLifecycleOwner(), new Observer<ActivityWithTimes>() {
             @Override
             public void onChanged(ActivityWithTimes activityWithTimes) {
@@ -201,6 +202,7 @@ public class EditActivityFragment extends Fragment{
             Toast.makeText(getActivity(), getString(R.string.new_act_must_choose_type), Toast.LENGTH_LONG).show();
             return;
         }
+        CustomActivityHelper.recalculateAfterEditActivity(customActivity, times);
         addActivityToDb(fragView);
     }
 
@@ -660,11 +662,7 @@ public class EditActivityFragment extends Fragment{
                     binding.activityIsTimeMeasured.setVisibility(View.GONE);
                     binding.durationText.setText(R.string.choose_one_weekly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
-                    if(!setupFinished && customActivity.getDur() != 0L) {
-                        setSumTimePickerFromActivity();
-                    }else{
-                        setSumTimePickerDefault();
-                    }
+                    setSumTimePicker();
                 } else if(binding.activityMonthly.isChecked()) {
                     // Monthly
                     setWeeklyStuffGone();
@@ -673,16 +671,15 @@ public class EditActivityFragment extends Fragment{
                     binding.activityIsTimeMeasured.setVisibility(View.GONE);
                     binding.durationText.setText(R.string.choose_monthly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
-                    if(!setupFinished && customActivity.getDur() != 0L) {
-                        setSumTimePickerFromActivity();
-                    }else{
-                        setSumTimePickerDefault();
-                    }
+                    setSumTimePicker();
                 }
             }
         });
     }
 
+    /**
+     * Initializes the "has fix days" switch.
+     */
     private void initHasFixedDaysSwitch() {
         binding.activityHasFixedWeeks.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -690,6 +687,7 @@ public class EditActivityFragment extends Fragment{
                 if(b) {
                     binding.activityWeeklyDays.setVisibility(View.VISIBLE);
                     binding.allDaysOfWeek.setVisibility(View.VISIBLE);
+                    // First we restore the time from the database
                     if(!setupFinished && !customActivity.getCustomWeekTime().nothingSet()) {
                         setFixedDaysFromActivity();
                     }
@@ -700,88 +698,72 @@ public class EditActivityFragment extends Fragment{
                     binding.allDaysOfWeek.setVisibility(View.GONE);
                     setDurationGone();
                     binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
-                    //if(binding.activityWeekly.isChecked()) {
                     binding.durationText.setText(R.string.choose_one_weekly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
-                    if(!setupFinished && customActivity.getDur() != 0L) {
-                        setSumTimePickerFromActivity();
-                    }else{
-                        setSumTimePickerDefault();
-                    }
+                    setSumTimePicker();
                     binding.activityIsTimeMeasured.setVisibility(View.GONE);
-                    //}
                 }
             }
         });
     }
 
+    /**
+     * Initializes the "has end date" switch.
+     */
     private void initHasEndDateSwitch() {
         binding.activityHasAnEndDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b) {
                     binding.activityEndDate.setVisibility(View.VISIBLE);
-                    setDurationGone();
-                    binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
                 } else {
                     binding.activityEndDate.setVisibility(View.GONE);
-                    setDurationGone();
-                    binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
                 }
+                setDurationGone();
+                binding.activityIsTimeMeasured.setVisibility(View.VISIBLE);
+                // If it is regular weekly and no fix days
                 if(binding.activityWeekly.isChecked() && !binding.activityHasFixedWeeks.isChecked()) {
                     binding.durationText.setText(R.string.choose_one_weekly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
-                    if(!setupFinished && customActivity.getDur() != 0L) {
-                        setSumTimePickerFromActivity();
-                    }else{
-                        setSumTimePickerDefault();
-                    }
+                    setSumTimePicker();
                     binding.activityIsTimeMeasured.setVisibility(View.GONE);
+                    // If it is regular monthly
                 } else if(binding.activityMonthly.isChecked()) {
                     binding.durationText.setText(R.string.choose_monthly_time);
                     binding.durationText.setVisibility(View.VISIBLE);
-                    if(!setupFinished && customActivity.getDur() != 0L) {
-                        setSumTimePickerFromActivity();
-                    }else{
-                        setSumTimePickerDefault();
-                    }
+                    setSumTimePicker();
                     binding.activityIsTimeMeasured.setVisibility(View.GONE);
                 }
             }
         });
     }
 
+    /**
+     * Initializes the "is time measured" switch.
+     */
     private void initIsTimeMeasuredSwitch() {
         binding.activityIsTimeMeasured.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    if(binding.activityCustom.isChecked()) {
+                if (b) { // Checked
+                    if(binding.activityCustom.isChecked()) { // Neither
                         binding.durationText.setText(R.string.choose_sum_time_for_neither);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        if(!setupFinished && customActivity.getDur() != 0L) {
-                            setSumTimePickerFromActivity();
-                        }else{
-                            setSumTimePickerDefault();
-                        }
-                    } else if(binding.activityIsInterval.isChecked()) {
+                        setSumTimePicker();
+                    } else if(binding.activityIsInterval.isChecked()) { // Interval
                         binding.selectDurationType.setVisibility(View.VISIBLE);
                         binding.activityIsSumTime.setVisibility(View.VISIBLE);
                         binding.activityIsTime.setVisibility(View.VISIBLE);
                         binding.activityCustomTime.setVisibility(View.GONE);
                         binding.activityIsWeeklyTime.setVisibility(View.GONE);
-                    } else if(binding.activityDaily.isChecked()) {
+                    } else if(binding.activityDaily.isChecked()) { // Regular - daily
                         binding.durationText.setText(R.string.choose_daily_time);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        if(!setupFinished && customActivity.getDur() != 0L) {
-                            setSumTimePickerFromActivity();
-                        }else{
-                            setSumTimePickerDefault();
-                        }
+                        setSumTimePicker();
                         binding.activitySumTimePicker.days.setEnabled(false);
                         binding.activitySumTimePicker.days.setBackgroundColor(Color.LTGRAY);
                         binding.activitySumTimePicker.days.setTypeface(null, Typeface.ITALIC);
-                    } else if(binding.activityWeekly.isChecked()) {
+                    } else if(binding.activityWeekly.isChecked()) { // Regular - weekly
                         if (binding.activityHasFixedWeeks.isChecked()) {
                             if(binding.activityHasAnEndDate.isChecked()) {
                                 binding.selectDurationType.setVisibility(View.VISIBLE);
@@ -799,22 +781,15 @@ public class EditActivityFragment extends Fragment{
                         } else {
                             binding.durationText.setText(R.string.choose_one_weekly_time);
                             binding.durationText.setVisibility(View.VISIBLE);
-                            if(!setupFinished && customActivity.getDur() != 0L) {
-                                setSumTimePickerFromActivity();
-                            }else{
-                                setSumTimePickerDefault();
-                            }
+                            // First we restore the time from the database
+                            setSumTimePicker();
                         }
-                    } else if(binding.activityMonthly.isChecked()) {
+                    } else if(binding.activityMonthly.isChecked()) { // Regular - monthly
                         binding.durationText.setText(R.string.choose_monthly_time);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        if(!setupFinished && customActivity.getDur() != 0L) {
-                            setSumTimePickerFromActivity();
-                        }else{
-                            setSumTimePickerDefault();
-                        }
+                        setSumTimePicker();
                     }
-                } else {
+                } else { // Unchecked
                     setDurationTypeRadiosToFalse();
                     binding.durationText.setVisibility(View.GONE);
                     binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
@@ -825,75 +800,79 @@ public class EditActivityFragment extends Fragment{
         });
     }
 
+    /**
+     * Clears check in duration type radio button group.
+     */
     private void setDurationTypeRadiosToFalse() {
         binding.selectDurationType.clearCheck();
     }
 
+    /**
+     * Initializes the duration type radio group where we can choose from sum time, daily, weekly or custom time.
+     * Displays the corresponding UI items based on our choice.
+     */
     private void initSelectDurationTypeRadioGroups() {
         binding.selectDurationType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i) {
-                    case R.id.activityIsSumTime:
-                        binding.fixedDaysTimes.setVisibility(View.GONE);
-                        if(binding.activityIsInterval.isChecked()) {
-                            binding.durationText.setText(R.string.choose_sum_time_for_interval);
-                            binding.durationText.setVisibility(View.VISIBLE);
-                            if(!setupFinished && customActivity.getDur() != 0L) {
-                                setSumTimePickerFromActivity();
-                            }else{
-                                setSumTimePickerDefault();
-                            }
-                        } else {
-                            binding.durationText.setText(R.string.choose_sum_time_for_fixed_week_days);
-                            binding.durationText.setVisibility(View.VISIBLE);
-                            if(!setupFinished && customActivity.getDur() != 0L) {
-                                setSumTimePickerFromActivity();
-                            }else{
-                                setSumTimePickerDefault();
-                            }
-                        }
-                        break;
-                    case R.id.activityIsTime:
-                        binding.fixedDaysTimes.setVisibility(View.GONE);
-                        if(binding.activityIsInterval.isChecked()) {
-                            binding.durationText.setText(R.string.choose_daily_time_for_interval);
-                        } else {
-                            binding.durationText.setText(R.string.choose_daily_time);
-                        }
+                if(binding.activityIsSumTime.isChecked()) {
+                    binding.fixedDaysTimes.setVisibility(View.GONE);
+                    if(binding.activityIsInterval.isChecked()) {
+                        binding.durationText.setText(R.string.choose_sum_time_for_interval);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        if(!setupFinished && customActivity.getDur() != 0L) {
-                            setSumTimePickerFromActivity();
-                        }else{
-                            setSumTimePickerDefault();
-                        }
-                        binding.activitySumTimePicker.days.setEnabled(false);
-                        binding.activitySumTimePicker.days.setBackgroundColor(Color.LTGRAY);
-                        binding.activitySumTimePicker.days.setTypeface(null, Typeface.ITALIC);
-                        break;
-                    case R.id.activityCustomTime:
-                        binding.durationText.setVisibility(View.GONE);
-                        binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
-                        if(!setupFinished && customActivity.ishFD()) {
-                            resetFixedDaysTimePickersFromActivity();
-                        } else {
-                            resetFixedDaysTimePickers();
-                        }
-                        binding.fixedDaysTimes.setVisibility(View.VISIBLE);
-                        break;
-                    case R.id.activityIsWeeklyTime:
-                        binding.fixedDaysTimes.setVisibility(View.GONE);
-                        binding.durationText.setText(R.string.choose_one_weekly_time);
+                        setSumTimePicker();
+                    } else {
+                        binding.durationText.setText(R.string.choose_sum_time_for_fixed_week_days);
                         binding.durationText.setVisibility(View.VISIBLE);
-                        if(!setupFinished && customActivity.getDur() != 0L) {
-                            setSumTimePickerFromActivity();
-                        }else{
-                            setSumTimePickerDefault();
-                        }
-                        break;
+                        setSumTimePicker();
+                    }
+                } else if(binding.activityIsTime.isChecked()) {
+                    binding.fixedDaysTimes.setVisibility(View.GONE);
+                    if(binding.activityIsInterval.isChecked()) {
+                        binding.durationText.setText(R.string.choose_daily_time_for_interval);
+                    } else {
+                        binding.durationText.setText(R.string.choose_daily_time);
+                    }
+                    binding.durationText.setVisibility(View.VISIBLE);
+                    setSumTimePicker();
+                    binding.activitySumTimePicker.days.setEnabled(false);
+                    binding.activitySumTimePicker.days.setBackgroundColor(Color.LTGRAY);
+                    binding.activitySumTimePicker.days.setTypeface(null, Typeface.ITALIC);
+                } else if(binding.activityCustomTime.isChecked()) {
+                    binding.durationText.setVisibility(View.GONE);
+                    binding.activitySumTimePicker.getRoot().setVisibility(View.GONE);
+                    setFixDaysPickers();
+                    binding.fixedDaysTimes.setVisibility(View.VISIBLE);
+                } else if(binding.activityIsWeeklyTime.isChecked()) {
+                    binding.fixedDaysTimes.setVisibility(View.GONE);
+                    binding.durationText.setText(R.string.choose_one_weekly_time);
+                    binding.durationText.setVisibility(View.VISIBLE);
+                    setSumTimePicker();
                 }
             }
         });
+    }
+
+    /**
+     * Sets fix days time pickers to default or to the time that comes from the database.
+     */
+    private void setFixDaysPickers() {
+        if(!setupFinished && customActivity.ishFD()) {
+            resetFixedDaysTimePickersFromActivity();
+        } else {
+            resetFixedDaysTimePickers();
+        }
+    }
+
+    /**
+     * Sets time picker to default or to the time that comes from the database.
+     */
+    private void setSumTimePicker() {
+        if(!setupFinished && customActivity.getDur() != 0L) {
+            setSumTimePickerFromActivity();
+        }else{
+            setSumTimePickerDefault();
+        }
     }
 
     /**

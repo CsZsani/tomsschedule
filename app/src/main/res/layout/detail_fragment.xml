@@ -75,6 +75,8 @@
                 android:layout_marginEnd="@dimen/fab_margin"
                 android:layout_marginBottom="8dp"
                 android:contentDescription="@string/fab_start_timer"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
                 app:layout_anchor="@+id/app_bar"
                 app:layout_anchorGravity="top|end"
                 app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
@@ -90,6 +92,7 @@
                 android:layout_marginBottom="8dp"
                 android:clickable="true"
                 android:contentDescription="@string/fab_plus_time"
+                android:minHeight="48dp"
                 android:src="@drawable/ic_add_entry"
                 app:layout_anchor="@+id/app_bar"
                 app:layout_anchorGravity="start|top"
@@ -105,6 +108,7 @@
                 android:layout_marginBottom="8dp"
                 android:clickable="true"
                 android:contentDescription="@string/fab_minus_time"
+                android:minHeight="48dp"
                 android:src="@drawable/ic_minus"
                 app:layout_anchor="@+id/app_bar"
                 app:layout_anchorGravity="start|top"
@@ -138,7 +142,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/note_detail"
-                    android:textStyle="italic" />
+                    android:textStyle="bold|italic" />
 
                 <TextView
                     android:id="@+id/detailNote"
@@ -151,9 +155,9 @@
                     android:id="@+id/detailPriorityText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
+                    android:layout_marginTop="16dp"
                     android:text="@string/priority_detail"
-                    android:textStyle="italic" />
+                    android:textStyle="bold|italic" />
 
                 <TextView
                     android:id="@+id/detailPriority"
@@ -166,9 +170,9 @@
                     android:id="@+id/detailRegularityText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
+                    android:layout_marginTop="16dp"
                     android:text="@string/regularity_detail"
-                    android:textStyle="italic"
+                    android:textStyle="bold|italic"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
@@ -184,9 +188,9 @@
                     android:id="@+id/detailDeadlineText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
+                    android:layout_marginTop="16dp"
                     android:text="Interval date/end date text"
-                    android:textStyle="italic"
+                    android:textStyle="bold|italic"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
@@ -202,9 +206,9 @@
                     android:id="@+id/detailDurationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="16dp"
+                    android:layout_marginTop="16dp"
                     android:text="Duration text"
-                    android:textStyle="italic"
+                    android:textStyle="bold|italic"
                     android:visibility="gone"
                     tools:visibility="visible" />
 
@@ -219,8 +223,8 @@
                 <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp">
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp">
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -232,6 +236,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.33"
                             android:text="@string/detail_so_far"
+                            android:textAllCaps="true"
                             android:textStyle="italic" />
 
                         <TextView
@@ -239,6 +244,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.33"
                             android:text="@string/detail_remaining"
+                            android:textAllCaps="true"
                             android:textStyle="italic" />
 
                         <TextView
@@ -246,6 +252,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.33"
                             android:text="@string/detail_all_time"
+                            android:textAllCaps="true"
                             android:textStyle="italic" />
                     </TableRow>
 
