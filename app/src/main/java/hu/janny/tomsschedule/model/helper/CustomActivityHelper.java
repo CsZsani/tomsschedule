@@ -732,7 +732,7 @@ public final class CustomActivityHelper {
     }
 
     /**
-     * Updates last day field, if we add a new time record to the activity.
+     * Updates lastDay field, if we add a new time record to the activity.
      *
      * @param customActivity activity to which we added a time
      * @param activityTime   the activity time we added

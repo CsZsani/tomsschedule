@@ -23,13 +23,17 @@ import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.viewmodel.LoginRegisterViewModel;
 
+/**
+ * This fragment provides an opportunity to change the user's name, birth date and gender.
+ */
 public class EditAccountFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private FragmentEditAccountBinding binding;
-    private DatePickerDialog datePickerDialog;
-
     private LoginRegisterViewModel viewModel;
+
+    private DatePickerDialog datePickerDialog;
     private final Calendar calendar = Calendar.getInstance();
+
     private User editUser;
 
     @Override

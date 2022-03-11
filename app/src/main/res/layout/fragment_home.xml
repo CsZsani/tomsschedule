@@ -21,15 +21,17 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/toms_500"
         android:clickable="true"
         android:contentDescription="Add activity"
+        android:foregroundTint="@color/white"
         android:minHeight="48dp"
         android:onClick="addNewCustomActivity"
         android:src="@drawable/ic_add_entry"
-        android:tint="@color/toms_400"
+        android:tint="@color/white"
         app:backgroundTint="@color/toms_400"
         app:fabSize="auto"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="@color/toms_400" />
+        app:rippleColor="@color/toms_700" />
 </androidx.constraintlayout.widget.ConstraintLayout>

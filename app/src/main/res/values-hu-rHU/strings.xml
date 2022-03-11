@@ -242,4 +242,33 @@
     <string name="edit_was_successful">Felhasználói adatok frissítése befejeződött!</string>
     <string name="edit_was_fail">Hiba! Ellenőrizd az internet kapcsolatot és próbáld újra a szerkesztést!</string>
     <string name="label_edit_account">Szerkesztés</string>
+    <string name="select_color_for_activity">Válassz színt!</string>
+    <string name="error_saving_no_user">Hiba! Nem lehet menteni. Kérlek, jelentkezz be újra!</string>
+    <string name="new_activity_name_is_required">Név megadása kötelező!</string>
+    <string name="new_act_start_day_required">A kezdés napja kötelező intervallumnál!</string>
+    <string name="new_act_end_day_required">A befejezés napja kötelező intervallumnál!</string>
+    <string name="new_act_must_add_time">Meg kell adnod a napokat, órákat és perceket is (lehet 0 is)!</string>
+    <string name="new_act_must_add_time_for_a_day">Óra és perc megadása kötelező (lehet 0 is)!</string>
+    <string name="new_act_format_add_time"><![CDATA[Az óra egész szám legyen 0–23 között, a percek 0–59 között és a napok is >=0!]]></string>
+    <string name="new_act_format_add_time_for_a_day">"Az óra egész szám legyen 0-23 között és a percek is 0-59 között! "</string>
+    <string name="new_act_must_set_one_day">Legalább egy nap kiválasztása kötelező!</string>
+    <string name="new_act_must_choose_reg_type">A gyakoriság megadása kötelező rendszeres tevékenységnél!</string>
+    <string name="new_act_must_choose_type">A rendszeresség megadása kötelező!</string>
+    <string name="new_act_must_add_end_date">Utolsó nap megadása kötelező!</string>
+    <string name="add_time_no_activity">Nincs ilyen tevékenység!</string>
+    <string name="detail_bar_chart_no_data">Nem érhető el adat!</string>
+    <string name="detail_act_no_act">Nincs ilyen tevékenység!</string>
+    <string name="detail_bar_chart_label">Az elmúlt héten a tevékenységgel töltött idő</string>
+    <string name="edit_act_no_act">Nincs ilyen tevékenység!</string>
+    <string name="edit_act_name_required">Név megadása kötelező!</string>
+    <string name="edit_act_start_day_required">A kezdés napja kötelező intervallumnál!</string>
+    <string name="edit_act_end_day_required">A befejezés napja kötelező intervallumnál!</string>
+    <string name="edit_act_must_add_time">Meg kell adnod a napokat, órákat és perceket is (lehet 0 is)!</string>
+    <string name="edit_act_must_add_time_for_a_day">Óra és perc megadása kötelező (lehet 0 is)!</string>
+    <string name="edit_act_format_add_time"><![CDATA[Az óra egész szám legyen 0–23 között, a percek 0–59 között és a napok is >=0!]]></string>
+    <string name="edit_act_format_add_time_for_a_day">"Az óra egész szám legyen 0-23 között és a percek is 0-59 között! "</string>
+    <string name="edit_act_must_set_one_day">Legalább egy nap kiválasztása kötelező!</string>
+    <string name="edit_act_must_choose_reg_type">A gyakoriság megadása kötelező rendszeres tevékenységnél!</string>
+    <string name="edit_act_must_choose_type">A rendszeresség megadása kötelező!</string>
+    <string name="edit_act_must_add_end_date">Utolsó nap megadása kötelező!</string>
 </resources>

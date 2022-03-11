@@ -210,26 +210,34 @@
     <string name="fab_delete">Delete activity</string>
     <string name="sure_delete_acitvity">Do you really want to delete this activity?</string>
     <string name="detail_act_no_act">I can\'t find this activity!</string>
-    <string name="detail_bar_chart_label">Time spent on this activity in the last week in hours</string>
+    <string name="detail_bar_chart_label">Time spent on this activity in the last week</string>
     <string name="detail_bar_chart_no_data">No data is available!</string>
 
-
+    <!-- Add time fragment -->
     <string name="add_time_to_activity">Add time</string>
     <string name="add_time_date">Set the date</string>
     <string name="add_time_time">Set the amount of time</string>
     <string name="add_time_fragment_label">Edit time</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
+    <string name="add_time_no_activity">I can\'t find this activity!</string>
     <string name="select_time">Select time amount</string>
     <string name="select_date">Select date</string>
+    <string name="add_time_date_required">Date is required!</string>
+    <string name="add_time_time_required">Time amount is required!</string>
+
+    <!-- Timer activity -->
     <string name="stop">Finish</string>
     <string name="today">Today:</string>
     <string name="remaining">Remaining:</string>
     <string name="so_far">So far:</string>
+
+    <!-- Statistics -->
     <string name="personal_statistics">Personal</string>
     <string name="global_statistics">Global</string>
     <string name="tips">Tips</string>
     <string name="tip">Tip</string>
+    <!-- Statistics filter -->
     <string name="select_time_period_chip">Select time period</string>
     <string name="today_chip">Today</string>
     <string name="yesterday_chip">Yesterday</string>
@@ -272,6 +280,8 @@
     <string name="ma_3">Male 40–49</string>
     <string name="ma_4">Male 50–59</string>
     <string name="ma_5">Male \u003E60</string>
+
+    <!-- Settings ad backup -->
     <string name="dark_mode">Dark mode</string>
     <string name="create_backup">Create backup (internet connection required)</string>
     <string name="save_data">Save data</string>
@@ -281,7 +291,6 @@
     <string name="download_data_warning">Your local data will be overwritten. Do you want to continue?</string>
     <string name="create_backup_progress">Creating backup is in progress. Please wait…</string>
     <string name="restore_backup_progress">Restoring backup is in progress. Please wait…</string>
-    <string name="connect_to_stable_internet">Please, connect to stable Internet!</string>
 
     <!-- Timer assets -->
     <string name="blue">Blue</string>
@@ -304,5 +313,6 @@
     <string name="edit">Edit</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="connect_to_stable_internet">Please, connect to stable Internet!</string>
 
 </resources>

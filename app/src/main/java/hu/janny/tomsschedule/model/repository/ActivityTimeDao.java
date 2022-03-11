@@ -27,12 +27,23 @@ public abstract class ActivityTimeDao {
     @Insert
     public abstract void insertAll(List<ActivityTime> activityTimes);
 
+    // ActivityTime - insert or update
+
+    /**
+     * Returns -1L if we could not insert, because that will not be an unique row. This is how we are
+     * able to check if we have to update a row or just insert.
+     * @param activityTime
+     * @return
+     */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract long insertIgnore(ActivityTime activityTime);
 
-    @Query("UPDATE activitytimes SET time = time + :timeAmount WHERE actId = :activityId and date = :date")
-    public abstract void update(long activityId, long date, long timeAmount);
-
+    /**
+     * Insert or updates an activity time. If the given activity already has time on the given date,
+     * then we update (returns false), if it has not the we insert (returns true).
+     * @param activityTime the time to be updated (or inserted)
+     * @return true if we inserted, false if we updated
+     */
     @Transaction
     public boolean insertOrUpdateTime(ActivityTime activityTime) {
         if (insertIgnore(activityTime) == -1L) {
@@ -41,6 +52,16 @@ public abstract class ActivityTimeDao {
         }
         return true;
     }
+
+    /**
+     * Updates the activity time. Adds time to the appropriate row based on activityId and date.
+     * @param activityId the id of the activity to which the time belongs to
+     * @param date date of activity time
+     * @param timeAmount the amount of time we want to add
+     */
+    @Query("UPDATE activitytimes SET time = time + :timeAmount WHERE actId = :activityId and date = :date")
+    public abstract void update(long activityId, long date, long timeAmount);
+
 
     @Update
     public abstract void updateActivityTime(ActivityTime activityTime);

@@ -72,6 +72,7 @@ public final class FirebaseManager {
      * Saves the activity time into Firebase if it is a fix activity.
      * It uses the path "activityTimes/{activityName}/{gender}/{ageGroup}/{dayInMillis}"
      * This method used when the user is adding time to the given day for the first time.
+     * In this case we have to increase the user count with 1 and add the time amount.
      *
      * @param activityTime activity time object
      * @param activityName name of activity
@@ -99,7 +100,7 @@ public final class FirebaseManager {
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed,
                                    DataSnapshot currentData) {
-                System.out.println("Saved insert into firebase");
+                //System.out.println("Saved insert into firebase");
             }
         });
     }
@@ -108,6 +109,8 @@ public final class FirebaseManager {
      * Saves the activity time into Firebase if it is a fix activity.
      * It uses the path "activityTimes/{activityName}/{gender}/{ageGroup}/{dayInMillis}"
      * This method used when the user is adding time to the given day for not the first time.
+     * In this case we have to add the time amount, but not increase user count because
+     * we will count the average and that would be a misleading value.
      *
      * @param activityTime activity time object
      * @param activityName name of activity
@@ -136,7 +139,7 @@ public final class FirebaseManager {
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed,
                                    DataSnapshot currentData) {
-                System.out.println("Saved update into firebase");
+                //System.out.println("Saved update into firebase");
             }
         });
     }

@@ -1,9 +1,6 @@
 package hu.janny.tomsschedule.ui.main.details;
 
 import androidx.annotation.ColorInt;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -12,8 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -34,20 +30,18 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Random;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.DetailFragmentBinding;
@@ -57,12 +51,16 @@ import hu.janny.tomsschedule.model.entities.CustomActivity;
 import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
 import hu.janny.tomsschedule.model.entities.CustomWeekTime;
 import hu.janny.tomsschedule.model.helper.DateConverter;
-import hu.janny.tomsschedule.model.helper.TimerAssets;
 import hu.janny.tomsschedule.viewmodel.MainViewModel;
 import hu.janny.tomsschedule.ui.main.editactivity.EditActivityFragment;
 import hu.janny.tomsschedule.ui.main.timeadding.AddTimeFragment;
 import hu.janny.tomsschedule.ui.timeractivity.TimerActivity;
 
+/**
+ * This fragment shows the details of the chosen activity. It presents the name, note, priority,
+ * regularity type, duration, deadline and a bar chart that shows the time spent on this activity
+ * in the last 7 days.
+ */
 public class DetailFragment extends Fragment {
 
     public static final String ARG_ITEM_ID = "item_id";
@@ -175,7 +173,8 @@ public class DetailFragment extends Fragment {
 
     /**
      * Sets up the bar chart that shows the time was spent on activity in the last 7 days.
-     * @param list list of times
+     *
+     * @param list  list of times
      * @param color the color of the activity
      */
     private void setUpBarChart(List<ActivityTime> list, int color) {
@@ -184,8 +183,6 @@ public class DetailFragment extends Fragment {
         BarChart chart = binding.chart;
 
         int MAX_X_VALUE = 7;
-        float MAX_Y_VALUE = DateConverter.durationConverterFromLongToBarChart(list.get(0).t);
-        float MIN_Y_VALUE = 0f;
         String SET_LABEL = getString(R.string.detail_bar_chart_label);
         String[] DAYS = new String[MAX_X_VALUE];
 
@@ -198,20 +195,17 @@ public class DetailFragment extends Fragment {
         legend.setEnabled(false);
 
         ArrayList<BarEntry> values = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int date = cal.get(Calendar.DATE);
-        cal.clear();
-        cal.set(year, month, date);
-        long todayMillis = cal.getTimeInMillis();
-        Random r = new Random();
+
+        LocalDate localDate = LocalDate.now();
+        Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        long today = instant.toEpochMilli();
+
         for (int i = MAX_X_VALUE - 1; i >= 0; i--) {
             float x = i;
-            values.add(new BarEntry(x, containsName(list, todayMillis)));
-            DAYS[i] = String.format(Locale.getDefault(), "%02d.%02d.", cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DATE));
-            cal.add(Calendar.DATE, -1);
-            todayMillis = cal.getTimeInMillis();
+            values.add(new BarEntry(x, containsDate(list, today)));
+            DAYS[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
+            localDate = localDate.minusDays(1);
+            today = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
         }
 
         XAxis xAxis = chart.getXAxis();
@@ -221,15 +215,17 @@ public class DetailFragment extends Fragment {
         xAxis.setGranularityEnabled(true);
         xAxis.setPosition(XAxis.XAxisPosition.TOP);
         xAxis.setDrawGridLines(false);
+        xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisLeft = chart.getAxisLeft();
-        if(list.get(0).t > 2L * 60L * 60L * 1000L) {
+        if (list.get(0).t > 2L * 60L * 60L * 1000L) {
             axisLeft.setGranularity(0.5f);
         } else {
             axisLeft.setGranularity(1.0f);
         }
         axisLeft.setAxisMinimum(0);
         axisLeft.setValueFormatter(new HourValueFormatter());
+        axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisRight = chart.getAxisRight();
         axisRight.setEnabled(false);
@@ -263,6 +259,10 @@ public class DetailFragment extends Fragment {
         chart.invalidate();
     }
 
+    /**
+     * Formats the value of bar chart axis and data label from float to hour and minutes.
+     * E.g. 1.5f -> 1h 30m
+     */
     private static class HourValueFormatter extends ValueFormatter {
         @Override
         public String getAxisLabel(float value, AxisBase axis) {
@@ -275,7 +275,15 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private float containsName(final List<ActivityTime> list, final long date) {
+    /**
+     * Returns the time value of the activity time if its date equals to the given date.
+     * Otherwise it returns 0f.
+     *
+     * @param list activity time list
+     * @param date the date we are searching for in the list
+     * @return time value of the activity time for the given day
+     */
+    private float containsDate(final List<ActivityTime> list, final long date) {
         ActivityTime activityTime = list.stream()
                 .filter(at -> at.getD() == date)
                 .findAny()
@@ -287,62 +295,95 @@ public class DetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets up the click listener of the add time button. When clicked, it navigates to add time fragment.
+     * It sends a bundle with the id, and a boolean true, which means that the time is need to be added.
+     *
+     * @param activityId   the activity id, we send it in a bundle to add time fragment
+     * @param activityName name of the activity
+     * @param fragView     root view of the fragment
+     */
     private void setUpAddTimeButton(long activityId, String activityName, View fragView) {
         binding.plusTimeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle arguments = new Bundle();
                 arguments.putLong(AddTimeFragment.ITEM_ID, activityId);
-                //arguments.putString(AddTimeFragment.ACTIVITY_NAME, activityName);
                 arguments.putBoolean(AddTimeFragment.OPERATION_TYPE, true);
                 Navigation.findNavController(fragView).navigate(R.id.action_detailFragment_to_addTimeFragment, arguments);
             }
         });
     }
 
+    /**
+     * Sets up the click listener of the subtraction time button. When clicked, it navigates to add time fragment.
+     * It sends a bundle with the id, and a boolean false, which means that the time is need to be subtracted.
+     *
+     * @param activityId   the activity id, we send it in a bundle to add time fragment
+     * @param activityName name of the activity
+     * @param fragView     root view of the fragment
+     */
     private void setUpSubtractionButton(long activityId, String activityName, View fragView) {
         binding.minusTimeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle arguments = new Bundle();
                 arguments.putLong(AddTimeFragment.ITEM_ID, activityId);
-                //arguments.putString(AddTimeFragment.ACTIVITY_NAME, activityName);
                 arguments.putBoolean(AddTimeFragment.OPERATION_TYPE, false);
                 Navigation.findNavController(fragView).navigate(R.id.action_detailFragment_to_addTimeFragment, arguments);
             }
         });
     }
 
-    private void setUpEditButton(long id, View fragView) {
+    /**
+     * Sets up the click listener of the edit activity button. When clicked, it navigates to edit fragment.
+     *
+     * @param activityId the activity id, we send it in a bundle to edit fragment
+     * @param fragView   root view of the fragment
+     */
+    private void setUpEditButton(long activityId, View fragView) {
         binding.editActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle arguments = new Bundle();
-                arguments.putLong(EditActivityFragment.ARG_ITEM_ID, id);
+                arguments.putLong(EditActivityFragment.ARG_ITEM_ID, activityId);
                 Navigation.findNavController(fragView).navigate(R.id.action_detailFragment_to_editActivityFragment, arguments);
             }
         });
     }
 
-    private void setUpDeleteDialog(long id, View fragView) {
+    /**
+     * Sets up the dialog for deleting an activity. It asks if we are sure that we want to delete the activity.
+     *
+     * @param activityId the id of the activity we want to delete
+     * @param fragView   root view of the fragment
+     */
+    private void setUpDeleteDialog(long activityId, View fragView) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.sure_delete_acitvity);
         builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                mainViewModel.deleteActivityById(id);
-                mainViewModel.deleteActivityTimesByActivityId(id);
+                mainViewModel.deleteActivityById(activityId);
+                // mainViewModel.deleteActivityTimesByActivityId(activityId);
                 Navigation.findNavController(fragView).popBackStack();
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
+                // User cancelled the dialog - nothing happens
             }
         });
         deleteDialog = builder.create();
     }
 
+    /**
+     * Sets up the click listener of the start timer button. When clicked, it starts the timer activity.
+     * It sends an intent with arguments: the id, the name, and soFar.
+     *
+     * @param activityId   id of the activity to send to timer activity
+     * @param activityName name of the activity to send to timer activity
+     */
     private void setUpStartActivityButton(long activityId, String activityName) {
         binding.startTimerFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -377,8 +418,6 @@ public class DetailFragment extends Fragment {
      */
     private void setUpTheViewDuration(CustomActivity activity) {
         if (activity.gettT() > 0) {
-            binding.detailDurationText.setVisibility(View.VISIBLE);
-            binding.detailDuration.setVisibility(View.VISIBLE);
             switch (activity.gettT()) {
                 case 1:
                     binding.detailDurationText.setText(R.string.details_sum_time);
@@ -401,6 +440,8 @@ public class DetailFragment extends Fragment {
                     binding.detailDuration.setText(selectedWeeklyDaysTimeToString(activity.getCustomWeekTime()));
                     break;
             }
+            binding.detailDurationText.setVisibility(View.VISIBLE);
+            binding.detailDuration.setVisibility(View.VISIBLE);
         }
     }
 
@@ -433,8 +474,6 @@ public class DetailFragment extends Fragment {
      */
     private void setUpTheViewRegularity(CustomActivity activity) {
         if (activity.getReg() > 0) {
-            binding.detailRegularityText.setVisibility((View.VISIBLE));
-            binding.detailRegularity.setVisibility(View.VISIBLE);
             switch (activity.getReg()) {
                 case 1:
                     binding.detailRegularity.setText(R.string.details_daily);
@@ -451,6 +490,8 @@ public class DetailFragment extends Fragment {
                     binding.detailRegularity.setText(R.string.details_monthly);
                     break;
             }
+            binding.detailRegularityText.setVisibility((View.VISIBLE));
+            binding.detailRegularity.setVisibility(View.VISIBLE);
         }
 
     }
