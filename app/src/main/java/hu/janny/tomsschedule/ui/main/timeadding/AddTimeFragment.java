@@ -186,9 +186,19 @@ public class AddTimeFragment extends Fragment {
         if (!isAdd) {
             activityTime.setT(-activityTime.getT());
         }
-        checkingSubtraction(activityTime);
+        if (!checkingSubtraction(activityTime)) {
+            Toast.makeText(getContext(), getString(R.string.under_zero), Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        saveIntoDatabase(activityTime);
+        mainViewModel.saveIntoDatabase(activityTime, customActivity, currentUser);
+
+        // Informs the user about what amount of time was added
+        if (isAdd) {
+            Toast.makeText(getContext(), String.format(Locale.getDefault(), "+%02d:%02d", hour, minute), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getContext(), String.format(Locale.getDefault(), "-%02d:%02d", hour, minute), Toast.LENGTH_LONG).show();
+        }
 
         Navigation.findNavController(fragView).popBackStack();
     }
@@ -198,47 +208,9 @@ public class AddTimeFragment extends Fragment {
      *
      * @param activityTime the time to be updated
      */
-    private void checkingSubtraction(ActivityTime activityTime) {
-
-    }
-
-    /**
-     * Saves the time into database, local and Firebase. Then updates the activity in fields of soFar,
-     * remaining and allTime. If the activity is fix, then we update in the Firebase.
-     *
-     * @param activityTime the time with which we want to update
-     */
-    private void saveIntoDatabase(ActivityTime activityTime) {
-        // Fix activity - we have to wait that it was an insert or an update.
-        // Insert - we add the time and increase the user count with one
-        // Update - we add just the time
-        if (CustomActivityHelper.isFixActivity(customActivity.getName())) {
-            int isInsert = mainViewModel.insertOrUpdateTime(activityTime);
-            // If the insertOrUpdate was not successful (0), we try again
-            while (isInsert == 0) {
-                isInsert = mainViewModel.insertOrUpdateTime(activityTime);
-            }
-            // 1 means - it was insert, 2 means - it wan update
-            if (isInsert == 1) {
-                // add to Firebase
-                FirebaseManager.saveInsertedActivityTimeToFirebase(activityTime, customActivity.getName(), currentUser);
-            } else if (isInsert == 2) {
-                // update in Firebase
-                FirebaseManager.saveUpdateActivityTimeToFirebase(activityTime, customActivity.getName(), currentUser);
-            }
-        } else {
-            // No fix activity - we just simply update in local database
-            mainViewModel.insertOrUpdateTimeSingle(activityTime);
-        }
-        // Informs the user about what amount of time was added
-        if (isAdd) {
-            Toast.makeText(getContext(), String.format(Locale.getDefault(), "+%02d:%02d", hour, minute), Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(getContext(), String.format(Locale.getDefault(), "-%02d:%02d", hour, minute), Toast.LENGTH_LONG).show();
-        }
-        // Updates the activity by soFar, remaining and allTime
-        CustomActivityHelper.updateActivity(customActivity, activityTime);
-        mainViewModel.updateActivity(customActivity);
+    private boolean checkingSubtraction(ActivityTime activityTime) {
+        long alreadySpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(times);
+        return alreadySpentToday + activityTime.getT() >= 0L;
     }
 
     /**

@@ -24,13 +24,13 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Prevents this activity to be visible
-        splashScreen.setKeepOnScreenCondition(() -> true );
+        splashScreen.setKeepOnScreenCondition(() -> true);
 
         // Initializes Firebase manager
         FirebaseManager.onStart();
 
         // Checks whether the user is logged in or not and directs to the appropriate activity
-        if(FirebaseManager.isUserLoggedIn()){
+        if (FirebaseManager.isUserLoggedIn()) {
             startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
         } else {
             startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));

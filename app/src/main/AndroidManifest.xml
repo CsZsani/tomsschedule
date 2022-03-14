@@ -17,10 +17,6 @@
             android:exported="false" />
 
         <service
-            android:name=".ui.timeractivity.CounterService"
-            android:enabled="true"
-            android:exported="true" />
-        <service
             android:name=".ui.timeractivity.MusicPlayerService"
             android:enabled="true"
             android:exported="true" />

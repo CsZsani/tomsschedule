@@ -167,10 +167,11 @@ public final class CustomActivityHelper {
      */
     public static String detailsOnCardsDeadline(CustomActivity activity) {
         if (activity.getsD() != 0L && activity.geteD() != 0L) {
-            String text = DateConverter.longMillisToStringForSimpleDateDialog(activity.getsD())
+            // Deadline
+            return DateConverter.longMillisToStringForSimpleDateDialog(activity.getsD())
                     + "-" + DateConverter.longMillisToStringForSimpleDateDialog(activity.geteD());
-            return text;
         } else if (activity.getsD() == 0L && activity.geteD() != 0L) {
+            // End date
             return DateConverter.longMillisToStringForSimpleDateDialog(activity.geteD());
         } else {
             return "";
@@ -447,23 +448,38 @@ public final class CustomActivityHelper {
                 if (activity.getlD() != todayMillis()) {
                     return NULL_MIN;
                 }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
+                }
                 return DateConverter.durationConverterFromLongToString(activity.getsF());
             case 3:
                 if (activity.getlD() < firstDayOfThisMonth()) {
                     return NULL_MIN;
+                }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getsF());
             case 4:
                 if (activity.getlD() < thisMondayMillis()) {
                     return NULL_MIN;
                 }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
+                }
                 return DateConverter.durationConverterFromLongToString(activity.getsF());
             case 5:
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
+                }
                 return DateConverter.durationConverterFromLongToString(activity.getsF());
             case 6:
             case 7:
                 if (activity.getlD() < activity.getsD()) {
                     return NULL_MIN;
+                }
+                if(todayMillis() > activity.geteD()) {
+                    return "-";
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getsF());
         }
@@ -485,23 +501,35 @@ public final class CustomActivityHelper {
                 if (activity.getlD() != todayMillis()) {
                     return 0L;
                 }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return -1L;
+                }
                 return activity.getsF();
             case 3:
                 if (activity.getlD() < firstDayOfThisMonth()) {
                     return 0L;
+                }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return -1L;
                 }
                 return activity.getsF();
             case 4:
                 if (activity.getlD() < thisMondayMillis()) {
                     return 0L;
                 }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return -1L;
+                }
                 return activity.getsF();
             case 5:
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return -1L;
+                }
                 return activity.getsF();
             case 6:
             case 7:
-                if (activity.getlD() < activity.getsD()) {
-                    return 0L;
+                if (activity.getlD() < activity.getsD() || todayMillis() > activity.geteD()) {
+                    return -1L;
                 }
                 return activity.getsF();
         }
@@ -521,29 +549,48 @@ public final class CustomActivityHelper {
                 return "-";
             case 2:
             case 8:
-                if (activity.ishFD() && activity.getlD() != todayMillis()) {
-                    return goalDurationForFixedDay(activity.getCustomWeekTime(), whatDayOfWeekToday());
-                } else if (!activity.ishFD() && activity.getlD() != todayMillis()) {
-                    return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
+                if(activity.getlD() != todayMillis()) {
+                    if(activity.ishFD()) {
+                        return goalDurationForFixedDay(activity.getCustomWeekTime(), whatDayOfWeekToday());
+                    } else {
+                        return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
+                    }
+                }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getRe());
             case 3:
                 if (activity.getlD() < firstDayOfThisMonth()) {
                     return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
                 }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
+                }
                 return DateConverter.durationConverterFromLongToString(activity.getRe());
             case 4:
-                if (activity.ishFD() && activity.getlD() < thisMondayMillis()) {
-                    return goalDurationForFixedDay(activity.getCustomWeekTime(), whatDayOfWeekToday());
-                } else if (!activity.ishFD() && activity.getlD() < thisMondayMillis()) {
-                    return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
+                if(activity.getlD() < thisMondayMillis()) {
+                    if (activity.ishFD()) {
+                        return goalDurationForFixedDay(activity.getCustomWeekTime(), whatDayOfWeekToday());
+                    } else {
+                        return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
+                    }
+                }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getRe());
             case 5:
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
+                }
                 return DateConverter.durationConverterFromLongToString(activity.getRe());
             case 7:
                 if (activity.getlD() < activity.getsD()) {
                     return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
+                }
+                if(todayMillis() > activity.geteD()) {
+                    return "-";
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getRe());
         }
@@ -563,29 +610,48 @@ public final class CustomActivityHelper {
                 return -1L;
             case 2:
             case 8:
-                if (activity.ishFD() && activity.getlD() != todayMillis()) {
-                    return goalDurationForFixedDayLong(activity.getCustomWeekTime(), whatDayOfWeekToday());
-                } else if (!activity.ishFD() && activity.getlD() != todayMillis()) {
-                    return activity.getDur();
+                if(activity.getlD() != todayMillis()) {
+                    if(activity.ishFD()) {
+                        return goalDurationForFixedDayLong(activity.getCustomWeekTime(), whatDayOfWeekToday());
+                    } else {
+                        return activity.getDur();
+                    }
+                }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return -1L;
                 }
                 return activity.getRe();
             case 3:
                 if (activity.getlD() < firstDayOfThisMonth()) {
                     return activity.getDur();
                 }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return -1L;
+                }
                 return activity.getRe();
             case 4:
-                if (activity.ishFD() && activity.getlD() < thisMondayMillis()) {
-                    return goalDurationForFixedDayLong(activity.getCustomWeekTime(), whatDayOfWeekToday());
-                } else if (!activity.ishFD() && activity.getlD() < thisMondayMillis()) {
-                    return activity.getDur();
+                if(activity.getlD() < thisMondayMillis()) {
+                    if(activity.ishFD()) {
+                        return goalDurationForFixedDayLong(activity.getCustomWeekTime(), whatDayOfWeekToday());
+                    } else {
+                        return activity.getDur();
+                    }
+                }
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return -1L;
                 }
                 return activity.getRe();
             case 5:
+                if(activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return -1L;
+                }
                 return activity.getRe();
             case 7:
                 if (activity.getlD() < activity.getsD()) {
                     return activity.getDur();
+                }
+                if(todayMillis() > activity.geteD()) {
+                    return -1L;
                 }
                 return activity.getRe();
         }
@@ -597,9 +663,8 @@ public final class CustomActivityHelper {
      *
      * @param customActivity the activity to be updated
      * @param activityTime   the added activity time
-     * @return the updated activity
      */
-    public static CustomActivity updateActivity(CustomActivity customActivity, ActivityTime activityTime) {
+    public static void updateActivity(CustomActivity customActivity, ActivityTime activityTime) {
         long todayMillis = CustomActivityHelper.todayMillis();
         long firstDayOfThisMonth = CustomActivityHelper.firstDayOfThisMonth();
         long thisMonday = CustomActivityHelper.thisMondayMillis();
@@ -728,7 +793,7 @@ public final class CustomActivityHelper {
                 }
         }
         updateLastDay(customActivity, activityTime);
-        return customActivity;
+        //return customActivity;
     }
 
     /**

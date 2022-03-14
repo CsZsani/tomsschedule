@@ -225,12 +225,16 @@
     <string name="select_date">Select date</string>
     <string name="add_time_date_required">Date is required!</string>
     <string name="add_time_time_required">Time amount is required!</string>
+    <string name="under_zero">Time would decrease under zero with this parameters! Give lower time value!</string>
 
     <!-- Timer activity -->
     <string name="stop">Finish</string>
     <string name="today">Today:</string>
     <string name="remaining">Remaining:</string>
     <string name="so_far">So far:</string>
+    <string name="timer_no_activity">I can\'t find this activity! Something went wrong :(</string>
+    <string name="timer_activit_is_in_progress">Activity is in progress!</string>
+    <string name="timer_finish">Finish</string>
 
     <!-- Statistics -->
     <string name="personal_statistics">Personal</string>
@@ -314,5 +318,6 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="connect_to_stable_internet">Please, connect to stable Internet!</string>
+    <string name="custom">custom</string>
 
 </resources>

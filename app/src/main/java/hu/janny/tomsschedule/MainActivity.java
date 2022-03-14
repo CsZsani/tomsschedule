@@ -1,6 +1,8 @@
 package hu.janny.tomsschedule;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -25,21 +27,33 @@ import hu.janny.tomsschedule.viewmodel.LoginRegisterViewModel;
 
 public class MainActivity extends AppCompatActivity implements AddCustomActivityFragment.OnFragmentInteractionListener {
 
-    private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
     private LoginRegisterViewModel viewModel;
+
+    private AppBarConfiguration mAppBarConfiguration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // If an activity is in progress we have to go ack to timer activity
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                "hu.janny.tomsschedule.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+        long activityId = sharedPref.getLong(TimerActivity.ACTIVITY_ID, 0L);
+        String activityName = sharedPref.getString(TimerActivity.ACTIVITY_NAME, "");
+        if (activityId != 0L && !activityName.equals("")) {
+            startTimerActivity(activityId, activityName);
+        }
+
+        // Binds layout
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Gets a LoginRegisterViewModel
         viewModel = new ViewModelProvider(this).get(LoginRegisterViewModel.class);
 
         setSupportActionBar(binding.appBarMain.toolbar);
-
+        // Navigation drawer
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
@@ -53,11 +67,21 @@ public class MainActivity extends AppCompatActivity implements AddCustomActivity
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
+    /**
+     * Navigates to add new custom activity when the add new activity fab is pressed.
+     *
+     * @param view the view of the activity
+     */
     public void addNewCustomActivity(View view) {
         Navigation.findNavController(this, R.id.nav_host_fragment_content_main).navigate(
                 R.id.action_nav_home_to_add_custom_activity);
     }
 
+    /**
+     * Logs out the current user from local and Firebase database.
+     *
+     * @param view the view of the activity
+     */
     public void logoutUser(View view) {
         viewModel.logoutUser(FirebaseManager.user.getUid());
         FirebaseManager.logoutUser();
@@ -65,11 +89,16 @@ public class MainActivity extends AppCompatActivity implements AddCustomActivity
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
-    public void startTimerActivity(long customActivityId, String activityName, long todaySoFar) {
+    /**
+     * Starts the timer activity.
+     *
+     * @param customActivityId the custom activity we want to count
+     * @param activityName     the name of the custom activity we want to count
+     */
+    public void startTimerActivity(long customActivityId, String activityName) {
         Intent i = new Intent(this, TimerActivity.class);
         i.putExtra(TimerActivity.ACTIVITY_ID, customActivityId);
         i.putExtra(TimerActivity.ACTIVITY_NAME, activityName);
-        i.putExtra(TimerActivity.TODAY_SO_FAR, todaySoFar);
         startActivity(i);
         finish();
     }

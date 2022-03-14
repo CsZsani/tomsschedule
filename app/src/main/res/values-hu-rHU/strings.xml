@@ -271,4 +271,11 @@
     <string name="edit_act_must_choose_reg_type">A gyakoriság megadása kötelező rendszeres tevékenységnél!</string>
     <string name="edit_act_must_choose_type">A rendszeresség megadása kötelező!</string>
     <string name="edit_act_must_add_end_date">Utolsó nap megadása kötelező!</string>
+    <string name="add_time_date_required">Dátum megadása kötelező!</string>
+    <string name="add_time_time_required">Időmennyiség megadása kötelező!</string>
+    <string name="under_zero">Az időmennyiség 0 alá csökkenne! Adj meg kevesebbet!</string>
+    <string name="timer_no_activity">Nincs ilyen tevékenység!</string>
+    <string name="timer_activit_is_in_progress">A tevékenység folyamatban van</string>
+    <string name="timer_finish">Befejez</string>
+    <string name="custom">egyedi</string>
 </resources>

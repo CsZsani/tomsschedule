@@ -29,9 +29,9 @@
     <color name="coffee">#855948</color>
 
     <!-- Notifications in home fragment -->
-    <color name="red_notification">#F44336</color>
-    <color name="orange_notification">#FFC107</color>
-    <color name="green_notification">#4CAF50</color>
+    <color name="red_notification">#FF6559</color>
+    <color name="orange_notification">#FFCA2C</color>
+    <color name="green_notification">#5ED662</color>
 
     <!-- Statistics colours -->
     <color name="female_0">#FFB5E6</color>

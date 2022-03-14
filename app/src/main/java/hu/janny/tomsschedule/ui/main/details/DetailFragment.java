@@ -70,7 +70,6 @@ public class DetailFragment extends Fragment {
     private MainViewModel mainViewModel;
 
     private AlertDialog deleteDialog;
-    private long today;
     //ActionBar actionBar;
 
     public static DetailFragment newInstance() {
@@ -107,11 +106,6 @@ public class DetailFragment extends Fragment {
                 if (activity != null) {
                     // Gets how many time were spent today on the activity
                     List<ActivityTime> times = activityWithTimes.activityTimes;
-                    if (times != null && !times.isEmpty()) {
-                        today = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(times);
-                    } else {
-                        today = 0L;
-                    }
 
                     // Sets up the UI based on the activity's parameters that comes from the database
 
@@ -391,7 +385,6 @@ public class DetailFragment extends Fragment {
                 Intent i = new Intent(getActivity(), TimerActivity.class);
                 i.putExtra(TimerActivity.ACTIVITY_ID, activityId);
                 i.putExtra(TimerActivity.ACTIVITY_NAME, activityName);
-                i.putExtra(TimerActivity.TODAY_SO_FAR, today);
                 startActivity(i);
                 Objects.requireNonNull(getActivity()).finish();
             }

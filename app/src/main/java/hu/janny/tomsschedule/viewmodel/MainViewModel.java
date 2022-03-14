@@ -1,6 +1,8 @@
 package hu.janny.tomsschedule.viewmodel;
 
 import android.app.Application;
+import android.content.Context;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
@@ -11,6 +13,7 @@ import androidx.lifecycle.Transformations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -20,6 +23,7 @@ import hu.janny.tomsschedule.model.entities.ActivityWithTimes;
 import hu.janny.tomsschedule.model.entities.CustomActivity;
 import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
 import hu.janny.tomsschedule.model.repository.Repository;
 import hu.janny.tomsschedule.model.repository.UserRepository;
 
@@ -142,7 +146,8 @@ public class MainViewModel extends AndroidViewModel {
 
     /**
      * Updates an activity time if it does not belong to a fix activity. It actually inserts if there is no time added for that activity and day,
-     *      * and updates if we have added a time to that day before.
+     * * and updates if we have added a time to that day before.
+     *
      * @param activityTime the time to be updated (or inserted)
      */
     public void insertOrUpdateTimeSingle(ActivityTime activityTime) {
@@ -156,6 +161,43 @@ public class MainViewModel extends AndroidViewModel {
      */
     public void deleteActivityById(long id) {
         repository.deleteActivityById(id);
+    }
+
+    /**
+     * Saves the time into database, local and Firebase. Then updates the activity in fields of soFar,
+     * remaining and allTime. If the activity is fix, then we update in the Firebase.
+     *
+     * @param activityTime   the time with which we want to update
+     * @param customActivity the activity we will update
+     * @param currentUser    the logged in user - for saving time into Firebase
+     */
+    public void saveIntoDatabase(ActivityTime activityTime, CustomActivity customActivity, User currentUser) {
+        // Fix activity - we have to wait that it was an insert or an update.
+        // Insert - we add the time and increase the user count with one
+        // Update - we add just the time
+        if (CustomActivityHelper.isFixActivity(customActivity.getName())) {
+            int isInsert = insertOrUpdateTime(activityTime);
+            // If the insertOrUpdate was not successful (0), we try again
+            while (isInsert == 0) {
+                isInsert = insertOrUpdateTime(activityTime);
+            }
+            // 1 means - it was insert, 2 means - it wan update
+            if (currentUser != null) {
+                if (isInsert == 1) {
+                    // add to Firebase
+                    FirebaseManager.saveInsertedActivityTimeToFirebase(activityTime, customActivity.getName(), currentUser);
+                } else if (isInsert == 2) {
+                    // update in Firebase
+                    FirebaseManager.saveUpdateActivityTimeToFirebase(activityTime, customActivity.getName(), currentUser);
+                }
+            }
+        } else {
+            // No fix activity - we just simply update in local database
+            insertOrUpdateTimeSingle(activityTime);
+        }
+        // Updates the activity by soFar, remaining and allTime
+        CustomActivityHelper.updateActivity(customActivity, activityTime);
+        updateActivity(customActivity);
     }
 
     //********//
@@ -216,7 +258,6 @@ public class MainViewModel extends AndroidViewModel {
     public void deleteActivityTimesByActivityId(long id) {
         repository.deleteTimesByActivityId(id);
     }
-
 
 
     //*********//
