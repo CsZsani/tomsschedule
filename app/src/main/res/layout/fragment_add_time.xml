@@ -57,7 +57,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:hint="@string/time"
-                android:hintTextColor="#546E7A"
                 android:textAlignment="viewStart"
                 android:textColor="@color/black"
                 android:textColorHighlight="@color/toms_200"

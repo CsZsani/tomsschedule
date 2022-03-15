@@ -1,5 +1,8 @@
 package hu.janny.tomsschedule.model.helper;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +51,8 @@ public final class DateConverter {
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
-        return makeDateStringForSimpleDateDialog(day, month, year);
+        LocalDate ld = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate();
+        return makeDateStringForSimpleDateDialog(ld.getDayOfMonth(), ld.getMonthValue(), ld.getYear());
     }
 
     /**

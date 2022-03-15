@@ -172,8 +172,6 @@ public class DetailFragment extends Fragment {
      * @param color the color of the activity
      */
     private void setUpBarChart(List<ActivityTime> list, int color) {
-        Collections.sort(list);
-
         BarChart chart = binding.chart;
 
         int MAX_X_VALUE = 7;
@@ -212,11 +210,7 @@ public class DetailFragment extends Fragment {
         xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisLeft = chart.getAxisLeft();
-        if (list.get(0).t > 2L * 60L * 60L * 1000L) {
-            axisLeft.setGranularity(0.5f);
-        } else {
-            axisLeft.setGranularity(1.0f);
-        }
+        axisLeft.setGranularity(1.0f);
         axisLeft.setAxisMinimum(0);
         axisLeft.setValueFormatter(new HourValueFormatter());
         axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));

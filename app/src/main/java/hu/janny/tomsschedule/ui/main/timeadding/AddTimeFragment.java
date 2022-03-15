@@ -73,7 +73,7 @@ public class AddTimeFragment extends Fragment {
 
         if (getArguments() != null && getArguments().containsKey(ITEM_ID)) {
             activityId = getArguments().getLong(ITEM_ID);
-            mainViewModel.findActivityById(activityId);
+            mainViewModel.findActivityByIdWithTimesEntity(activityId);
         } else {
             Navigation.findNavController(root).popBackStack();
         }
@@ -95,6 +95,7 @@ public class AddTimeFragment extends Fragment {
                         times = new ArrayList<>();
                     }
                 }
+                System.out.println(activity + " " + times);
                 if (activity != null) {
                     customActivity = activity;
                 } else {
@@ -185,12 +186,12 @@ public class AddTimeFragment extends Fragment {
         // * -1 if we want to subtract the time amount
         if (!isAdd) {
             activityTime.setT(-activityTime.getT());
+            if (!checkingSubtraction(activityTime)) {
+                Toast.makeText(getContext(), getString(R.string.under_zero), Toast.LENGTH_LONG).show();
+                return;
+            }
         }
-        if (!checkingSubtraction(activityTime)) {
-            Toast.makeText(getContext(), getString(R.string.under_zero), Toast.LENGTH_LONG).show();
-            return;
-        }
-
+        System.out.println(customActivity + " " + times);
         mainViewModel.saveIntoDatabase(activityTime, customActivity, currentUser);
 
         // Informs the user about what amount of time was added

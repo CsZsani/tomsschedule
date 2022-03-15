@@ -92,6 +92,8 @@ public class CustomActivityRecyclerAdapter
 
         viewHolder.beginActivity.setBackgroundColor(darkenColor(activityList.get(i).customActivity.getCol()));
         long timeSpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(activityList.get(i).activityTimes);
+        viewHolder.todayTime.setText(DateConverter.durationConverterFromLongToStringForADay(timeSpentToday));
+        viewHolder.detailsText.setText(detailsText(activityList.get(i).customActivity));
         viewHolder.beginActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,17 +102,11 @@ public class CustomActivityRecyclerAdapter
             }
         });
 
-        viewHolder.todayTime.setText(DateConverter.durationConverterFromLongToStringForADay(timeSpentToday));
-        viewHolder.detailsText.setText(detailsText(activityList.get(i).customActivity));
-
         long soFar = CustomActivityHelper.getSoFarLong(activityList.get(i).customActivity);
         long remaining = CustomActivityHelper.getRemainingLong(activityList.get(i).customActivity);
         if (notificationShown(soFar, remaining, activityList.get(i).customActivity)) {
             viewHolder.statusIndicator.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mainActivity,
                     notificationColor(soFar, remaining, activityList.get(i).customActivity))));
-            int intColor = ContextCompat.getColor(mainActivity, notificationColor(soFar, remaining, activityList.get(i).customActivity));
-            //String hexColor = String.format("#%06X", (0xFFFFFF & intColor));
-            //System.out.println(hexColor);
             viewHolder.statusIndicator.setVisibility(View.VISIBLE);
         }
     }
@@ -126,10 +122,10 @@ public class CustomActivityRecyclerAdapter
     private int notificationColor(long soFar, long remaining, CustomActivity activity) {
         if (greenColor(soFar, remaining, activity)) {
             return R.color.green_notification;
-        } else if (redColor(soFar, remaining, activity)) {
-            return R.color.red_notification;
         } else if (orangeColor(soFar, remaining, activity)) {
             return R.color.orange_notification;
+        } else if (redColor(soFar, remaining, activity)) {
+            return R.color.red_notification;
         }
         return R.color.white;
     }
@@ -184,7 +180,7 @@ public class CustomActivityRecyclerAdapter
         }
         if (activity.ishFD()) {
             if ((activity.gettT() == 3 || activity.gettT() == 5) && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) != 0
-                    && soFar < activity.getDur()) {
+                    && soFar < CustomActivityHelper.todayIsAFixedDayAndDuration(activity.getCustomWeekTime())) {
                 return true;
             }
         }

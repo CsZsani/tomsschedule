@@ -30,6 +30,9 @@ import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.ColorPickerDialog;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -55,6 +58,9 @@ public class EditActivityFragment extends Fragment{
     final Calendar calStartDay= Calendar.getInstance();
     final Calendar calEndDay= Calendar.getInstance();
     final Calendar calEndDate= Calendar.getInstance();
+    private LocalDate ldStartDay;
+    private LocalDate ldEndDay;
+    private LocalDate ldEndDate;
 
     // Activity to be edited
     private CustomActivity customActivity;
@@ -224,8 +230,12 @@ public class EditActivityFragment extends Fragment{
             Toast.makeText(getActivity(), getString(R.string.edit_act_end_day_required), Toast.LENGTH_LONG).show();
             return false;
         }
-        customActivity.setsD(calStartDay.getTimeInMillis());
-        customActivity.seteD(calEndDay.getTimeInMillis());
+        Instant sd = ldStartDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
+//        customActivity.setsD(calStartDay.getTimeInMillis());
+        customActivity.setsD(sd.toEpochMilli());
+        Instant ed = ldEndDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
+//        customActivity.seteD(calEndDay.getTimeInMillis());
+        customActivity.seteD(ed.toEpochMilli());
         customActivity.settN(6);
         if(binding.activityIsTimeMeasured.isChecked()) {
             return setIntervalMeasuredTime();
@@ -523,7 +533,9 @@ public class EditActivityFragment extends Fragment{
                 Toast.makeText(getActivity(), getString(R.string.edit_act_format_add_time), Toast.LENGTH_LONG).show();
                 return false;
             }
-            customActivity.seteD(calEndDate.getTimeInMillis());
+            Instant d = ldEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+//            customActivity.seteD(calEndDate.getTimeInMillis());
+            customActivity.seteD(d.toEpochMilli());
         }
         return true;
     }
@@ -911,6 +923,8 @@ public class EditActivityFragment extends Fragment{
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 calStartDay.clear();
                 calStartDay.set(year, month, day);
+                month++;
+                ldStartDay = LocalDate.of(year, month, day);
                 updateLabelStartDay();
             }
         };
@@ -920,6 +934,8 @@ public class EditActivityFragment extends Fragment{
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 calEndDay.clear();
                 calEndDay.set(year, month, day);
+                month++;
+                ldEndDay = LocalDate.of(year, month, day);
                 updateLabelEndDay();
             }
         };
@@ -929,6 +945,8 @@ public class EditActivityFragment extends Fragment{
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 calEndDate.clear();
                 calEndDate.set(year, month, day);
+                month++;
+                ldEndDate = LocalDate.of(year, month, day);
                 updateLabelEndDate();
             }
         };
@@ -936,19 +954,22 @@ public class EditActivityFragment extends Fragment{
         binding.activityStartDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(getActivity(),dateStartday,calStartDay.get(Calendar.YEAR),calStartDay.get(Calendar.MONTH),calStartDay.get(Calendar.DAY_OF_MONTH)).show();
+                //new DatePickerDialog(getActivity(),dateStartday,calStartDay.get(Calendar.YEAR),calStartDay.get(Calendar.MONTH),calStartDay.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(getActivity(),dateStartday,ldStartDay.getYear(),ldStartDay.getMonthValue()-1,ldStartDay.getDayOfMonth()).show();
             }
         });
         binding.activityEndDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(getActivity(),dateEndDay,calEndDay.get(Calendar.YEAR),calEndDay.get(Calendar.MONTH),calEndDay.get(Calendar.DAY_OF_MONTH)).show();
+                //new DatePickerDialog(getActivity(),dateEndDay,calEndDay.get(Calendar.YEAR),calEndDay.get(Calendar.MONTH),calEndDay.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(getActivity(),dateEndDay,ldEndDay.getYear(),ldEndDay.getMonthValue()-1,ldEndDay.getDayOfMonth()).show();
             }
         });
         binding.activityEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(getActivity(),dateEndDate,calEndDate.get(Calendar.YEAR),calEndDate.get(Calendar.MONTH),calEndDate.get(Calendar.DAY_OF_MONTH)).show();
+                //new DatePickerDialog(getActivity(),dateEndDate,calEndDate.get(Calendar.YEAR),calEndDate.get(Calendar.MONTH),calEndDate.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(getActivity(),dateEndDate,ldEndDate.getYear(),ldEndDate.getMonthValue()-1,ldEndDate.getDayOfMonth()).show();
             }
         });
         initTodayDate();
@@ -964,6 +985,7 @@ public class EditActivityFragment extends Fragment{
         int day = helper.get(Calendar.DATE);
         calStartDay.clear();
         calStartDay.set(year, month, day);
+        ldStartDay = LocalDate.now();
         updateLabelStartDay();
     }
 
@@ -972,7 +994,8 @@ public class EditActivityFragment extends Fragment{
      */
     private void updateLabelStartDay(){
         binding.activityStartDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
-                calStartDay.get(Calendar.DATE), calStartDay.get(Calendar.MONTH) + 1, calStartDay.get(Calendar.YEAR)));
+                //calStartDay.get(Calendar.DATE), calStartDay.get(Calendar.MONTH) + 1, calStartDay.get(Calendar.YEAR)));
+                ldStartDay.getYear(),ldStartDay.getMonthValue(),ldStartDay.getDayOfMonth()));
     }
 
     /**
@@ -980,7 +1003,8 @@ public class EditActivityFragment extends Fragment{
      */
     private void updateLabelEndDay(){
         binding.activityEndDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
-                calEndDay.get(Calendar.DATE), calEndDay.get(Calendar.MONTH) + 1, calEndDay.get(Calendar.YEAR)));
+                //calEndDay.get(Calendar.DATE), calEndDay.get(Calendar.MONTH) + 1, calEndDay.get(Calendar.YEAR)));
+                ldEndDay.getYear(),ldEndDay.getMonthValue(),ldEndDay.getDayOfMonth()));
     }
 
     /**
@@ -988,7 +1012,8 @@ public class EditActivityFragment extends Fragment{
      */
     private void updateLabelEndDate(){
         binding.activityEndDate.setText(DateConverter.makeDateStringForSimpleDateDialog(
-                calEndDate.get(Calendar.DATE), calEndDate.get(Calendar.MONTH) + 1, calEndDate.get(Calendar.YEAR)));
+                //calEndDate.get(Calendar.DATE), calEndDate.get(Calendar.MONTH) + 1, calEndDate.get(Calendar.YEAR)));
+                ldEndDate.getYear(),ldEndDate.getMonthValue(),ldEndDate.getDayOfMonth()));
     }
 
     /**
@@ -1220,7 +1245,10 @@ public class EditActivityFragment extends Fragment{
      */
     private void setStartDayCalendar() {
         calStartDay.setTimeInMillis(customActivity.getsD());
-        updateLabelStartDay();
+        if(customActivity.getsD() != 0L) {
+            ldStartDay = Instant.ofEpochMilli(customActivity.geteD()).atZone(ZoneId.systemDefault()).toLocalDate();
+            updateLabelStartDay();
+        }
     }
 
     /**
@@ -1228,7 +1256,13 @@ public class EditActivityFragment extends Fragment{
      */
     private void setEndDayCalendar() {
         calEndDay.setTimeInMillis(customActivity.geteD());
-        updateLabelEndDay();
+        if(customActivity.getsD() == 0L && customActivity.geteD() != 0L) {
+            ldEndDate = Instant.ofEpochMilli(customActivity.geteD()).atZone(ZoneId.systemDefault()).toLocalDate();
+            updateLabelEndDate();
+        } else if(customActivity.getsD() != 0L && customActivity.geteD() != 0L) {
+            ldEndDay = Instant.ofEpochMilli(customActivity.geteD()).atZone(ZoneId.systemDefault()).toLocalDate();
+            updateLabelEndDay();
+        }
     }
 
     /**
