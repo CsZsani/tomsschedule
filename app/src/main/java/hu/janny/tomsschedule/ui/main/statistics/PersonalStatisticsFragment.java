@@ -51,12 +51,13 @@ import hu.janny.tomsschedule.viewmodel.StatisticsViewModel;
 
 public class PersonalStatisticsFragment extends Fragment {
 
-    private FragmentPersonalStatisticsBinding binding;
-    private StatisticsViewModel viewModel;
     public static final String PERIOD_TYPE = "period_type";
     public static final String ACTIVITY_NUM = "activity_num";
     public static final String REQUEST_KEY = "p_filter_data";
     public static final String ACTIVITIES = "activities_array";
+
+    private FragmentPersonalStatisticsBinding binding;
+    private StatisticsViewModel viewModel;
 
     private int periodType = 0;
     private int activityNum = 0;
@@ -73,41 +74,32 @@ public class PersonalStatisticsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        //return inflater.inflate(R.layout.fragment_personal_statistics, container, false);
-        binding = FragmentPersonalStatisticsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
 
+        // Binds layout
+        binding = FragmentPersonalStatisticsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Gets a StatisticsViewModel instance
         viewModel = new ViewModelProvider(requireActivity()).get(StatisticsViewModel.class);
 
         binding.personalFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigation.findNavController(root).navigate(R.id.action_nav_statistics_to_personalFilterFragment);
+                Navigation.findNavController(view).navigate(R.id.action_nav_statistics_to_personalFilterFragment);
             }
         });
-
-        /*getParentFragmentManager().setFragmentResultListener(REQUEST_KEY, this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                // We use a String here, but any type that can be put in a Bundle is supported
-                periodType = bundle.getInt(PERIOD_TYPE);
-                activityNum = bundle.getInt(ACTIVITY_NUM);
-                List<String> activitiesString = bundle.getStringArrayList(ACTIVITIES);
-                List<Long> acts = new ArrayList<>();
-                for (int i = 0; i<activities.size(); i++) {
-                    acts.add(Long.getLong(activitiesString.get(i)));
-                }
-                activities = acts;
-                System.out.println(periodType + " " + activityNum + " " + activities + " get bundle");
-                // Do something with the result
-            }
-        });*/
 
         viewModel.getTimesList().observe(getViewLifecycleOwner(), new Observer<List<ActivityTime>>() {
             @Override
             public void onChanged(List<ActivityTime> activityTimes) {
                 binding.pleaseFilter.setVisibility(View.GONE);
                 chartsGoToGone();
+                // Gets the parameters from filtering to know what charts should be displayed
                 periodType = viewModel.getpPeriodType();
                 activityNum = viewModel.getpActivityNum();
                 activities = viewModel.getActsList();
@@ -116,59 +108,71 @@ public class PersonalStatisticsFragment extends Fragment {
                 fromMillis = viewModel.getFromTime();
                 toMillis = viewModel.getToTime();
                 System.out.println(activityNum + " " + periodType);
-                if(activityNum == 0) {
-                    if(activityTimes.isEmpty()) {
-                        Toast.makeText(getActivity(), "No data available in this period!", Toast.LENGTH_LONG).show();
-                        binding.pleaseFilter.setVisibility(View.VISIBLE);
-                    } else {
-                        if(fromMillis == 0L) {
-                            setUpAllBarChart(activityTimes);
-                            binding.allBarChart.setVisibility(View.VISIBLE);
-                            setUpAllPieChartForSingleDays(activityTimes);
-                        } else {
-                            setUpAllBarChartLonger(activityTimes, fromMillis, toMillis);
-                            binding.allStackedBarChart.setVisibility(View.VISIBLE);
-                            setUpAllPieChartForLonger(activityTimes);
-                        }
-                        binding.allPieChart.setVisibility(View.VISIBLE);
-                    }
-                } else if(activityNum == 1) {
-                    if(activityTimes.isEmpty()) {
-                        Toast.makeText(getActivity(), "No data available in this period!", Toast.LENGTH_LONG).show();
-                        binding.pleaseFilter.setVisibility(View.VISIBLE);
-                    } else {
-                        if(fromMillis == 0L) {
-                            binding.timeSpentText.setVisibility(View.VISIBLE);
-                            binding.timeSpent.setText(DateConverter.durationConverterFromLongToStringForADay(activityTimes.get(0).getT()));
-                            binding.timeSpent.setVisibility(View.VISIBLE);
-                        } else {
-                            setUpOneBarChart(activityTimes, fromMillis, toMillis);
-                            binding.oneBarChart.setVisibility(View.VISIBLE);
-                        }
-                    }
-                } else if(activityNum >= 2) {
-                    if(activityTimes.isEmpty()) {
-                        Toast.makeText(getActivity(), "No data available in this period!", Toast.LENGTH_LONG).show();
-                        binding.pleaseFilter.setVisibility(View.VISIBLE);
-                    } else {
-                        if(fromMillis == 0L) {
-                            setUpMoreBarChart(activityTimes);
-                            binding.moreBarChart.setVisibility(View.VISIBLE);
-                            setUpMorePieChartForSingleDays(activityTimes);
-                        } else {
-                            setUpMoreStackedBarChartLonger(activityTimes, fromMillis, toMillis);
-                            binding.moreStackedChart.setVisibility(View.VISIBLE);
-                            setUpMoreGroupBarChartLonger(activityTimes, fromMillis, toMillis);
-                            binding.moreGroupChart.setVisibility(View.VISIBLE);
-                            setUpMorePieChartForLonger(activityTimes);
-                        }
-                        binding.morePieChart.setVisibility(View.VISIBLE);
-                    }
+                if (activityTimes.isEmpty()) {
+                    Toast.makeText(getActivity(), getString(R.string.no_data_available_in_period), Toast.LENGTH_LONG).show();
+                    binding.pleaseFilter.setVisibility(View.VISIBLE);
+                } else {
+                    showCharts(activityTimes);
                 }
             }
         });
+    }
 
-        return root;
+    /**
+     * Shows the charts based on the filtering.
+     *
+     * @param activityTimes the list of times
+     */
+    private void showCharts(List<ActivityTime> activityTimes) {
+        if (activityNum == 0) {
+            // All activity is chosen
+            showAllActivity(activityTimes);
+        } else if (activityNum == 1) {
+            // Just one activity is chosen
+            showJustOneActivity(activityTimes);
+        } else if (activityNum >= 2) {
+            // More activities is chosen
+            showMoreActivities(activityTimes);
+        }
+    }
+
+    private void showAllActivity(List<ActivityTime> activityTimes) {
+        if (fromMillis == 0L) {
+            setUpAllBarChart(activityTimes);
+            binding.allBarChart.setVisibility(View.VISIBLE);
+            setUpAllPieChartForSingleDays(activityTimes);
+        } else {
+            setUpAllBarChartLonger(activityTimes, fromMillis, toMillis);
+            binding.allStackedBarChart.setVisibility(View.VISIBLE);
+            setUpAllPieChartForLonger(activityTimes);
+        }
+        binding.allPieChart.setVisibility(View.VISIBLE);
+    }
+
+    private void showJustOneActivity(List<ActivityTime> activityTimes) {
+        if (fromMillis == 0L) {
+            binding.timeSpentText.setVisibility(View.VISIBLE);
+            binding.timeSpent.setText(DateConverter.durationConverterFromLongToStringForADay(activityTimes.get(0).getT()));
+            binding.timeSpent.setVisibility(View.VISIBLE);
+        } else {
+            setUpOneBarChart(activityTimes, fromMillis, toMillis);
+            binding.oneBarChart.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void showMoreActivities(List<ActivityTime> activityTimes) {
+        if (fromMillis == 0L) {
+            setUpMoreBarChart(activityTimes);
+            binding.moreBarChart.setVisibility(View.VISIBLE);
+            setUpMorePieChartForSingleDays(activityTimes);
+        } else {
+            setUpMoreStackedBarChartLonger(activityTimes, fromMillis, toMillis);
+            binding.moreStackedChart.setVisibility(View.VISIBLE);
+            setUpMoreGroupBarChartLonger(activityTimes, fromMillis, toMillis);
+            binding.moreGroupChart.setVisibility(View.VISIBLE);
+            setUpMorePieChartForLonger(activityTimes);
+        }
+        binding.morePieChart.setVisibility(View.VISIBLE);
     }
 
     private void chartsGoToGone() {
@@ -194,14 +198,14 @@ public class PersonalStatisticsFragment extends Fragment {
         chart.getDescription().setEnabled(false);
 
         ArrayList<BarEntry> values = new ArrayList<>();
-        for (int i = 0; i<activityTimes.size(); i++) {
+        for (int i = 0; i < activityTimes.size(); i++) {
             values.add(new BarEntry(i, DateConverter.durationConverterFromLongToBarChart(activityTimes.get(i).getT())));
             NAMES[i] = names.get(activities.indexOf(activityTimes.get(i).getaId()));
         }
 
         Legend legend = chart.getLegend();
         LegendEntry[] legendEntries = new LegendEntry[activityTimes.size()];
-        for(int i = 0; i< legendEntries.length; i++) {
+        for (int i = 0; i < legendEntries.length; i++) {
             LegendEntry legendEntry = new LegendEntry();
             legendEntry.formColor = colors.get(i);
             legendEntry.label = names.get(i);
@@ -270,7 +274,7 @@ public class PersonalStatisticsFragment extends Fragment {
         chart.getDescription().setEnabled(false);
 
         ArrayList<PieEntry> values = new ArrayList<>();
-        for (int i = 0; i<activityTimes.size(); i++) {
+        for (int i = 0; i < activityTimes.size(); i++) {
             values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(activityTimes.get(i).getT()), names.get(activities.indexOf(activityTimes.get(i).getaId()))));
         }
 
@@ -289,7 +293,7 @@ public class PersonalStatisticsFragment extends Fragment {
         chart.getDescription().setEnabled(false);
 
         ArrayList<PieEntry> values = new ArrayList<>();
-        for (int i = 0; i<activityTimes.size(); i++) {
+        for (int i = 0; i < activityTimes.size(); i++) {
             values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(activityTimes.get(i).getT()), names.get(activities.indexOf(activityTimes.get(i).getaId()))));
         }
 
@@ -328,9 +332,9 @@ public class PersonalStatisticsFragment extends Fragment {
 
         LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
         long millis = to;
-        while(millis != from) {
+        while (millis != from) {
             float[] list = new float[activities.size()];
-            for(int j = 0; j < activities.size(); j++) {
+            for (int j = 0; j < activities.size(); j++) {
                 list[j] = containsName(activityTimes, activities.get(j), millis);
             }
             values.add(new BarEntry(i, list));
@@ -359,7 +363,7 @@ public class PersonalStatisticsFragment extends Fragment {
         BarDataSet set1 = new BarDataSet(values, "Time spent in hours");
         set1.setColors(colors);
         String[] labels = new String[names.size()];
-        for(int k = 0; k<names.size(); k++) {
+        for (int k = 0; k < names.size(); k++) {
             labels[k] = names.get(k);
         }
         set1.setStackLabels(labels);
@@ -384,7 +388,7 @@ public class PersonalStatisticsFragment extends Fragment {
         chart.getDescription().setEnabled(false);
 
         ArrayList<PieEntry> values = new ArrayList<>();
-        for (int i = 0; i<activities.size(); i++) {
+        for (int i = 0; i < activities.size(); i++) {
             final int j = i;
             long sum = activityTimes.stream().filter(a -> a.getaId() == activities.get(j)).mapToLong(ActivityTime::getT).sum();
             values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(sum), names.get(i)));
@@ -421,7 +425,7 @@ public class PersonalStatisticsFragment extends Fragment {
 
         LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
         long millis = to;
-        while(millis != from) {
+        while (millis != from) {
             values.add(new BarEntry(i, containsName(activityTimes, millis)));
             DAYS[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
             i++;
@@ -474,7 +478,7 @@ public class PersonalStatisticsFragment extends Fragment {
         chart.setDrawBarShadow(false);
 
         ArrayList<BarEntry> values = new ArrayList<>();
-        for (int i = 0; i<activities.size(); i++) {
+        for (int i = 0; i < activities.size(); i++) {
             values.add(new BarEntry(i, containsId(activityTimes, activities.get(i))));
             NAMES[i] = names.get(i);
         }
@@ -498,7 +502,7 @@ public class PersonalStatisticsFragment extends Fragment {
         BarDataSet set1 = new BarDataSet(values, "Time spent in hours");
         set1.setColors(colors);
         String[] labels = new String[names.size()];
-        for(int k = 0; k<names.size(); k++) {
+        for (int k = 0; k < names.size(); k++) {
             labels[k] = names.get(k);
         }
         set1.setStackLabels(labels);
@@ -539,9 +543,9 @@ public class PersonalStatisticsFragment extends Fragment {
 
         LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
         long millis = to;
-        while(millis != from) {
+        while (millis != from) {
             float[] list = new float[activities.size()];
-            for(int j = 0; j < activities.size(); j++) {
+            for (int j = 0; j < activities.size(); j++) {
                 list[j] = containsName(activityTimes, activities.get(j), millis);
             }
             values.add(new BarEntry(i, list));
@@ -570,7 +574,7 @@ public class PersonalStatisticsFragment extends Fragment {
         BarDataSet set1 = new BarDataSet(values, "Time spent in hours");
         set1.setColors(colors);
         String[] labels = new String[names.size()];
-        for(int k = 0; k<names.size(); k++) {
+        for (int k = 0; k < names.size(); k++) {
             labels[k] = names.get(k);
         }
         set1.setStackLabels(labels);
@@ -607,15 +611,15 @@ public class PersonalStatisticsFragment extends Fragment {
         Legend legend = chart.getLegend();
 
         ArrayList<ArrayList<BarEntry>> values = new ArrayList<>();
-        for(int k = 0; k<activities.size(); k++) {
+        for (int k = 0; k < activities.size(); k++) {
             values.add(new ArrayList<>());
         }
         int i = 0;
 
         LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
         long millis = to;
-        while(millis != from) {
-            for(int j = 0; j < activities.size(); j++) {
+        while (millis != from) {
+            for (int j = 0; j < activities.size(); j++) {
                 values.get(j).add(new BarEntry(i, containsName(activityTimes, activities.get(j), millis)));
             }
             NAMES[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
@@ -641,7 +645,7 @@ public class PersonalStatisticsFragment extends Fragment {
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
 
         int l = 0;
-        for(ArrayList<BarEntry> be : values) {
+        for (ArrayList<BarEntry> be : values) {
             BarDataSet set1 = new BarDataSet(be, names.get(l));
             set1.setColors(colors.get(l));
             l++;
@@ -670,7 +674,7 @@ public class PersonalStatisticsFragment extends Fragment {
         chart.getDescription().setEnabled(false);
 
         ArrayList<PieEntry> values = new ArrayList<>();
-        for (int i = 0; i<activities.size(); i++) {
+        for (int i = 0; i < activities.size(); i++) {
             final int j = i;
             long sum = activityTimes.stream().filter(a -> a.getaId() == activities.get(j)).mapToLong(ActivityTime::getT).sum();
             values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(sum), names.get(i)));
@@ -686,36 +690,36 @@ public class PersonalStatisticsFragment extends Fragment {
         chart.invalidate();
     }
 
-    private float containsId(final List<ActivityTime> list, final long id){
+    private float containsId(final List<ActivityTime> list, final long id) {
         ActivityTime activityTime = list.stream()
                 .filter(at -> at.getaId() == id)
                 .findAny()
                 .orElse(null);
-        if(activityTime != null) {
+        if (activityTime != null) {
             return DateConverter.durationConverterFromLongToBarChart(activityTime.getT());
         } else {
             return 0f;
         }
     }
 
-    private float containsName(final List<ActivityTime> list, final long date){
+    private float containsName(final List<ActivityTime> list, final long date) {
         ActivityTime activityTime = list.stream()
                 .filter(at -> at.getD() == date)
                 .findAny()
                 .orElse(null);
-        if(activityTime != null) {
+        if (activityTime != null) {
             return DateConverter.durationConverterFromLongToBarChart(activityTime.getT());
         } else {
             return 0f;
         }
     }
 
-    private float containsName(final List<ActivityTime> list, final long id, final long date){
+    private float containsName(final List<ActivityTime> list, final long id, final long date) {
         ActivityTime activityTime = list.stream()
                 .filter(at -> at.getaId() == id && at.getD() == date)
                 .findAny()
                 .orElse(null);
-        if(activityTime != null) {
+        if (activityTime != null) {
             return DateConverter.durationConverterFromLongToBarChart(activityTime.getT());
         } else {
             return 0f;
@@ -723,9 +727,9 @@ public class PersonalStatisticsFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // TODO: Use the ViewModel
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
 }

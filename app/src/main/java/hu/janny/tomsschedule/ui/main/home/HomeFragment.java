@@ -30,7 +30,6 @@ import hu.janny.tomsschedule.ui.main.details.DetailFragment;
  */
 public class HomeFragment extends Fragment {
 
-    private MainViewModel mainViewModel;
     private FragmentHomeBinding binding;
     private CustomActivityRecyclerAdapter adapter;
 
@@ -39,10 +38,15 @@ public class HomeFragment extends Fragment {
 
         // Binds layout
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Gets a MainViewModel instance
-        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        MainViewModel mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         // Displays add activity fab icon
         binding.addCustomActivity.setVisibility(View.VISIBLE);
@@ -56,12 +60,6 @@ public class HomeFragment extends Fragment {
                 adapter.setActivityList(customActivities);
             }
         });
-        return root;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     /**
@@ -80,7 +78,7 @@ public class HomeFragment extends Fragment {
         };
         // Creates a new adapter with layout of the activity list, item onClickListener and MainActivity context
         adapter = new CustomActivityRecyclerAdapter(R.layout.custom_activity_list_item,
-                onClickListener, (MainActivity)getActivity());
+                onClickListener, (MainActivity) getActivity());
         // Sets the layout recycler view of the activity
         binding.activitiesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.activitiesListRecyclerView.setAdapter(adapter);

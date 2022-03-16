@@ -187,4 +187,10 @@ public class GlobalFilterFragment extends Fragment {
         binding.gCustomDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 calDay.get(Calendar.DATE), calDay.get(Calendar.MONTH) + 1, calDay.get(Calendar.YEAR)));
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

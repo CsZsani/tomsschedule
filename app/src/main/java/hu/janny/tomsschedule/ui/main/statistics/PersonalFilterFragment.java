@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -20,6 +22,9 @@ import android.widget.Toast;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -35,26 +40,34 @@ public class PersonalFilterFragment extends Fragment {
 
     private FragmentPersonalFilterBinding binding;
     private StatisticsViewModel statisticsViewModel;
+
     private List<ActivityFilter> activityFilters;
 
-    final Calendar calDay = Calendar.getInstance();
-    final Calendar calFrom = Calendar.getInstance();
-    final Calendar calTo = Calendar.getInstance();
-
-    private int periodType;
-    private int activityNum;
+    // LocalDates for the date pickers
+    private LocalDate ldCustom;
+    private LocalDate ldFrom;
+    private LocalDate ldTo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        statisticsViewModel =
-                new ViewModelProvider(requireActivity()).get(StatisticsViewModel.class);
+
+        // Binds layout
         binding = FragmentPersonalFilterBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Gets a StatisticsViewModel instance
+        statisticsViewModel = new ViewModelProvider(requireActivity()).get(StatisticsViewModel.class);
 
         initPeriodChipGroup();
         initCalendars();
 
+        // Observer of activities of the user to choose from these activities
         statisticsViewModel.getFilterActivities().observe(getViewLifecycleOwner(), new Observer<List<ActivityFilter>>() {
             @Override
             public void onChanged(List<ActivityFilter> activityFilters) {
@@ -64,19 +77,22 @@ public class PersonalFilterFragment extends Fragment {
         });
 
         initActivityChipGroup();
-        initFilterButton(root);
+        initFilterButton(view);
 
-        return root;
     }
 
+    /**
+     * Initializes activity chip group. Adds on checked change listener to all activity chip. If all activity chip is
+     * selected, then we uncheck all the other chips.
+     */
     private void initActivityChipGroup() {
         binding.pAllActivityChip.setChecked(true);
         binding.pAllActivityChip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(binding.pAllActivityChip.isChecked()) {
+                if (binding.pAllActivityChip.isChecked()) {
                     int chipsCount = binding.pActivityChipGroup.getChildCount();
-                    for(int i = 1; i<chipsCount; i++) {
+                    for (int i = 1; i < chipsCount; i++) {
                         Chip chip = (Chip) binding.pActivityChipGroup.getChildAt(i);
                         chip.setChecked(false);
                     }
@@ -85,14 +101,24 @@ public class PersonalFilterFragment extends Fragment {
         });
     }
 
+    /**
+     * It programmatically adds the activities to activity chip group.
+     *
+     * @param activityFilters the list of activities to filter
+     */
     private void initActivitiesChips(List<ActivityFilter> activityFilters) {
-        for(ActivityFilter af : activityFilters) {
+        for (ActivityFilter af : activityFilters) {
             addChipToActivityGroup(af);
         }
     }
 
+    /**
+     * It adds an activity to activity chip group to filter.
+     *
+     * @param af the activity to filter
+     */
     private void addChipToActivityGroup(ActivityFilter af) {
-        if(getContext() != null) {
+        if (getContext() != null) {
             Chip chip = (Chip) getLayoutInflater().inflate(R.layout.chip_layout, binding.pActivityChipGroup, false);
             chip.setId(ViewCompat.generateViewId());
             chip.setText(af.name);
@@ -101,31 +127,34 @@ public class PersonalFilterFragment extends Fragment {
             chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if(b) {
-                        if(binding.pAllActivityChip.isChecked()) {
+                    if (b) {
+                        // If we check a chip which is not all, then we set all chip to unchecked
+                        if (binding.pAllActivityChip.isChecked()) {
                             binding.pAllActivityChip.setChecked(false);
                         }
                     }
                 }
             });
-            //chip.setTextColor(getResources().getColor(R.color.black));
             binding.pActivityChipGroup.addView(chip);
         }
         binding.pActivityChipGroup.getChildAt(0);
     }
 
+    /**
+     * Initializes the time period chip group.
+     */
     private void initPeriodChipGroup() {
         binding.pPeriodChipGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(ChipGroup group, int checkedId) {
-
-                if(binding.pCustomDayChip.isChecked()) {
+                // Changes the UI if we want add custom day or interval to display the data
+                if (binding.pCustomDayChip.isChecked()) {
                     binding.pCustomDay.setVisibility(View.VISIBLE);
                     binding.pFromText.setVisibility(View.GONE);
                     binding.pFromDay.setVisibility(View.GONE);
                     binding.pToText.setVisibility(View.GONE);
                     binding.pToDay.setVisibility(View.GONE);
-                } else if(binding.pFromToChip.isChecked()) {
+                } else if (binding.pFromToChip.isChecked()) {
                     binding.pCustomDay.setVisibility(View.GONE);
                     binding.pFromText.setVisibility(View.VISIBLE);
                     binding.pFromDay.setVisibility(View.VISIBLE);
@@ -142,11 +171,16 @@ public class PersonalFilterFragment extends Fragment {
         });
     }
 
+    /**
+     * Initializes the click listener of the filter button.
+     *
+     * @param fragView the root view of fragment
+     */
     private void initFilterButton(View fragView) {
         binding.pFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(binding.pAllActivityChip.isChecked()) {
+                if (binding.pAllActivityChip.isChecked()) {
                     filterAll(fragView);
                 } else {
                     filterActivities(fragView);
@@ -155,14 +189,19 @@ public class PersonalFilterFragment extends Fragment {
         });
     }
 
+    /**
+     * Sends filtering to view model. This method used when want the data of all activities.
+     *
+     * @param fragView the root view of fragment
+     */
     private void filterAll(View fragView) {
-        activityNum = 0;
         statisticsViewModel.setpActivityNum(0);
         statisticsViewModel.setActsList(new ArrayList<>());
+        // We make lists of the parameters of activity. It used by the fragment which shows charts based on the data
         List<Long> list = new ArrayList<>();
         List<Integer> colList = new ArrayList<>();
         List<String> names = new ArrayList<>();
-        for(int i = 0; i<activityFilters.size(); i++) {
+        for (int i = 0; i < activityFilters.size(); i++) {
             list.add(activityFilters.get(i).activityId);
             colList.add(activityFilters.get(i).color);
             names.add(activityFilters.get(i).name);
@@ -170,176 +209,195 @@ public class PersonalFilterFragment extends Fragment {
         statisticsViewModel.setActsList(list);
         statisticsViewModel.setColors(colList);
         statisticsViewModel.setNames(names);
-        sendRequestToDb(new ArrayList<>());
-        //sendData(new ArrayList<>());
+
+        if (!sendRequestToDb(new ArrayList<>())) {
+            return;
+        }
         Navigation.findNavController(fragView).popBackStack();
 
     }
 
+    /**
+     * Sends filtering to view model. This method used when want the data of one or more activities.
+     * @param fragView the root view of fragment
+     */
     private void filterActivities(View fragView) {
         List<Long> list = new ArrayList<>();
         List<Integer> colList = new ArrayList<>();
         List<String> names = new ArrayList<>();
         int chipsCount = binding.pActivityChipGroup.getChildCount();
-        for(int i = 1; i<chipsCount; i++) {
+        for (int i = 1; i < chipsCount; i++) {
             Chip chip = (Chip) binding.pActivityChipGroup.getChildAt(i);
-            if(chip.isChecked()) {
-                list.add(activityFilters.get(i-1).activityId);
-                colList.add(activityFilters.get(i-1).color);
-                names.add(activityFilters.get(i-1).name);
+            if (chip.isChecked()) {
+                list.add(activityFilters.get(i - 1).activityId);
+                colList.add(activityFilters.get(i - 1).color);
+                names.add(activityFilters.get(i - 1).name);
             }
         }
-        if(list.size() == 0) {
+        if (list.size() == 0) {
             Toast.makeText(getActivity(), "You must choose All or at least one activity!", Toast.LENGTH_LONG).show();
             return;
         }
-        if(list.size() == 1 && (binding.pTodayChip.isChecked() || binding.pYesterdayChip.isChecked() || binding.pWeekChip.isChecked())) {
+        if (list.size() == 1 && (binding.pTodayChip.isChecked() || binding.pYesterdayChip.isChecked() || binding.pWeekChip.isChecked())) {
             Toast.makeText(getActivity(), "For only one activity, you must choose longer period than one week or custom dates!", Toast.LENGTH_LONG).show();
             return;
         }
-        activityNum = list.size();
         statisticsViewModel.setpActivityNum(list.size());
         statisticsViewModel.setActsList(list);
         statisticsViewModel.setColors(colList);
         statisticsViewModel.setNames(names);
-        sendRequestToDb(list);
-        //sendData(list);
+        if (!sendRequestToDb(list)) {
+            return;
+        }
         Navigation.findNavController(fragView).popBackStack();
     }
 
-    private void sendRequestToDb(List<Long> list) {
-        if(binding.pYesterdayChip.isChecked()) {
+    private boolean sendRequestToDb(List<Long> list) {
+        if (binding.pYesterdayChip.isChecked()) {
             statisticsViewModel.setpPeriodType(1);
             statisticsViewModel.setFromTime(0L);
             statisticsViewModel.setToTime(CustomActivityHelper.minusDaysMillis(1));
             statisticsViewModel.filterExactDay(CustomActivityHelper.minusDaysMillis(1), list);
-            periodType = 1;
-        } else if(binding.pWeekChip.isChecked()) {
+        } else if (binding.pWeekChip.isChecked()) {
             statisticsViewModel.setpPeriodType(2);
             statisticsViewModel.setFromTime(CustomActivityHelper.minusWeekMillis(1));
             statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusWeekMillis(1), list);
-            periodType = 2;
-        } else if(binding.pTwoWeeksChip.isChecked()) {
+        } else if (binding.pTwoWeeksChip.isChecked()) {
             statisticsViewModel.setpPeriodType(3);
             statisticsViewModel.setFromTime(CustomActivityHelper.minusWeekMillis(2));
             statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusWeekMillis(2), list);
-            periodType = 3;
-        } else if(binding.pMonthChip.isChecked()) {
+        } else if (binding.pMonthChip.isChecked()) {
             statisticsViewModel.setpPeriodType(4);
             statisticsViewModel.setFromTime(CustomActivityHelper.minusMonthMillis(1));
             statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusMonthMillis(1), list);
-            periodType = 4;
-        } else if(binding.pThreeMonthsChip.isChecked()) {
+        } else if (binding.pThreeMonthsChip.isChecked()) {
             statisticsViewModel.setpPeriodType(5);
             statisticsViewModel.setFromTime(CustomActivityHelper.minusMonthMillis(3));
             statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusMonthMillis(3), list);
-            periodType = 5;
-        } else if(binding.pCustomDayChip.isChecked()) {
+        } else if (binding.pCustomDayChip.isChecked()) {
             statisticsViewModel.setpPeriodType(6);
             statisticsViewModel.setFromTime(0L);
-            statisticsViewModel.setToTime(calDay.getTimeInMillis());
-            statisticsViewModel.filterExactDay(calDay.getTimeInMillis(), list);
-            periodType = 6;
-        } else if(binding.pFromToChip.isChecked()) {
+            Instant custom = ldCustom.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            statisticsViewModel.setToTime(custom.toEpochMilli());
+            statisticsViewModel.filterExactDay(custom.toEpochMilli(), list);
+        } else if (binding.pFromToChip.isChecked()) {
             statisticsViewModel.setpPeriodType(7);
-            statisticsViewModel.setFromTime(calFrom.getTimeInMillis());
-            statisticsViewModel.setToTime(calTo.getTimeInMillis());
-            statisticsViewModel.filterFromTo(calFrom.getTimeInMillis(), calTo.getTimeInMillis(), list);
-            periodType = 7;
+            Instant from = ldFrom.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            Instant to = ldTo.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            if (from.toEpochMilli() > to.toEpochMilli()) {
+                Toast.makeText(getContext(), getString(R.string.filter_from_to_error), Toast.LENGTH_LONG).show();
+                return false;
+            }
+            statisticsViewModel.setFromTime(from.toEpochMilli());
+            statisticsViewModel.setToTime(to.toEpochMilli());
+            statisticsViewModel.filterFromTo(from.toEpochMilli(), to.toEpochMilli(), list);
         } else {
             statisticsViewModel.setpPeriodType(0);
             statisticsViewModel.setFromTime(0L);
             statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterExactDay(CustomActivityHelper.todayMillis(), list);
-            periodType = 0;
         }
+        return true;
     }
 
-    private void sendData(List<Long> list) {
-        ArrayList<String> stringList = new ArrayList<>();
-        for(int i = 0; i<list.size(); i++) {
-            stringList.add(String.valueOf(list.get(i)));
-        }
-        Bundle result = new Bundle();
-        result.putInt(PersonalStatisticsFragment.PERIOD_TYPE, periodType);
-        result.putInt(PersonalStatisticsFragment.ACTIVITY_NUM, list.size());
-        result.putStringArrayList(PersonalStatisticsFragment.ACTIVITIES, stringList);
-        System.out.println(periodType + " " + list.size() + " " + stringList + " filterrfrag");
-        getParentFragmentManager().setFragmentResult(PersonalStatisticsFragment.REQUEST_KEY, result);
-    }
-
+    /**
+     * Initializes date picker dialogs and set on click listeners to these date picker dialogs.
+     */
     private void initCalendars() {
-
-        DatePickerDialog.OnDateSetListener dateDay = new DatePickerDialog.OnDateSetListener() {
+        // Initializes date picker dialogs' onDateSetListener and after that it sets the UI according to
+        // the new date
+        DatePickerDialog.OnDateSetListener dateCustomDay = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calDay.clear();
-                calDay.set(year, month, day);
+                month++;
+                ldCustom = LocalDate.of(year, month, day);
                 updateLabelStartDay();
             }
         };
 
-        DatePickerDialog.OnDateSetListener dateFrom = new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog.OnDateSetListener dateFromDay = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calFrom.clear();
-                calFrom.set(year, month, day);
+                month++;
+                ldFrom = LocalDate.of(year, month, day);
                 updateLabelEndDay();
             }
         };
 
-        DatePickerDialog.OnDateSetListener dateTo = new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog.OnDateSetListener dateToDay = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calTo.clear();
-                calTo.set(year, month, day);
+                month++;
+                ldTo = LocalDate.of(year, month, day);
                 updateLabelEndDate();
             }
         };
 
+        // Sets onClickListeners for date pickers
         binding.pCustomDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(getActivity(),dateDay,calDay.get(Calendar.YEAR),calDay.get(Calendar.MONTH),calDay.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(getActivity(), dateCustomDay, ldCustom.getYear(), ldCustom.getMonthValue() - 1, ldCustom.getDayOfMonth()).show();
             }
         });
         binding.pFromDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(getActivity(),dateFrom,calFrom.get(Calendar.YEAR),calFrom.get(Calendar.MONTH),calFrom.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(getActivity(), dateFromDay, ldFrom.getYear(), ldFrom.getMonthValue() - 1, ldFrom.getDayOfMonth()).show();
             }
         });
         binding.pToDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(getActivity(),dateTo,calTo.get(Calendar.YEAR),calTo.get(Calendar.MONTH),calTo.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(getActivity(), dateToDay, ldTo.getYear(), ldTo.getMonthValue() - 1, ldTo.getDayOfMonth()).show();
             }
         });
-
+        initTodayDate();
     }
 
-    private void updateLabelStartDay(){
+    /**
+     * Initializes start day picker dialog for today date and shows on the UI as well.
+     */
+    private void initTodayDate() {
+        ldCustom = LocalDate.now();
+        updateLabelStartDay();
+        ldFrom = LocalDate.now();
+        updateLabelEndDay();
+        ldTo = LocalDate.now();
+        updateLabelEndDate();
+    }
+
+    /**
+     * Displays start day's date.
+     */
+    private void updateLabelStartDay() {
         binding.pCustomDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
-                calDay.get(Calendar.DATE), calDay.get(Calendar.MONTH) + 1, calDay.get(Calendar.YEAR)));
+                ldCustom.getYear(), ldCustom.getMonthValue(), ldCustom.getDayOfMonth()));
     }
 
-    private void updateLabelEndDay(){
+    /**
+     * Displays end day's date.
+     */
+    private void updateLabelEndDay() {
         binding.pFromDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
-                calFrom.get(Calendar.DATE), calFrom.get(Calendar.MONTH) + 1, calFrom.get(Calendar.YEAR)));
+                ldFrom.getYear(), ldFrom.getMonthValue(), ldFrom.getDayOfMonth()));
     }
 
-    private void updateLabelEndDate(){
+    /**
+     * Displays end date's date.
+     */
+    private void updateLabelEndDate() {
         binding.pToDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
-                calTo.get(Calendar.DATE), calTo.get(Calendar.MONTH) + 1, calTo.get(Calendar.YEAR)));
+                ldTo.getYear(), ldTo.getMonthValue(), ldTo.getDayOfMonth()));
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         binding = null;
     }
 }

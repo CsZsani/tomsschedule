@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -38,7 +39,12 @@ public class SettingsFragment extends Fragment {
 
         // Binds layout
         binding = FragmentSettingsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Gets a BackUpViewModel instance
         viewModel = new ViewModelProvider(this).get(BackUpViewModel.class);
@@ -47,39 +53,20 @@ public class SettingsFragment extends Fragment {
         setUpRestoreDialog();
 
         // Gets the current user's id
-        viewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                userId = user.getUid();
-            }
-        });
+        viewModel.getUser().observe(getViewLifecycleOwner(), user -> userId = user.getUid());
 
         // Gets the state of creating an restoring backup
-        viewModel.getReady().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean ready) {
-                if (ready) {
-                    Toast.makeText(getActivity(), "Save/restore is done!", Toast.LENGTH_SHORT).show();
-                    viewModel.setReady(true);
-                }
+        viewModel.getReady().observe(getViewLifecycleOwner(), ready -> {
+            if (ready) {
+                Toast.makeText(getActivity(), "Save/restore is done!", Toast.LENGTH_SHORT).show();
+                viewModel.setReady(true);
             }
         });
 
-        binding.createBackupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveDialog.show();
-            }
-        });
+        binding.createBackupButton.setOnClickListener(view1 -> saveDialog.show());
 
-        binding.restoreBackupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                restoreDialog.show();
-            }
-        });
+        binding.restoreBackupButton.setOnClickListener(view12 -> restoreDialog.show());
 
-        return root;
     }
 
     /**
@@ -109,17 +96,12 @@ public class SettingsFragment extends Fragment {
     private void setUpRestoreDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.download_data_warning);
-        builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(), R.string.restore_backup_progress, Toast.LENGTH_LONG).show();
-                viewModel.restoreBackup(userId);
-            }
+        builder.setPositiveButton(R.string.confirm, (dialogInterface, i) -> {
+            Toast.makeText(getActivity(), R.string.restore_backup_progress, Toast.LENGTH_LONG).show();
+            viewModel.restoreBackup(userId);
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-            }
+        builder.setNegativeButton(R.string.cancel, (dialog, id) -> {
+            // User cancelled the dialog
         });
         restoreDialog = builder.create();
     }

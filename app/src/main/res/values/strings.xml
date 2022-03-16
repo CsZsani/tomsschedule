@@ -84,6 +84,8 @@
     <string name="new_act_must_choose_reg_type">You must choose regularity type for regular activity!</string>
     <string name="new_act_must_choose_type">You must choose type of activity!</string>
     <string name="new_act_must_add_end_date">End date is required!</string>
+    <string name="new_act_end_date_error">End date must not be before today!</string>
+    <string name="new_act_interval_date_error">Start day must not be after end day!</string>
     <string name="add_new_activity_fragment_label">Add new activity</string>
     <string name="color_pick">Choose a color</string>
     <string name="priority">Priority (1–10)</string>
@@ -150,6 +152,8 @@
     <string name="edit_act_must_choose_reg_type">You must choose regularity type for regular activity!</string>
     <string name="edit_act_must_choose_type">You must choose type of activity!</string>
     <string name="edit_act_must_add_end_date">End date is required!</string>
+    <string name="edit_act_end_date_error">End date must not be before today!</string>
+    <string name="edit_act_interval_date_error">Start day must not be after end day!</string>
     <string name="global_activity_name_immutable">Activity name (global activity names are immutable)</string>
 
     <!--  Days of week  -->
@@ -241,7 +245,9 @@
     <string name="global_statistics">Global</string>
     <string name="tips">Tips</string>
     <string name="tip">Tip</string>
+    <string name="no_data_available_in_period">No data available in this period!</string>
     <!-- Statistics filter -->
+    <string name="filter_from_to_error">The beginning must be before the end date!</string>
     <string name="select_time_period_chip">Select time period</string>
     <string name="today_chip">Today</string>
     <string name="yesterday_chip">Yesterday</string>

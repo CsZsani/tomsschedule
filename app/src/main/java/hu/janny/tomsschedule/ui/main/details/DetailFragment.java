@@ -82,7 +82,12 @@ public class DetailFragment extends Fragment {
 
         // Binds layout
         binding = DetailFragmentBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Gets a MainViewModel instance
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -95,7 +100,7 @@ public class DetailFragment extends Fragment {
             long id = getArguments().getLong(ARG_ITEM_ID);
             mainViewModel.findActivityByIdWithTimesEntity(id);
         } else {
-            Navigation.findNavController(root).popBackStack();
+            Navigation.findNavController(view).popBackStack();
         }
 
         // Observer of the activity to get the data from the database
@@ -144,16 +149,16 @@ public class DetailFragment extends Fragment {
                     setUpTable(activity);
 
                     // Sets up action buttons
-                    setUpDeleteDialog(activity.getId(), root);
-                    setUpEditButton(activity.getId(), root);
+                    setUpDeleteDialog(activity.getId(), view);
+                    setUpEditButton(activity.getId(), view);
                     setUpStartActivityButton(activity.getId(), activity.getName());
-                    setUpAddTimeButton(activity.getId(), activity.getName(), root);
-                    setUpSubtractionButton(activity.getId(), activity.getName(), root);
+                    setUpAddTimeButton(activity.getId(), activity.getName(), view);
+                    setUpSubtractionButton(activity.getId(), activity.getName(), view);
 
                     // Sets up the bar chart for the last seven days
                     setUpBarChart(activityWithTimes.activityTimes, activity.getCol());
                 } else {
-                    Navigation.findNavController(root).popBackStack();
+                    Navigation.findNavController(view).popBackStack();
                     Toast.makeText(getActivity(), getString(R.string.detail_act_no_act), Toast.LENGTH_LONG).show();
                 }
             }
@@ -162,7 +167,6 @@ public class DetailFragment extends Fragment {
         // Sets up delete button
         setUpDeleteActivity();
 
-        return root;
     }
 
     /**
@@ -638,8 +642,8 @@ public class DetailFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         binding = null;
     }
 }

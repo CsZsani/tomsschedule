@@ -76,7 +76,12 @@ public class EditActivityFragment extends Fragment{
 
         // Binds layout
         binding = FragmentEditActivityBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Gets a MainViewModel instance
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -92,7 +97,7 @@ public class EditActivityFragment extends Fragment{
             //mainViewModel.findActivityById(id);
             mainViewModel.findActivityByIdWithTimesEntity(id);
         } else {
-            Navigation.findNavController(root).popBackStack();
+            Navigation.findNavController(view).popBackStack();
         }
 
         // mainViewModel.getSingleActivity()
@@ -120,8 +125,8 @@ public class EditActivityFragment extends Fragment{
                     // Initializes the radio groups and switches
                     initSelection();
                 } else {
-                    Navigation.findNavController(root).popBackStack();
-                    Toast.makeText(getActivity(), getString(R.string.edit_act_no_act), Toast.LENGTH_LONG).show();
+                    Navigation.findNavController(view).popBackStack();
+                    Toast.makeText(getContext(), getString(R.string.edit_act_no_act), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -137,9 +142,8 @@ public class EditActivityFragment extends Fragment{
         initFixedDaysTimePickerListeners();
 
         // Sets on click listener of saving activity
-        saveOnClickListener(root);
+        saveOnClickListener(view);
 
-        return root;
     }
 
     /**
@@ -176,7 +180,7 @@ public class EditActivityFragment extends Fragment{
         // Name of activity
         String name = binding.activityName.getText().toString().trim();
         if(name.isEmpty()) {
-            Toast.makeText(getActivity(), getString(R.string.edit_act_name_required), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.edit_act_name_required), Toast.LENGTH_LONG).show();
             return;
         }
         if(!CustomActivityHelper.isFixActivity(name)) {
@@ -207,7 +211,7 @@ public class EditActivityFragment extends Fragment{
             // Regular
             if(!setRegularity()) {return;}
         } else {
-            Toast.makeText(getActivity(), getString(R.string.new_act_must_choose_type), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.new_act_must_choose_type), Toast.LENGTH_LONG).show();
             return;
         }
         CustomActivityHelper.recalculateAfterEditActivity(customActivity, times);
@@ -223,17 +227,21 @@ public class EditActivityFragment extends Fragment{
         String from = binding.activityStartDay.getText().toString().trim();
         String to = binding.activityEndDay.getText().toString().trim();
         if(from.isEmpty()) {
-            Toast.makeText(getActivity(), getString(R.string.edit_act_start_day_required), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.edit_act_start_day_required), Toast.LENGTH_LONG).show();
             return false;
         }
         if(to.isEmpty()) {
-            Toast.makeText(getActivity(), getString(R.string.edit_act_end_day_required), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.edit_act_end_day_required), Toast.LENGTH_LONG).show();
             return false;
         }
         Instant sd = ldStartDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
-//        customActivity.setsD(calStartDay.getTimeInMillis());
-        customActivity.setsD(sd.toEpochMilli());
         Instant ed = ldEndDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        if(sd.toEpochMilli() > ed.toEpochMilli()) {
+            Toast.makeText(getContext(), getString(R.string.edit_act_interval_date_error), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        //        customActivity.setsD(calStartDay.getTimeInMillis());
+        customActivity.setsD(sd.toEpochMilli());
 //        customActivity.seteD(calEndDay.getTimeInMillis());
         customActivity.seteD(ed.toEpochMilli());
         customActivity.settN(6);
@@ -267,7 +275,7 @@ public class EditActivityFragment extends Fragment{
         String hours = binding.activitySumTimePicker.hours.getText().toString().trim();
         String minutes = binding.activitySumTimePicker.minutes.getText().toString().trim();
         if(days.isEmpty() || hours.isEmpty() || minutes.isEmpty()) {
-            Toast.makeText(getActivity(), getString(R.string.edit_act_must_add_time), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.edit_act_must_add_time), Toast.LENGTH_LONG).show();
             return true;
         }
         int day = 0;
@@ -282,7 +290,7 @@ public class EditActivityFragment extends Fragment{
             return true;
         }
         if(day < 0 || hour > 23 || hour < 0 || minute > 59 || minute < 0) {
-            Toast.makeText(getActivity(), getString(R.string.edit_act_format_add_time), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.edit_act_format_add_time), Toast.LENGTH_LONG).show();
             return true;
         }
         customActivity.setDur(DateConverter.durationTimeConverterFromIntToLong(day, hour, minute));
@@ -315,7 +323,7 @@ public class EditActivityFragment extends Fragment{
         } else if(binding.activityMonthly.isChecked()) {
             return setMonthly();
         } else {
-            Toast.makeText(getActivity(), getString(R.string.edit_act_must_choose_reg_type), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.edit_act_must_choose_reg_type), Toast.LENGTH_LONG).show();
             return false;
         }
     }
@@ -424,7 +432,7 @@ public class EditActivityFragment extends Fragment{
             customActivity.getCustomWeekTime().setSun(0);
         }
         if(customActivity.getCustomWeekTime().nothingSet()) {
-            Toast.makeText(getActivity(), getString(R.string.edit_act_must_set_one_day), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.edit_act_must_set_one_day), Toast.LENGTH_LONG).show();
             return false;
         }
         customActivity.sethFD(true);
@@ -491,7 +499,7 @@ public class EditActivityFragment extends Fragment{
         String hours = tp.oneDayHours.getText().toString().trim();
         String minutes = tp.oneDayMinutes.getText().toString().trim();
         if(hours.isEmpty() || minutes.isEmpty()) {
-            Toast.makeText(getActivity(), getString(R.string.edit_act_must_add_time_for_a_day), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.edit_act_must_add_time_for_a_day), Toast.LENGTH_LONG).show();
             return -1L;
         }
         int hour = 0;
@@ -504,7 +512,7 @@ public class EditActivityFragment extends Fragment{
             return -1L;
         }
         if(hour > 23 || hour < 0 || minute > 59 || minute < 0) {
-            Toast.makeText(getActivity(), getString(R.string.edit_act_format_add_time_for_a_day), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.edit_act_format_add_time_for_a_day), Toast.LENGTH_LONG).show();
             return -1L;
         }
         return DateConverter.durationTimeConverterFromIntToLongForDays(hour, minute);
@@ -530,11 +538,15 @@ public class EditActivityFragment extends Fragment{
         if(binding.activityHasAnEndDate.isChecked()) {
             String ed = binding.activityEndDate.getText().toString().trim();
             if(ed.isEmpty()) {
-                Toast.makeText(getActivity(), getString(R.string.edit_act_format_add_time), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getString(R.string.edit_act_format_add_time), Toast.LENGTH_LONG).show();
                 return false;
             }
             Instant d = ldEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
 //            customActivity.seteD(calEndDate.getTimeInMillis());
+            if(d.toEpochMilli() < CustomActivityHelper.todayMillis()) {
+                Toast.makeText(getContext(), getString(R.string.edit_act_end_date_error), Toast.LENGTH_LONG).show();
+                return false;
+            }
             customActivity.seteD(d.toEpochMilli());
         }
         return true;
@@ -1362,8 +1374,8 @@ public class EditActivityFragment extends Fragment{
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         binding = null;
     }
 

@@ -21,6 +21,9 @@ import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.model.entities.ActivityWithTimes;
 import hu.janny.tomsschedule.model.entities.CustomActivity;
 
+/**
+ * This adapter is for displaying the custom activities in a card view list in HomeFragment.
+ */
 public class CustomActivityRecyclerAdapter
         extends RecyclerView.Adapter<CustomActivityRecyclerAdapter.ViewHolder> {
 
@@ -89,7 +92,7 @@ public class CustomActivityRecyclerAdapter
             viewHolder.activityName.setText(activityList.get(i).customActivity.getName());
         }
         viewHolder.divider.setBackgroundColor(activityList.get(i).customActivity.getCol());
-
+        //System.out.printf("#%06X%n", (0xFFFFFF & activityList.get(i).customActivity.getCol()));
         viewHolder.beginActivity.setBackgroundColor(darkenColor(activityList.get(i).customActivity.getCol()));
         long timeSpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(activityList.get(i).activityTimes);
         viewHolder.todayTime.setText(DateConverter.durationConverterFromLongToStringForADay(timeSpentToday));

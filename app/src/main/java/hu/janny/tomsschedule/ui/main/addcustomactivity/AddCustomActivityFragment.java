@@ -53,9 +53,6 @@ public class AddCustomActivityFragment extends Fragment {
     private FragmentAddCustomActivityBinding binding;
 
     private AlertDialog colorPickerDialog;
-    final Calendar calStartDay= Calendar.getInstance();
-    final Calendar calEndDay= Calendar.getInstance();
-    final Calendar calEndDate= Calendar.getInstance();
     private LocalDate ldStartDay;
     private LocalDate ldEndDay;
     private LocalDate ldEndDate;
@@ -64,7 +61,6 @@ public class AddCustomActivityFragment extends Fragment {
 
     // The new activity
     private CustomActivity customActivity;
-    private long activityId;
 
     private User currentUser;
 
@@ -74,9 +70,14 @@ public class AddCustomActivityFragment extends Fragment {
 
         // Binds layout
         binding = FragmentAddCustomActivityBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
 
-        color = ContextCompat.getColor(root.getContext(), R.color.base_activity);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        color = ContextCompat.getColor(view.getContext(), R.color.base_activity);
 
         // Gets a MainViewModel instance
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -106,9 +107,7 @@ public class AddCustomActivityFragment extends Fragment {
         initFixedDaysTimePickerListeners();
 
         // Sets on click listener of saving activity
-        saveOnClickListener(root);
-
-        return root;
+        saveOnClickListener(view);
     }
 
     /**
@@ -178,7 +177,7 @@ public class AddCustomActivityFragment extends Fragment {
 
         // Creates the activity
         if(currentUser != null) {
-            activityId = System.currentTimeMillis();
+            long activityId = System.currentTimeMillis();
             customActivity = new CustomActivity(activityId, currentUser.uid, name, col, note, priority);
         } else {
             Toast.makeText(getActivity(), getString(R.string.error_saving_no_user), Toast.LENGTH_LONG).show();
@@ -226,9 +225,13 @@ public class AddCustomActivityFragment extends Fragment {
             return false;
         }
         Instant sd = ldStartDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
-//        customActivity.setsD(calStartDay.getTimeInMillis());
-        customActivity.setsD(sd.toEpochMilli());
         Instant ed = ldEndDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        if(sd.toEpochMilli() > ed.toEpochMilli()) {
+            Toast.makeText(getActivity(), getString(R.string.new_act_interval_date_error), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        //        customActivity.setsD(calStartDay.getTimeInMillis());
+        customActivity.setsD(sd.toEpochMilli());
 //        customActivity.seteD(calEndDay.getTimeInMillis());
         customActivity.seteD(ed.toEpochMilli());
         customActivity.settN(6);
@@ -531,6 +534,10 @@ public class AddCustomActivityFragment extends Fragment {
             }
             Instant d = ldEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
 //            customActivity.seteD(calEndDate.getTimeInMillis());
+            if(d.toEpochMilli() < CustomActivityHelper.todayMillis()) {
+                Toast.makeText(getActivity(), getString(R.string.new_act_end_date_error), Toast.LENGTH_LONG).show();
+                return false;
+            }
             customActivity.seteD(d.toEpochMilli());
         }
         return true;
@@ -883,11 +890,9 @@ public class AddCustomActivityFragment extends Fragment {
     private void initCalendars() {
         // Initializes date picker dialogs' onDateSetListener and after that it sets the UI according to
         // the new date
-        DatePickerDialog.OnDateSetListener dateStartday = new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog.OnDateSetListener dateStartDay = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calStartDay.clear();
-                calStartDay.set(year, month, day);
                 month++;
                 ldStartDay = LocalDate.of(year, month, day);
                 updateLabelStartDay();
@@ -916,7 +921,7 @@ public class AddCustomActivityFragment extends Fragment {
         binding.activityStartDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(getActivity(),dateStartday,ldStartDay.getYear(),ldStartDay.getMonthValue()-1,ldStartDay.getDayOfMonth()).show();
+                new DatePickerDialog(getActivity(),dateStartDay,ldStartDay.getYear(),ldStartDay.getMonthValue()-1,ldStartDay.getDayOfMonth()).show();
             }
         });
         binding.activityEndDay.setOnClickListener(new View.OnClickListener() {
@@ -1116,8 +1121,8 @@ public class AddCustomActivityFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         binding = null;
     }
 }

@@ -278,4 +278,8 @@
     <string name="timer_activit_is_in_progress">A tevékenység folyamatban van</string>
     <string name="timer_finish">Befejez</string>
     <string name="custom">egyedi</string>
+    <string name="new_act_end_date_error">A határidő nem lehet korábban mint a mai nap!</string>
+    <string name="new_act_interval_date_error">A kezdő napnak korábban kell lennie az utolsó napnál!</string>
+    <string name="edit_act_interval_date_error">A kezdő napnak korábban kell lennie az utolsó napnál!</string>
+    <string name="edit_act_end_date_error">A határidő nem lehet korábban mint a mai nap!</string>
 </resources>

@@ -237,7 +237,7 @@
                             android:layout_weight="0.33"
                             android:text="@string/detail_so_far"
                             android:textAllCaps="true"
-                            android:textStyle="italic" />
+                            android:textStyle="bold|italic" />
 
                         <TextView
                             android:id="@+id/detailRemainingText"
@@ -245,7 +245,7 @@
                             android:layout_weight="0.33"
                             android:text="@string/detail_remaining"
                             android:textAllCaps="true"
-                            android:textStyle="italic" />
+                            android:textStyle="bold|italic" />
 
                         <TextView
                             android:id="@+id/detailAllTimeText"
@@ -253,7 +253,7 @@
                             android:layout_weight="0.33"
                             android:text="@string/detail_all_time"
                             android:textAllCaps="true"
-                            android:textStyle="italic" />
+                            android:textStyle="bold|italic" />
                     </TableRow>
 
                     <TableRow

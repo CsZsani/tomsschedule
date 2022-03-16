@@ -68,5 +68,9 @@ public class TipsFragment extends Fragment {
         binding.tipsRecyclerView.setAdapter(adapter);
     }
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

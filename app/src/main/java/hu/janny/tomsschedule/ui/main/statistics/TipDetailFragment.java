@@ -45,4 +45,10 @@ public class TipDetailFragment extends Fragment {
 
         return root;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

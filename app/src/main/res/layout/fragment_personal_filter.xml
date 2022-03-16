@@ -28,13 +28,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/select_time_period_chip"
                 android:textSize="16sp"
-                android:textStyle="italic" />
+                android:textStyle="bold|italic" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/pPeriodChipGroup"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="16dp"
+                android:layout_marginTop="16dp"
                 app:checkedChip="@id/pTodayChip"
                 app:selectionRequired="true"
                 app:singleSelection="true">
@@ -125,13 +125,13 @@
                 android:id="@+id/pCustomDay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:clickable="false"
                 android:cursorVisible="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:hint="@string/date_hint"
                 android:minHeight="48dp"
-                android:paddingTop="16dp"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -139,9 +139,9 @@
                 android:id="@+id/pFromText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/from_day"
-                android:textStyle="italic"
+                android:textStyle="bold|italic"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -149,6 +149,7 @@
                 android:id="@+id/pFromDay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:clickable="false"
                 android:cursorVisible="false"
                 android:focusable="false"
@@ -162,9 +163,9 @@
                 android:id="@+id/pToText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/to_day"
-                android:textStyle="italic"
+                android:textStyle="bold|italic"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -172,6 +173,7 @@
                 android:id="@+id/pToDay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:clickable="false"
                 android:cursorVisible="false"
                 android:focusable="false"
@@ -185,17 +187,16 @@
                 android:id="@+id/pActivityText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/select_activity_chip"
                 android:textSize="16sp"
-                android:textStyle="italic" />
+                android:textStyle="bold|italic" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/pActivityChipGroup"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
+                android:layout_marginTop="16dp">
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/pAllActivityChip"
@@ -210,7 +211,7 @@
                 android:id="@+id/pFilterButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="4dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/filter"
                 android:textSize="20sp"
                 android:textStyle="bold" />

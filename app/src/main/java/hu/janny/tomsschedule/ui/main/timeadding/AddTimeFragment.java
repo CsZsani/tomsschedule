@@ -66,7 +66,12 @@ public class AddTimeFragment extends Fragment {
 
         // Binds layout
         binding = FragmentAddTimeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Gets a MainViewModel instance
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -75,7 +80,7 @@ public class AddTimeFragment extends Fragment {
             activityId = getArguments().getLong(ITEM_ID);
             mainViewModel.findActivityByIdWithTimesEntity(activityId);
         } else {
-            Navigation.findNavController(root).popBackStack();
+            Navigation.findNavController(view).popBackStack();
         }
 
         if (getArguments().containsKey(OPERATION_TYPE)) {
@@ -99,7 +104,7 @@ public class AddTimeFragment extends Fragment {
                 if (activity != null) {
                     customActivity = activity;
                 } else {
-                    Navigation.findNavController(root).popBackStack();
+                    Navigation.findNavController(view).popBackStack();
                     Toast.makeText(getActivity(), getString(R.string.add_time_no_activity), Toast.LENGTH_LONG).show();
                 }
             }
@@ -119,9 +124,8 @@ public class AddTimeFragment extends Fragment {
 
         setUpDate();
         setUpTime();
-        setUpSave(root);
+        setUpSave(view);
 
-        return root;
     }
 
     /**
@@ -263,8 +267,8 @@ public class AddTimeFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         binding = null;
     }
 

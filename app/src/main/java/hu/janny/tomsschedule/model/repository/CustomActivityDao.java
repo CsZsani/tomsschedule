@@ -21,17 +21,68 @@ public interface CustomActivityDao {
 
     /**
      * Inserts a new activity into the database.
+     *
      * @param customActivity the activity to be inserted
      */
     @Insert
     void insertActivity(CustomActivity customActivity);
 
+    /**
+     * Updates the given activity in local database.
+     *
+     * @param customActivity the activity to be updated
+     */
+    @Update
+    void updateActivity(CustomActivity customActivity);
+
+    /**
+     * Deletes an activity based on its id.
+     *
+     * @param id the id of the activity we want to delete
+     */
+    @Query("DELETE FROM customactivities WHERE activityId = :id")
+    void deleteActivityById(long id);
+
+    /**
+     * Gets an activity based on id.
+     *
+     * @param id id of the activity we search for
+     * @return the activity with the given id
+     */
+    @Query("SELECT * FROM customactivities WHERE customactivities.activityId = :id")
+    CustomActivity getActivityById(long id);
+
+    /**
+     * Searches an activity with its times based on its id.
+     * @param id id of the activity we search for
+     * @return the activity with times with the given id
+     */
+    @Transaction
+    @Query("SELECT * FROM customactivities WHERE activityId = :id")
+    ActivityWithTimes getActivityWithTimesEntity(long id);
+
+    /**
+     * Returns the list of activities with their times ordered by priority (desc), remaining (desc) and last day added (asc).
+     *
+     * @return the list of activities with their time in LiveData
+     */
+    @Transaction
+    @Query("SELECT * FROM customactivities ORDER BY customactivities.priority DESC, customactivities.remaining DESC, customactivities.lastDayAdded ASC")
+    LiveData<List<ActivityWithTimes>> getActivitiesWithTimes();
+
+    /**
+     * Returns the list of activities the given user has to filter.
+     * @param uid the uid of the user
+     * @return the list of activities to filter
+     */
+    @Query("SELECT activityId, name, color from customactivities WHERE userId = :uid")
+    LiveData<List<ActivityFilter>> getActivityFilter(String uid);
+
+
     @Transaction
     @Insert
     void insertAll(List<CustomActivity> activityList);
 
-    @Update
-    void updateActivity(CustomActivity customActivity);
 
     @Delete
     void deleteActivity(CustomActivity customActivity);
@@ -39,8 +90,6 @@ public interface CustomActivityDao {
     @Query("DELETE FROM customactivities WHERE name = :name")
     void deleteActivityByName(String name);
 
-    @Query("DELETE FROM customactivities WHERE activityId = :id")
-    void deleteActivityById(long id);
 
     @Transaction
     @Query("DELETE FROM customactivities WHERE userId = :id")
@@ -66,18 +115,13 @@ public interface CustomActivityDao {
     @Query("SELECT * FROM customactivities WHERE customactivities.name = :name")
     CustomActivity getActivityByName(String name);
 
-    @Query("SELECT * FROM customactivities WHERE customactivities.activityId = :id")
-    CustomActivity getActivityById(long id);
+
 
     @Query("SELECT activityId FROM customactivities WHERE customactivities.name = :name")
     int getIdByName(String name);
 
-    @Query("SELECT activityId, name, color from customactivities")
-    LiveData<List<ActivityFilter>> getActivityFilter();
 
-    @Transaction
-    @Query("SELECT * FROM customactivities ORDER BY customactivities.priority DESC, customactivities.remaining DESC, customactivities.lastDayAdded ASC")
-    LiveData<List<ActivityWithTimes>> getActivitiesWithTimes();
+
 
     @Transaction
     @Query("SELECT * FROM customactivities where activityId in (:list)")
@@ -87,7 +131,5 @@ public interface CustomActivityDao {
     @Query("SELECT * FROM customactivities")
     LiveData<List<ActivityWithTimes>> getActivitiesWithTimesFilterAll();
 
-    @Transaction
-    @Query("SELECT * FROM customactivities WHERE activityId = :id")
-    ActivityWithTimes getActivityWithTimesEntity(long id);
+
 }

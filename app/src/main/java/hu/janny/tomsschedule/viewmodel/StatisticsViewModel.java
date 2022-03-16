@@ -78,6 +78,10 @@ public class StatisticsViewModel extends AndroidViewModel {
         return user;
     }
 
+    /**
+     * Returns the activities the user has.
+     * @return list of activities to filter
+     */
     public LiveData<List<ActivityFilter>> getFilterActivities() {
         return filterActivities;
     }

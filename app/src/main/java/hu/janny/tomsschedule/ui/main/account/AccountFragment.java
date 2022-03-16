@@ -22,7 +22,6 @@ import hu.janny.tomsschedule.viewmodel.MainViewModel;
 public class AccountFragment extends Fragment {
 
     private FragmentAccountBinding binding;
-    private MainViewModel mainViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -30,10 +29,15 @@ public class AccountFragment extends Fragment {
 
         // Binds layout
         binding = FragmentAccountBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Gets a MainViewModel instance
-        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        MainViewModel mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         // Displays the logged in user's data
         mainViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
@@ -63,9 +67,7 @@ public class AccountFragment extends Fragment {
             }
         });
 
-        return root;
     }
-
 
     @Override
     public void onDestroyView() {

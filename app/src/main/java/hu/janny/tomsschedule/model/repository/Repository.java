@@ -50,6 +50,10 @@ public class Repository {
     private final MutableLiveData<CustomActivity> activitiesData = new MutableLiveData<>();
     // An activity - add time, timer
     private CustomActivity activity;
+    // All the activities with their times - home
+    private final LiveData<List<ActivityWithTimes>> activitiesWithTimesEntities;
+    // List of activities to filter
+    private final LiveData<List<ActivityFilter>> filterActivities;
 
 
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activitiesWithTimesData = new MutableLiveData<>();
@@ -62,8 +66,6 @@ public class Repository {
     private final LiveData<List<CustomActivity>> activities;
     // All times in list
     private final LiveData<List<ActivityTime>> times;
-    private final LiveData<List<ActivityWithTimes>> activitiesWithTimesEntities;
-    private final LiveData<List<ActivityFilter>> filterActivities;
 
     private final MutableLiveData<List<ActivityWithTimes>> activityWithTimesFilterList = new MutableLiveData<>();
     private List<ActivityWithTimes> activityWithTimesFilter;
@@ -81,12 +83,12 @@ public class Repository {
         db = ActivityRoomDatabase.getDatabase(application);
         customActivityDao = db.customActivityDao();
         activityTimeDao = db.activityTimeDao();
+        activitiesWithTimesEntities = customActivityDao.getActivitiesWithTimes();
+        filterActivities = customActivityDao.getActivityFilter(FirebaseManager.auth.getUid());
 
         allActivitiesWithTimes = customActivityDao.getAllActivitiesWithTimes();
         activities = customActivityDao.getActivitiesList();
         times = activityTimeDao.getTimes();
-        activitiesWithTimesEntities = customActivityDao.getActivitiesWithTimes();
-        filterActivities = customActivityDao.getActivityFilter();
     }
 
     //**********//
@@ -609,6 +611,26 @@ public class Repository {
         return activitiesData;
     }
 
+    // home
+
+    /**
+     * Returns the list of activities with their times.
+     *
+     * @return the list of activities with their time in LiveData
+     */
+    public LiveData<List<ActivityWithTimes>> getActivitiesWithTimesEntities() {
+        return activitiesWithTimesEntities;
+    }
+
+    /**
+     * Returns the list of activities the user has.
+     * @return list of activities to filter
+     */
+    public LiveData<List<ActivityFilter>> getFilterActivities() {
+        return filterActivities;
+    }
+
+
     public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivitiesWithTimesData() {
         return activitiesWithTimesData;
     }
@@ -633,11 +655,4 @@ public class Repository {
         return activityByIdWithTimesData;
     }
 
-    public LiveData<List<ActivityWithTimes>> getActivitiesWithTimesEntities() {
-        return activitiesWithTimesEntities;
-    }
-
-    public LiveData<List<ActivityFilter>> getFilterActivities() {
-        return filterActivities;
-    }
 }
