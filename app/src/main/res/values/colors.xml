@@ -8,20 +8,25 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <!--<color name="toms_400">#FFA477</color>
+    <color name="toms_400">#FFA477</color>
     <color name="toms_500">#FF8040</color>
     <color name="toms_700">#FF6518</color>
     <color name="toms_100">#FFF2EC</color>
-    <color name="toms_200">#FFEADF</color>-->
-    <color name="toms_400">#F6AA9C</color>
+    <color name="toms_200">#FFEADF</color>
+    <!--<color name="toms_400">#F6AA9C</color>
     <color name="toms_500">#ED9D92</color>
     <color name="toms_700">#DC8074</color>
     <color name="toms_100">#FFE9E6</color>
-    <color name="toms_200">#FFDBD5</color>
+    <color name="toms_200">#FFDBD5</color>-->
+    <!--<color name="toms_400">#C8BFE7</color>
+    <color name="toms_500">#A99CD6</color>
+    <color name="toms_700">#836FC5</color>
+    <color name="toms_100">#F1EDFF</color>
+    <color name="toms_200">#E2DAFF</color>-->
     <color name="brown_200">#c28c55</color>
     <color name="brown_400">#a86b2c</color>
     <color name="brown_700">#7a440b</color>
-    <color name="base_activity">#F6AA9C</color>
+    <color name="base_activity">#FFA477</color>
 
     <!-- Timer assets -->
     <color name="water">#0887EC</color>

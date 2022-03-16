@@ -36,6 +36,9 @@ import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
 import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.viewmodel.StatisticsViewModel;
 
+/**
+ * This fragment is for filtering the personal statistics before displaying the data.
+ */
 public class PersonalFilterFragment extends Fragment {
 
     private FragmentPersonalFilterBinding binding;
@@ -195,9 +198,7 @@ public class PersonalFilterFragment extends Fragment {
      * @param fragView the root view of fragment
      */
     private void filterAll(View fragView) {
-        statisticsViewModel.setpActivityNum(0);
-        statisticsViewModel.setActsList(new ArrayList<>());
-        // We make lists of the parameters of activity. It used by the fragment which shows charts based on the data
+        // We make lists of the parameters of all activities. It used by the fragment which shows charts based on the data
         List<Long> list = new ArrayList<>();
         List<Integer> colList = new ArrayList<>();
         List<String> names = new ArrayList<>();
@@ -206,11 +207,13 @@ public class PersonalFilterFragment extends Fragment {
             colList.add(activityFilters.get(i).color);
             names.add(activityFilters.get(i).name);
         }
+        // 0 means that we will display the data of all activities
+        statisticsViewModel.setpActivityNum(0);
         statisticsViewModel.setActsList(list);
         statisticsViewModel.setColors(colList);
         statisticsViewModel.setNames(names);
 
-        if (!sendRequestToDb(new ArrayList<>())) {
+        if (!sendRequestToDb(list)) {
             return;
         }
         Navigation.findNavController(fragView).popBackStack();
@@ -219,9 +222,11 @@ public class PersonalFilterFragment extends Fragment {
 
     /**
      * Sends filtering to view model. This method used when want the data of one or more activities.
+     *
      * @param fragView the root view of fragment
      */
     private void filterActivities(View fragView) {
+        // We make lists of the parameters of the selected activities. It used by the fragment which shows charts based on the da
         List<Long> list = new ArrayList<>();
         List<Integer> colList = new ArrayList<>();
         List<String> names = new ArrayList<>();
@@ -234,18 +239,20 @@ public class PersonalFilterFragment extends Fragment {
                 names.add(activityFilters.get(i - 1).name);
             }
         }
+        // Looking for errors
         if (list.size() == 0) {
-            Toast.makeText(getActivity(), "You must choose All or at least one activity!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), getString(R.string.must_choose_one_error), Toast.LENGTH_LONG).show();
             return;
         }
         if (list.size() == 1 && (binding.pTodayChip.isChecked() || binding.pYesterdayChip.isChecked() || binding.pWeekChip.isChecked())) {
-            Toast.makeText(getActivity(), "For only one activity, you must choose longer period than one week or custom dates!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), getString(R.string.one_act_longer_period_error), Toast.LENGTH_LONG).show();
             return;
         }
         statisticsViewModel.setpActivityNum(list.size());
         statisticsViewModel.setActsList(list);
         statisticsViewModel.setColors(colList);
         statisticsViewModel.setNames(names);
+
         if (!sendRequestToDb(list)) {
             return;
         }
@@ -254,40 +261,48 @@ public class PersonalFilterFragment extends Fragment {
 
     private boolean sendRequestToDb(List<Long> list) {
         if (binding.pYesterdayChip.isChecked()) {
+            // Yesterday
             statisticsViewModel.setpPeriodType(1);
             statisticsViewModel.setFromTime(0L);
             statisticsViewModel.setToTime(CustomActivityHelper.minusDaysMillis(1));
             statisticsViewModel.filterExactDay(CustomActivityHelper.minusDaysMillis(1), list);
         } else if (binding.pWeekChip.isChecked()) {
+            // One week
             statisticsViewModel.setpPeriodType(2);
             statisticsViewModel.setFromTime(CustomActivityHelper.minusWeekMillis(1));
             statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusWeekMillis(1), list);
         } else if (binding.pTwoWeeksChip.isChecked()) {
+            // Two weeks
             statisticsViewModel.setpPeriodType(3);
             statisticsViewModel.setFromTime(CustomActivityHelper.minusWeekMillis(2));
             statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusWeekMillis(2), list);
         } else if (binding.pMonthChip.isChecked()) {
+            // One month
             statisticsViewModel.setpPeriodType(4);
             statisticsViewModel.setFromTime(CustomActivityHelper.minusMonthMillis(1));
             statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusMonthMillis(1), list);
         } else if (binding.pThreeMonthsChip.isChecked()) {
+            // Three months
             statisticsViewModel.setpPeriodType(5);
             statisticsViewModel.setFromTime(CustomActivityHelper.minusMonthMillis(3));
             statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());
             statisticsViewModel.filterFrom(CustomActivityHelper.minusMonthMillis(3), list);
         } else if (binding.pCustomDayChip.isChecked()) {
+            // A custom day
             statisticsViewModel.setpPeriodType(6);
             statisticsViewModel.setFromTime(0L);
             Instant custom = ldCustom.atStartOfDay(ZoneId.systemDefault()).toInstant();
             statisticsViewModel.setToTime(custom.toEpochMilli());
             statisticsViewModel.filterExactDay(custom.toEpochMilli(), list);
         } else if (binding.pFromToChip.isChecked()) {
+            // An interval
             statisticsViewModel.setpPeriodType(7);
             Instant from = ldFrom.atStartOfDay(ZoneId.systemDefault()).toInstant();
             Instant to = ldTo.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            // Checks if the interval is less than one day
             if (from.toEpochMilli() > to.toEpochMilli()) {
                 Toast.makeText(getContext(), getString(R.string.filter_from_to_error), Toast.LENGTH_LONG).show();
                 return false;
@@ -296,6 +311,7 @@ public class PersonalFilterFragment extends Fragment {
             statisticsViewModel.setToTime(to.toEpochMilli());
             statisticsViewModel.filterFromTo(from.toEpochMilli(), to.toEpochMilli(), list);
         } else {
+            // Today - which is the default as well
             statisticsViewModel.setpPeriodType(0);
             statisticsViewModel.setFromTime(0L);
             statisticsViewModel.setToTime(CustomActivityHelper.todayMillis());

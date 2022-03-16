@@ -54,7 +54,10 @@ public class Repository {
     private final LiveData<List<ActivityWithTimes>> activitiesWithTimesEntities;
     // List of activities to filter
     private final LiveData<List<ActivityFilter>> filterActivities;
-
+    // Times are searched in personal statistics
+    private final MutableLiveData<List<ActivityTime>> allActivitiesTime = new MutableLiveData<>();
+    // Times are searched in personal statistics
+    private List<ActivityTime> allTimes;
 
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activitiesWithTimesData = new MutableLiveData<>();
     private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityByIdWithTimesData = new MutableLiveData<>();
@@ -70,9 +73,8 @@ public class Repository {
     private final MutableLiveData<List<ActivityWithTimes>> activityWithTimesFilterList = new MutableLiveData<>();
     private List<ActivityWithTimes> activityWithTimesFilter;
 
-    private final MutableLiveData<List<ActivityTime>> allActivitiesTime = new MutableLiveData<>();
     private final MutableLiveData<List<ActivityTime>> oneActivitiesTime = new MutableLiveData<>();
-    private List<ActivityTime> allTimes;
+
     private List<ActivityTime> oneTimes;
 
     private final MutableLiveData<Boolean> ready = new MutableLiveData<>();
@@ -138,6 +140,10 @@ public class Repository {
         }
     };
 
+    /**
+     * When we search for times of activities in personal statistics, we send an empty message,
+     * so the mutable live data will get a new value.
+     */
     Handler handlerAllTimes = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -270,9 +276,53 @@ public class Repository {
         executor.shutdown();
     }
 
-    //***************//
-    // Getting lists //
-    //***************//
+    // personal statistics
+
+    /**
+     * Searches the times of the activities in the list on the given day.
+     *
+     * @param date the day on which we want to find times
+     * @param list the list of activities
+     */
+    public void getSomeExactDates(long date, List<Long> list) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getSomeExactDate(date, list);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    /**
+     * Searches the times of the activities in the list from the given day to today.
+     *
+     * @param from the day from which we want to find times
+     * @param list the list of activities
+     */
+    public void getSomeLaterDates(long from, List<Long> list) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getSomeLaterDates(from, list);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    /**
+     * Searches the times of the activities in the list from the given day (from) to an other given day (to).
+     *
+     * @param from the day from which we want to find times
+     * @param to   the day to which we want to find times
+     * @param list the list of activities
+     */
+    public void getSomeBetweenTwoDates(long from, long to, List<Long> list) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getSomeBetweenTwoDates(from, to, list);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
 
     //*******************************//
     // Creating and restoring backup //
@@ -403,7 +453,7 @@ public class Repository {
         restoreTimes(timeList);
     }
 
-    private int[] restoreReady = new int[1];
+    private final int[] restoreReady = new int[1];
 
     public void restoreActivities(List<CustomActivity> list) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -495,78 +545,6 @@ public class Repository {
         executor.shutdown();
     }
 
-    public void getAllExactDates(long date) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            allTimes = activityTimeDao.getAllExactDate(date);
-            handlerAllTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public void getAllLaterDates(long from) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            allTimes = activityTimeDao.getAllLaterDates(from);
-            handlerAllTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public void getAllBetweenTwoDates(long from, long to) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            allTimes = activityTimeDao.getAllBetweenTwoDates(from, to);
-            handlerAllTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public void getSomeExactDates(long date, List<Long> list) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            allTimes = activityTimeDao.getSomeExactDate(date, list);
-            handlerAllTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public void getSomeLaterDates(long from, List<Long> list) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            allTimes = activityTimeDao.getSomeLaterDates(from, list);
-            handlerAllTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public void getSomeBetweenTwoDates(long from, long to, List<Long> list) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            allTimes = activityTimeDao.getSomeBetweenTwoDates(from, to, list);
-            handlerAllTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public void getAllTimes() {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            allTimes = activityTimeDao.getAllAllTheTime();
-            handlerAllTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public void getSomeAllTimes(List<Long> list) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            allTimes = activityTimeDao.getSomeAll(list);
-            handlerAllTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
     public void getOneByIdLaterDates(int id, long from) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -624,12 +602,21 @@ public class Repository {
 
     /**
      * Returns the list of activities the user has.
+     *
      * @return list of activities to filter
      */
     public LiveData<List<ActivityFilter>> getFilterActivities() {
         return filterActivities;
     }
 
+    /**
+     * Returns the list of times of activities that are searched in personal statistics.
+     *
+     * @return list of times of the activities we searched
+     */
+    public MutableLiveData<List<ActivityTime>> getAllActivitiesTime() {
+        return allActivitiesTime;
+    }
 
     public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivitiesWithTimesData() {
         return activitiesWithTimesData;
@@ -639,9 +626,6 @@ public class Repository {
         return allActivitiesWithTimes;
     }
 
-    public MutableLiveData<List<ActivityTime>> getAllActivitiesTime() {
-        return allActivitiesTime;
-    }
 
     public MutableLiveData<List<ActivityTime>> getOneActivitiesTime() {
         return oneActivitiesTime;
@@ -653,6 +637,56 @@ public class Repository {
 
     public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivityByIdWithTimesData() {
         return activityByIdWithTimesData;
+    }
+
+    //*******//
+    // Shelf //
+    //*******//
+
+    public void getAllExactDates(long date) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getAllExactDate(date);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    public void getAllLaterDates(long from) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getAllLaterDates(from);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    public void getAllBetweenTwoDates(long from, long to) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getAllBetweenTwoDates(from, to);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+
+    public void getAllTimes() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getAllAllTheTime();
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
+    }
+
+    public void getSomeAllTimes(List<Long> list) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            allTimes = activityTimeDao.getSomeAll(list);
+            handlerAllTimes.sendEmptyMessage(0);
+        });
+        executor.shutdown();
     }
 
 }

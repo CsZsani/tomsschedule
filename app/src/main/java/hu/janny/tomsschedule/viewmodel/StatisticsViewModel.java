@@ -32,7 +32,6 @@ public class StatisticsViewModel extends AndroidViewModel {
     private List<Integer> colors = new ArrayList<>();
     private List<String> names = new ArrayList<>();
 
-
     public StatisticsViewModel(@NonNull Application application) {
         super(application);
         repository = new Repository(application);
@@ -42,44 +41,49 @@ public class StatisticsViewModel extends AndroidViewModel {
         timesList = repository.getAllActivitiesTime();
     }
 
+    /**
+     * Searches the times of the activities in the given list on the given day.
+     *
+     * @param day  the day on which we want to find times
+     * @param list the list of activities
+     */
     public void filterExactDay(long day, List<Long> list) {
-        if(list.isEmpty()) {
-            repository.getAllExactDates(day);
-        } else {
-            repository.getSomeExactDates(day, list);
-        }
+        repository.getSomeExactDates(day, list);
     }
 
+    /**
+     * Searches the times of the activities in the given list from the given day to today.
+     *
+     * @param from the day from which we want to find times
+     * @param list the list of activities
+     */
     public void filterFrom(long from, List<Long> list) {
-        if(list.isEmpty()) {
-            repository.getAllLaterDates(from);
-        } else {
-            repository.getSomeLaterDates(from, list);
-        }
+        repository.getSomeLaterDates(from, list);
     }
 
+    /**
+     * Searches the times of the activities in the given list from the given day (from) to an other given day (to).
+     *
+     * @param from the day from which we want to find times
+     * @param to   the day to which we want to find times
+     * @param list the list of activities
+     */
     public void filterFromTo(long from, long to, List<Long> list) {
-        if(list.isEmpty()) {
-            repository.getAllBetweenTwoDates(from, to);
-        } else {
-            repository.getSomeBetweenTwoDates(from, to, list);
-        }
+        repository.getSomeBetweenTwoDates(from, to, list);
     }
 
-    public void filterAll(List<Long> list) {
-        if(list.isEmpty()) {
-            repository.getAllTimes();
-        } else {
-            repository.getSomeAllTimes(list);
-        }
-    }
-
+    /**
+     * Returns the data of the logged in user.
+     *
+     * @return the data of user who is logged in
+     */
     public LiveData<User> getUser() {
         return user;
     }
 
     /**
      * Returns the activities the user has.
+     *
      * @return list of activities to filter
      */
     public LiveData<List<ActivityFilter>> getFilterActivities() {

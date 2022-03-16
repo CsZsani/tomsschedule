@@ -18,6 +18,7 @@ public abstract class ActivityTimeDao {
 
     /**
      * Inserts a new activity time into the database.
+     *
      * @param activityTime the activity time to be inserted
      */
     @Insert
@@ -32,6 +33,7 @@ public abstract class ActivityTimeDao {
     /**
      * Returns -1L if we could not insert, because that will not be an unique row. This is how we are
      * able to check if we have to update a row or just insert.
+     *
      * @param activityTime
      * @return
      */
@@ -41,6 +43,7 @@ public abstract class ActivityTimeDao {
     /**
      * Insert or updates an activity time. If the given activity already has time on the given date,
      * then we update (returns false), if it has not the we insert (returns true).
+     *
      * @param activityTime the time to be updated (or inserted)
      * @return true if we inserted, false if we updated
      */
@@ -55,47 +58,54 @@ public abstract class ActivityTimeDao {
 
     /**
      * Updates the activity time. Adds time to the appropriate row based on activityId and date.
+     *
      * @param activityId the id of the activity to which the time belongs to
-     * @param date date of activity time
+     * @param date       date of activity time
      * @param timeAmount the amount of time we want to add
      */
     @Query("UPDATE activitytimes SET time = time + :timeAmount WHERE actId = :activityId and date = :date")
     public abstract void update(long activityId, long date, long timeAmount);
 
-
-    @Update
-    public abstract void updateActivityTime(ActivityTime activityTime);
-
-    @Delete
-    public abstract void deleteActivityTime(ActivityTime activityTime);
-
     @Query("DELETE FROM activitytimes WHERE actId = :id")
     public abstract void deleteActivityTimeByActivityId(long id);
 
-    // For all act. today, yesterday
-    @Query("select * from activitytimes where activitytimes.date == :day ORDER BY time DESC")
-    public abstract List<ActivityTime> getAllExactDate(long day);
+    // Personal statistics
 
-    // For all act. last 3 day, last 1, 2 week, last 1, 3 month
-    @Transaction
-    @Query("select * from activitytimes where activitytimes.date >= :from")
-    public abstract List<ActivityTime> getAllLaterDates(long from);
+    // For act. today, yesterday
 
-    // For all act. interval
-    @Transaction
-    @Query("select * from activitytimes where activitytimes.date >= :from and activitytimes.date <= :to")
-    public abstract List<ActivityTime> getAllBetweenTwoDates(long from, long to);
-
-    // For some act. today, yesterday
+    /**
+     * Searches the times of the activities in the given list on the given day.
+     *
+     * @param day  the day on which we want to find times
+     * @param list the list of activities
+     * @return the list of times that belongs to the given activities and day
+     */
     @Query("select * from activitytimes where activitytimes.date == :day and actId in (:list) ORDER BY time DESC")
     public abstract List<ActivityTime> getSomeExactDate(long day, List<Long> list);
 
-    // For some act. last 3 day, last 1, 2 week, last 1, 3 month
+    // For act. last 3 day, last 1, 2 week, last 1, 3 month
+
+    /**
+     * Searches the times of the activities in the given list from the given day to today.
+     *
+     * @param from the day from which we want to find times
+     * @param list the list of activities
+     * @return the list of times that belongs to the given activities and interval
+     */
     @Transaction
     @Query("select * from activitytimes where activitytimes.date >= :from and actId in (:list)")
     public abstract List<ActivityTime> getSomeLaterDates(long from, List<Long> list);
 
-    // For some act. interval
+    // For act. interval
+
+    /**
+     * Searches the times of the activities in the given list from the given day (from) to an other given day (to).
+     *
+     * @param from the day from which we want to find times
+     * @param to   the day to which we want to find times
+     * @param list the list of activities
+     * @return the list of times that belongs to the given activities and interval
+     */
     @Transaction
     @Query("select * from activitytimes where activitytimes.date >= :from and activitytimes.date <= :to and actId in (:list)")
     public abstract List<ActivityTime> getSomeBetweenTwoDates(long from, long to, List<Long> list);
@@ -119,4 +129,23 @@ public abstract class ActivityTimeDao {
 
     @Query("select * from activitytimes where activitytimes.actId = :id and activitytimes.date >= :from and activitytimes.date <= :to")
     public abstract List<ActivityTime> getOneByIdBetweenTwoDates(long id, long from, long to);
+
+    //*******//
+    // Shelf //
+    //*******//
+
+    // For all act. today, yesterday
+    @Query("select * from activitytimes where activitytimes.date == :day ORDER BY time DESC")
+    public abstract List<ActivityTime> getAllExactDate(long day);
+
+    // For all act. last 3 day, last 1, 2 week, last 1, 3 month
+    @Transaction
+    @Query("select * from activitytimes where activitytimes.date >= :from")
+    public abstract List<ActivityTime> getAllLaterDates(long from);
+
+    // For all act. interval
+    @Transaction
+    @Query("select * from activitytimes where activitytimes.date >= :from and activitytimes.date <= :to")
+    public abstract List<ActivityTime> getAllBetweenTwoDates(long from, long to);
+
 }

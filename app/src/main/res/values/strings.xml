@@ -248,6 +248,8 @@
     <string name="no_data_available_in_period">No data available in this period!</string>
     <!-- Statistics filter -->
     <string name="filter_from_to_error">The beginning must be before the end date!</string>
+    <string name="must_choose_one_error">You must choose All or at least one activity!</string>
+    <string name="one_act_longer_period_error">For only one activity, you must choose longer period than one week or custom dates!</string>
     <string name="select_time_period_chip">Select time period</string>
     <string name="today_chip">Today</string>
     <string name="yesterday_chip">Yesterday</string>
