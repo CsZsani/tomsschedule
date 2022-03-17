@@ -2,9 +2,12 @@ package hu.janny.tomsschedule.ui.main.statistics;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
+import androidx.annotation.ColorInt;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,22 +22,20 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.StackedValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -46,15 +47,14 @@ import java.util.Locale;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentPersonalStatisticsBinding;
 import hu.janny.tomsschedule.model.entities.ActivityTime;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
 import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.viewmodel.StatisticsViewModel;
 
+/**
+ * This fragment displays the data we have filtered in personal filter fragment.
+ */
 public class PersonalStatisticsFragment extends Fragment {
-
-    public static final String PERIOD_TYPE = "period_type";
-    public static final String ACTIVITY_NUM = "activity_num";
-    public static final String REQUEST_KEY = "p_filter_data";
-    public static final String ACTIVITIES = "activities_array";
 
     private FragmentPersonalStatisticsBinding binding;
     private StatisticsViewModel viewModel;
@@ -66,10 +66,6 @@ public class PersonalStatisticsFragment extends Fragment {
     private List<Long> activities = new ArrayList<>();
     private List<Integer> colors = new ArrayList<>();
     private List<String> names = new ArrayList<>();
-
-    public static PersonalStatisticsFragment newInstance() {
-        return new PersonalStatisticsFragment();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -87,6 +83,7 @@ public class PersonalStatisticsFragment extends Fragment {
         // Gets a StatisticsViewModel instance
         viewModel = new ViewModelProvider(requireActivity()).get(StatisticsViewModel.class);
 
+        // Clicking on filter button results in navigating to personal filter fragment
         binding.personalFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,6 +91,7 @@ public class PersonalStatisticsFragment extends Fragment {
             }
         });
 
+        // Observer of list of times that we have searched for in personal filter fragment
         viewModel.getTimesList().observe(getViewLifecycleOwner(), new Observer<List<ActivityTime>>() {
             @Override
             public void onChanged(List<ActivityTime> activityTimes) {
@@ -108,6 +106,7 @@ public class PersonalStatisticsFragment extends Fragment {
                 fromMillis = viewModel.getFromTime();
                 toMillis = viewModel.getToTime();
                 System.out.println(activityNum + " " + periodType);
+                // When the times list is empty, we display that there is no data in the given period
                 if (activityTimes.isEmpty()) {
                     Toast.makeText(getActivity(), getString(R.string.no_data_available_in_period), Toast.LENGTH_LONG).show();
                     binding.pleaseFilter.setVisibility(View.VISIBLE);
@@ -136,12 +135,19 @@ public class PersonalStatisticsFragment extends Fragment {
         }
     }
 
+    /**
+     * Shows the charts if all the activity was selected.
+     *
+     * @param activityTimes list of times
+     */
     private void showAllActivity(List<ActivityTime> activityTimes) {
         if (fromMillis == 0L) {
+            // Just for one day - bar chart and pie chart
             setUpAllBarChart(activityTimes);
             binding.allBarChart.setVisibility(View.VISIBLE);
             setUpAllPieChartForSingleDays(activityTimes);
         } else {
+            // For an interval - stacked bar chart and pie chart
             setUpAllBarChartLonger(activityTimes, fromMillis, toMillis);
             binding.allStackedBarChart.setVisibility(View.VISIBLE);
             setUpAllPieChartForLonger(activityTimes);
@@ -149,32 +155,51 @@ public class PersonalStatisticsFragment extends Fragment {
         binding.allPieChart.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Shows the charts if just one activity was selected.
+     *
+     * @param activityTimes list of times
+     */
     private void showJustOneActivity(List<ActivityTime> activityTimes) {
         if (fromMillis == 0L) {
+            // Just for one day - the time spent on the activity this day
             binding.timeSpentText.setVisibility(View.VISIBLE);
             binding.timeSpent.setText(DateConverter.durationConverterFromLongToStringForADay(activityTimes.get(0).getT()));
             binding.timeSpent.setVisibility(View.VISIBLE);
         } else {
+            // For an interval - bar chart
             setUpOneBarChart(activityTimes, fromMillis, toMillis);
             binding.oneBarChart.setVisibility(View.VISIBLE);
         }
     }
 
+    /**
+     * Shows the charts if more but not all activity was selected.
+     *
+     * @param activityTimes list of times
+     */
     private void showMoreActivities(List<ActivityTime> activityTimes) {
         if (fromMillis == 0L) {
+            // Just for one day - bar chart and pie chart
             setUpMoreBarChart(activityTimes);
             binding.moreBarChart.setVisibility(View.VISIBLE);
             setUpMorePieChartForSingleDays(activityTimes);
         } else {
+            // For an interval - stacked bar chart, grouped bar chart and pie chart
             setUpMoreStackedBarChartLonger(activityTimes, fromMillis, toMillis);
             binding.moreStackedChart.setVisibility(View.VISIBLE);
             setUpMoreGroupBarChartLonger(activityTimes, fromMillis, toMillis);
             binding.moreGroupChart.setVisibility(View.VISIBLE);
             setUpMorePieChartForLonger(activityTimes);
+            setUpMoreAveragePieChartForLonger(activityTimes, fromMillis, toMillis);
+            binding.moreAveragePieChart.setVisibility(View.VISIBLE);
         }
         binding.morePieChart.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Sets the visibility of charts to gone.
+     */
     private void chartsGoToGone() {
         binding.allStackedBarChart.setVisibility(View.GONE);
         binding.allPieChart.setVisibility(View.GONE);
@@ -184,62 +209,73 @@ public class PersonalStatisticsFragment extends Fragment {
         binding.moreGroupChart.setVisibility(View.GONE);
         binding.morePieChart.setVisibility(View.GONE);
         binding.moreStackedChart.setVisibility(View.GONE);
+        binding.moreAveragePieChart.setVisibility(View.GONE);
         binding.timeSpentText.setVisibility(View.GONE);
         binding.timeSpent.setVisibility(View.GONE);
     }
 
+    /**
+     * Sets up the bar chart when we searched for all activity but for just one day.
+     *
+     * @param activityTimes list of times which usually includes max 1 time for an activity
+     */
     private void setUpAllBarChart(List<ActivityTime> activityTimes) {
         BarChart chart = binding.allBarChart;
 
         int MAX_X_VALUE = activityTimes.size();
-        String SET_LABEL = "Time spent each this activity on " + DateConverter.longMillisToStringForSimpleDateDialog(activityTimes.get(0).getD());
+        //String SET_LABEL = "Time spent each this activity on " + DateConverter.longMillisToStringForSimpleDateDialog(activityTimes.get(0).getD());
         String[] NAMES = new String[MAX_X_VALUE];
+        int[] EXACT_COLORS = new int[MAX_X_VALUE];
 
         chart.getDescription().setEnabled(false);
+        chart.setDrawValueAboveBar(true);
+        chart.setDrawGridBackground(false);
+        chart.setDrawBarShadow(false);
+
+        //LegendEntry[] legendEntries = new LegendEntry[activityTimes.size()];
 
         ArrayList<BarEntry> values = new ArrayList<>();
+
         for (int i = 0; i < activityTimes.size(); i++) {
             values.add(new BarEntry(i, DateConverter.durationConverterFromLongToBarChart(activityTimes.get(i).getT())));
             NAMES[i] = names.get(activities.indexOf(activityTimes.get(i).getaId()));
+            EXACT_COLORS[i] = colors.get(activities.indexOf(activityTimes.get(i).getaId()));
+            /*LegendEntry legendEntry = new LegendEntry();
+            legendEntry.formColor = colors.get(activities.indexOf(activityTimes.get(i).getaId()));
+            legendEntry.label = names.get(activities.indexOf(activityTimes.get(i).getaId()));
+            legendEntries[i] = legendEntry;*/
         }
 
         Legend legend = chart.getLegend();
-        LegendEntry[] legendEntries = new LegendEntry[activityTimes.size()];
-        for (int i = 0; i < legendEntries.length; i++) {
-            LegendEntry legendEntry = new LegendEntry();
-            legendEntry.formColor = colors.get(i);
-            legendEntry.label = names.get(i);
-            legendEntries[i] = legendEntry;
-        }
-        legend.setCustom(legendEntries);
+        /*legend.setCustom(legendEntries);
+        legend.setTextSize(12f);
+        legend.setFormSize(12f);*/
+        legend.setEnabled(false);
 
         XAxis xAxis = chart.getXAxis();
-        /*xAxis.setValueFormatter(new IndexAxisValueFormatter(NAMES));
-        xAxis.setCenterAxisLabels(true);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(NAMES));
+        xAxis.setCenterAxisLabels(false);
         xAxis.setGranularity(1);
-        xAxis.setGranularityEnabled(true);*/
-        xAxis.setEnabled(false);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setLabelRotationAngle(290f);
+        xAxis.setTextSize(12f);
+        xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisLeft = chart.getAxisLeft();
-        axisLeft.setGranularity(0.25f);
+        axisLeft.setGranularity(1.0f);
         axisLeft.setAxisMinimum(0);
-//        axisLeft.setAxisMaximum(12.0f);
         axisLeft.setDrawTopYLabelEntry(true);
+        axisLeft.setValueFormatter(new HourValueFormatter());
+        axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisRight = chart.getAxisRight();
-        axisRight.setGranularity(0.25f);
-        axisRight.setAxisMinimum(0);
-//        axisRight.setAxisMinimum(12.0f);
-        axisRight.setDrawTopYLabelEntry(true);
+        axisRight.setEnabled(false);
 
-        BarDataSet set1 = new BarDataSet(values, SET_LABEL);
-        set1.setColors(colors);
-        /*String[] labels = new String[names.size()];
-        for(int k = 0; k<names.size(); k++) {
-            labels[k] = names.get(k);
-        }
-        set1.setStackLabels(labels);*/
+        BarDataSet set1 = new BarDataSet(values, "");
+        set1.setColors(EXACT_COLORS);
+        set1.setValueFormatter(new HourValueFormatter());
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
@@ -247,71 +283,115 @@ public class PersonalStatisticsFragment extends Fragment {
         BarData data = new BarData(dataSets);
 
         data.setValueTextSize(12f);
-        data.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getBarLabel(BarEntry barEntry) {
-                return super.getBarLabel(barEntry);
-            }
-        });
+        data.setValueFormatter(new HourValueFormatter());
+
         chart.setData(data);
         chart.setScaleEnabled(true);
         chart.setDragEnabled(true);
         chart.setPinchZoom(false);
+        chart.setVisibleXRangeMaximum(7f);
+
+        chart.setDrawBorders(true);
+        chart.setBorderColor(Color.parseColor("#973200"));
+        chart.setBorderWidth(1);
+
+        chart.setNoDataText(getString(R.string.detail_bar_chart_no_data));
+        chart.setFitBars(true);
+
         chart.invalidate();
     }
 
-    private class HourValueFormatter implements IValueFormatter {
+    /**
+     * Formats the value of bar chart axis and data label from float to hour and minutes.
+     * E.g. 1.5f -> 1h 30m
+     */
+    private static class HourValueFormatter extends ValueFormatter {
+        @Override
+        public String getAxisLabel(float value, AxisBase axis) {
+            return DateConverter.chartTimeConverter(value);
+        }
 
         @Override
-        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-            return null;
+        public String getBarLabel(BarEntry barEntry) {
+            String label = DateConverter.chartTimeConverter(barEntry.getY());
+            if(label.equals("0h 0m")) {
+                return "0h";
+            } else {
+                return label;
+            }
         }
     }
 
+    /**
+     * Sets up the pie chart when we searched for all activity but for just one day.
+     *
+     * @param activityTimes list of times which usually includes max 1 time for an activity
+     */
     private void setUpAllPieChartForSingleDays(List<ActivityTime> activityTimes) {
         PieChart chart = binding.allPieChart;
 
-        chart.getDescription().setEnabled(false);
+        int MAX_X_VALUE = activityTimes.size();
+        int[] EXACT_COLORS = new int[MAX_X_VALUE];
+
+        chart.getDescription().setEnabled(true);
+        chart.getDescription().setText(getString(R.string.pie_description_one_day));
+
+        Legend legend = chart.getLegend();
+        legend.setEnabled(false);
 
         ArrayList<PieEntry> values = new ArrayList<>();
         for (int i = 0; i < activityTimes.size(); i++) {
             values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(activityTimes.get(i).getT()), names.get(activities.indexOf(activityTimes.get(i).getaId()))));
+            EXACT_COLORS[i] = colors.get(activities.indexOf(activityTimes.get(i).getaId()));
         }
 
-        PieDataSet set1 = new PieDataSet(values, "Time spent in minutes");
-        set1.setColors(colors);
+        PieDataSet set1 = new PieDataSet(values, "");
+        set1.setColors(EXACT_COLORS);
+        set1.setValueTextColor(Color.BLACK);
+        set1.setValueTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         PieData pieData = new PieData(set1);
+
         pieData.setValueTextSize(12f);
+        pieData.setValueTextColor(Color.BLACK);
+        pieData.setValueFormatter(new PieValueFormatter());
+
         chart.setData(pieData);
+        chart.setEntryLabelColor(Color.BLACK);
+        chart.setEntryLabelTextSize(14f);
+        chart.setEntryLabelTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
+        if (periodType == 0) {
+            chart.setCenterText(getString(R.string.pie_center_today) + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 1) {
+            chart.setCenterText(getString(R.string.pie_center_yesterday) + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 6) {
+            chart.setCenterText(DateConverter.longMillisToStringForSimpleDateDialog(toMillis) + "\n" + getString(R.string.pie_sum));
+        } else {
+            chart.setCenterText("");
+        }
+        chart.setCenterTextSize(18f);
+
         chart.invalidate();
     }
 
-    private void setUpMorePieChartForSingleDays(List<ActivityTime> activityTimes) {
-        PieChart chart = binding.morePieChart;
-
-        chart.getDescription().setEnabled(false);
-
-        ArrayList<PieEntry> values = new ArrayList<>();
-        for (int i = 0; i < activityTimes.size(); i++) {
-            values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(activityTimes.get(i).getT()), names.get(activities.indexOf(activityTimes.get(i).getaId()))));
+    /**
+     * Formats the value of bar chart axis and data label from float to hour and minutes.
+     * E.g. 1.5f -> 1h 30m
+     */
+    private static class PieValueFormatter extends ValueFormatter {
+        @Override
+        public String getPieLabel(float value, PieEntry pieEntry) {
+            return DateConverter.chartTimeConverterFromInt(value);
         }
-
-        PieDataSet set1 = new PieDataSet(values, "Time spent in minutes");
-        set1.setColors(colors);
-
-        PieData pieData = new PieData(set1);
-        pieData.setValueTextSize(12f);
-        chart.setData(pieData);
-        chart.invalidate();
     }
 
+    /**
+     * Sets up the stacked bar chart when we searched for all activity but for an interval.
+     *
+     * @param activityTimes list of times which usually includes more time for an activity
+     */
     private void setUpAllBarChartLonger(List<ActivityTime> activityTimes, long from, long to) {
         BarChart chart = binding.allStackedBarChart;
-
-        /*LocalDate localDate = LocalDate.now();
-        Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-        long millis = instant.toEpochMilli();*/
 
         LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
@@ -321,11 +401,12 @@ public class PersonalStatisticsFragment extends Fragment {
         String[] NAMES = new String[MAX_X_VALUE];
 
         chart.getDescription().setEnabled(false);
-        chart.setDrawValueAboveBar(false);
+        chart.setDrawValueAboveBar(true);
         chart.setDrawGridBackground(false);
         chart.setDrawBarShadow(false);
 
         Legend legend = chart.getLegend();
+        legend.setEnabled(false);
 
         ArrayList<BarEntry> values = new ArrayList<>();
         int i = 0;
@@ -335,7 +416,7 @@ public class PersonalStatisticsFragment extends Fragment {
         while (millis != from) {
             float[] list = new float[activities.size()];
             for (int j = 0; j < activities.size(); j++) {
-                list[j] = containsName(activityTimes, activities.get(j), millis);
+                list[j] = containsIdAndDate(activityTimes, activities.get(j), millis);
             }
             values.add(new BarEntry(i, list));
             NAMES[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
@@ -345,28 +426,33 @@ public class PersonalStatisticsFragment extends Fragment {
         }
 
         XAxis xAxis = chart.getXAxis();
-        xAxis.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return NAMES[(int) value];
-            }
-        });
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(NAMES));
+        xAxis.setCenterAxisLabels(false);
+        xAxis.setGranularity(1);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTH_SIDED);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextSize(12f);
+        xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisLeft = chart.getAxisLeft();
-        axisLeft.setGranularity(0.5f);
+        axisLeft.setGranularity(1.0f);
         axisLeft.setAxisMinimum(0);
+        axisLeft.setDrawTopYLabelEntry(true);
+        axisLeft.setValueFormatter(new HourValueFormatter());
+        axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisRight = chart.getAxisRight();
-        axisRight.setGranularity(0.5f);
-        axisRight.setAxisMinimum(0);
+        axisRight.setEnabled(false);
 
-        BarDataSet set1 = new BarDataSet(values, "Time spent in hours");
+        BarDataSet set1 = new BarDataSet(values, "");
         set1.setColors(colors);
-        String[] labels = new String[names.size()];
+        set1.setValueFormatter(new HourValueFormatter());
+        /*String[] labels = new String[names.size()];
         for (int k = 0; k < names.size(); k++) {
             labels[k] = names.get(k);
         }
-        set1.setStackLabels(labels);
+        set1.setStackLabels(labels);*/
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
@@ -375,17 +461,37 @@ public class PersonalStatisticsFragment extends Fragment {
         BarData data = new BarData(dataSets);
 
         data.setValueTextSize(12f);
+        data.setValueFormatter(new StackedValueFormatter(false, "h", 1));
+
         chart.setData(data);
         chart.setScaleEnabled(true);
         chart.setDragEnabled(true);
         chart.setPinchZoom(false);
+        chart.setVisibleXRangeMaximum(7f);
+
+        chart.setDrawBorders(true);
+        chart.setBorderColor(Color.parseColor("#973200"));
+        chart.setBorderWidth(1);
+
+        chart.setNoDataText(getString(R.string.detail_bar_chart_no_data));
+        chart.setFitBars(true);
+
         chart.invalidate();
     }
 
+    /**
+     * Sets up the pie chart when we searched for all activity but for an interval.
+     *
+     * @param activityTimes list of times which usually includes more time for an activity
+     */
     private void setUpAllPieChartForLonger(List<ActivityTime> activityTimes) {
         PieChart chart = binding.allPieChart;
 
-        chart.getDescription().setEnabled(false);
+        chart.getDescription().setEnabled(true);
+        chart.getDescription().setText(getString(R.string.pie_description_longer));
+
+        Legend legend = chart.getLegend();
+        legend.setEnabled(false);
 
         ArrayList<PieEntry> values = new ArrayList<>();
         for (int i = 0; i < activities.size(); i++) {
@@ -394,15 +500,48 @@ public class PersonalStatisticsFragment extends Fragment {
             values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(sum), names.get(i)));
         }
 
-        PieDataSet set1 = new PieDataSet(values, "All time spent in minutes");
+        PieDataSet set1 = new PieDataSet(values, "");
         set1.setColors(colors);
+        set1.setValueTextColor(Color.BLACK);
+        set1.setValueTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         PieData pieData = new PieData(set1);
+
         pieData.setValueTextSize(12f);
+        pieData.setValueTextColor(Color.BLACK);
+        pieData.setValueFormatter(new PieValueFormatter());
+
         chart.setData(pieData);
+        chart.setEntryLabelColor(Color.BLACK);
+        chart.setEntryLabelTextSize(14f);
+        chart.setEntryLabelTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
+        if (periodType == 2) {
+            chart.setCenterText(getString(R.string.pie_center_week) + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 3) {
+            chart.setCenterText(getString(R.string.pie_center_two_weeks) + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 4) {
+            chart.setCenterText(getString(R.string.pie_center_month) + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 5) {
+            chart.setCenterText(getString(R.string.pie_center_three_month) + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 7) {
+            chart.setCenterText(
+                    DateConverter.longMillisToStringForSimpleDateDialog(fromMillis) + "\n" +
+                            DateConverter.longMillisToStringForSimpleDateDialog(toMillis)
+                            + "\n" + getString(R.string.pie_sum)
+            );
+        } else {
+            chart.setCenterText("");
+        }
+        chart.setCenterTextSize(16f);
+
         chart.invalidate();
     }
 
+    /**
+     * Sets up the bar chart when we searched for just one activity but for an interval.
+     *
+     * @param activityTimes list of times which usually includes one time for a day
+     */
     private void setUpOneBarChart(List<ActivityTime> activityTimes, long from, long to) {
         BarChart chart = binding.oneBarChart;
 
@@ -414,11 +553,12 @@ public class PersonalStatisticsFragment extends Fragment {
         String[] DAYS = new String[MAX_X_VALUE];
 
         chart.getDescription().setEnabled(false);
-        chart.setDrawValueAboveBar(false);
+        chart.setDrawValueAboveBar(true);
         chart.setDrawGridBackground(false);
         chart.setDrawBarShadow(false);
 
         Legend legend = chart.getLegend();
+        legend.setEnabled(false);
 
         ArrayList<BarEntry> values = new ArrayList<>();
         int i = 0;
@@ -426,7 +566,7 @@ public class PersonalStatisticsFragment extends Fragment {
         LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
         long millis = to;
         while (millis != from) {
-            values.add(new BarEntry(i, containsName(activityTimes, millis)));
+            values.add(new BarEntry(i, containsDate(activityTimes, millis)));
             DAYS[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
             i++;
             localDate = localDate.minusDays(1);
@@ -434,38 +574,58 @@ public class PersonalStatisticsFragment extends Fragment {
         }
 
         XAxis xAxis = chart.getXAxis();
-        xAxis.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return DAYS[(int) value];
-            }
-        });
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(DAYS));
+        xAxis.setCenterAxisLabels(false);
+        xAxis.setGranularity(1);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextSize(12f);
+        xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisLeft = chart.getAxisLeft();
-        axisLeft.setGranularity(0.5f);
+        axisLeft.setGranularity(1.0f);
         axisLeft.setAxisMinimum(0);
+        axisLeft.setDrawTopYLabelEntry(true);
+        axisLeft.setValueFormatter(new HourValueFormatter());
+        axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisRight = chart.getAxisRight();
-        axisRight.setGranularity(0.5f);
-        axisRight.setAxisMinimum(0);
+        axisRight.setEnabled(false);
 
-        BarDataSet set1 = new BarDataSet(values, "Time spent in hours");
+        BarDataSet set1 = new BarDataSet(values, "");
         set1.setColor(colors.get(0));
+        set1.setValueFormatter(new HourValueFormatter());
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
 
-        //BarData data = new BarData(set1);
         BarData data = new BarData(dataSets);
 
+        data.setValueFormatter(new HourValueFormatter());
         data.setValueTextSize(12f);
+
         chart.setData(data);
         chart.setScaleEnabled(true);
         chart.setDragEnabled(true);
         chart.setPinchZoom(false);
+        chart.setVisibleXRangeMaximum(7f);
+
+        chart.setDrawBorders(true);
+        chart.setBorderColor(darkenColor(darkenColor(Color.parseColor("#973200"))));
+        chart.setBorderWidth(1);
+
+        chart.setNoDataText(getString(R.string.detail_bar_chart_no_data));
+        chart.setFitBars(true);
+
         chart.invalidate();
     }
 
+    /**
+     * Sets up the bar chart when we searched for more activities but for one day.
+     *
+     * @param activityTimes list of times which usually includes one time for a day and activity
+     */
     private void setUpMoreBarChart(List<ActivityTime> activityTimes) {
         BarChart chart = binding.moreBarChart;
 
@@ -473,9 +633,12 @@ public class PersonalStatisticsFragment extends Fragment {
         String[] NAMES = new String[MAX_X_VALUE];
 
         chart.getDescription().setEnabled(false);
-        chart.setDrawValueAboveBar(false);
+        chart.setDrawValueAboveBar(true);
         chart.setDrawGridBackground(false);
         chart.setDrawBarShadow(false);
+
+        Legend legend = chart.getLegend();
+        legend.setEnabled(false);
 
         ArrayList<BarEntry> values = new ArrayList<>();
         for (int i = 0; i < activities.size(); i++) {
@@ -484,28 +647,34 @@ public class PersonalStatisticsFragment extends Fragment {
         }
 
         XAxis xAxis = chart.getXAxis();
-        xAxis.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return NAMES[(int) value];
-            }
-        });
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(NAMES));
+        xAxis.setCenterAxisLabels(false);
+        xAxis.setGranularity(1);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextSize(12f);
+        xAxis.setLabelRotationAngle(290f);
+        xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisLeft = chart.getAxisLeft();
-        axisLeft.setGranularity(0.5f);
+        axisLeft.setGranularity(1.0f);
         axisLeft.setAxisMinimum(0);
+        axisLeft.setDrawTopYLabelEntry(true);
+        axisLeft.setValueFormatter(new HourValueFormatter());
+        axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisRight = chart.getAxisRight();
-        axisRight.setGranularity(0.5f);
-        axisRight.setAxisMinimum(0);
+        axisRight.setEnabled(false);
 
-        BarDataSet set1 = new BarDataSet(values, "Time spent in hours");
+        BarDataSet set1 = new BarDataSet(values, "");
         set1.setColors(colors);
-        String[] labels = new String[names.size()];
+        set1.setValueFormatter(new HourValueFormatter());
+        /*String[] labels = new String[names.size()];
         for (int k = 0; k < names.size(); k++) {
             labels[k] = names.get(k);
         }
-        set1.setStackLabels(labels);
+        set1.setStackLabels(labels);*/
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
@@ -513,11 +682,75 @@ public class PersonalStatisticsFragment extends Fragment {
         //BarData data = new BarData(set1);
         BarData data = new BarData(dataSets);
 
+        data.setValueFormatter(new HourValueFormatter());
         data.setValueTextSize(12f);
+
         chart.setData(data);
         chart.setScaleEnabled(true);
         chart.setDragEnabled(true);
         chart.setPinchZoom(false);
+        chart.setVisibleXRangeMaximum(7f);
+
+        chart.setDrawBorders(true);
+        chart.setBorderColor(darkenColor(darkenColor(Color.parseColor("#973200"))));
+        chart.setBorderWidth(1);
+
+        chart.setNoDataText(getString(R.string.detail_bar_chart_no_data));
+        chart.setFitBars(true);
+
+        chart.invalidate();
+    }
+
+    /**
+     * Sets up the pie chart when we searched for more activities but for one day.
+     *
+     * @param activityTimes list of times which usually includes one time for a day and activity
+     */
+    private void setUpMorePieChartForSingleDays(List<ActivityTime> activityTimes) {
+        PieChart chart = binding.morePieChart;
+
+        int MAX_X_VALUE = activityTimes.size();
+        int[] EXACT_COLORS = new int[MAX_X_VALUE];
+
+        chart.getDescription().setEnabled(true);
+        chart.getDescription().setText(getString(R.string.pie_description_one_day));
+
+        Legend legend = chart.getLegend();
+        legend.setEnabled(false);
+
+        ArrayList<PieEntry> values = new ArrayList<>();
+        for (int i = 0; i < activityTimes.size(); i++) {
+            values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(activityTimes.get(i).getT()), names.get(activities.indexOf(activityTimes.get(i).getaId()))));
+            EXACT_COLORS[i] = colors.get(activities.indexOf(activityTimes.get(i).getaId()));
+        }
+
+        PieDataSet set1 = new PieDataSet(values, "");
+        set1.setColors(EXACT_COLORS);
+        set1.setValueTextColor(Color.BLACK);
+        set1.setValueTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+        PieData pieData = new PieData(set1);
+
+        pieData.setValueTextSize(12f);
+        pieData.setValueTextColor(Color.BLACK);
+        pieData.setValueFormatter(new PieValueFormatter());
+
+        chart.setData(pieData);
+        chart.setEntryLabelColor(Color.BLACK);
+        chart.setEntryLabelTextSize(14f);
+        chart.setEntryLabelTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
+        if (periodType == 0) {
+            chart.setCenterText(getString(R.string.pie_center_today) + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 1) {
+            chart.setCenterText(getString(R.string.pie_center_yesterday) + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 6) {
+            chart.setCenterText(DateConverter.longMillisToStringForSimpleDateDialog(toMillis)
+                    + "\n" + getString(R.string.pie_sum));
+        } else {
+            chart.setCenterText("");
+        }
+        chart.setCenterTextSize(18f);
+
         chart.invalidate();
     }
 
@@ -532,11 +765,12 @@ public class PersonalStatisticsFragment extends Fragment {
         String[] NAMES = new String[MAX_X_VALUE];
 
         chart.getDescription().setEnabled(false);
-        chart.setDrawValueAboveBar(false);
+        chart.setDrawValueAboveBar(true);
         chart.setDrawGridBackground(false);
         chart.setDrawBarShadow(false);
 
         Legend legend = chart.getLegend();
+        legend.setEnabled(false);
 
         ArrayList<BarEntry> values = new ArrayList<>();
         int i = 0;
@@ -546,7 +780,7 @@ public class PersonalStatisticsFragment extends Fragment {
         while (millis != from) {
             float[] list = new float[activities.size()];
             for (int j = 0; j < activities.size(); j++) {
-                list[j] = containsName(activityTimes, activities.get(j), millis);
+                list[j] = containsIdAndDate(activityTimes, activities.get(j), millis);
             }
             values.add(new BarEntry(i, list));
             NAMES[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
@@ -556,41 +790,79 @@ public class PersonalStatisticsFragment extends Fragment {
         }
 
         XAxis xAxis = chart.getXAxis();
-        xAxis.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return NAMES[(int) value];
-            }
-        });
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(NAMES));
+        xAxis.setCenterAxisLabels(false);
+        xAxis.setGranularity(1);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTH_SIDED);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextSize(12f);
+        xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisLeft = chart.getAxisLeft();
-        axisLeft.setGranularity(0.5f);
+        axisLeft.setGranularity(1.0f);
         axisLeft.setAxisMinimum(0);
+        axisLeft.setDrawTopYLabelEntry(true);
+        axisLeft.setValueFormatter(new HourValueFormatter());
+        axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisRight = chart.getAxisRight();
-        axisRight.setGranularity(0.5f);
-        axisRight.setAxisMinimum(0);
+        axisRight.setEnabled(false);
 
         BarDataSet set1 = new BarDataSet(values, "Time spent in hours");
         set1.setColors(colors);
-        String[] labels = new String[names.size()];
+        set1.setValueFormatter(new HourValueFormatter());
+        /*String[] labels = new String[names.size()];
         for (int k = 0; k < names.size(); k++) {
             labels[k] = names.get(k);
         }
-        set1.setStackLabels(labels);
+        set1.setStackLabels(labels);*/
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
 
-        //BarData data = new BarData(set1);
         BarData data = new BarData(dataSets);
 
         data.setValueTextSize(12f);
+        data.setValueFormatter(new StackedValueFormatter(false, "h", 1));
+
         chart.setData(data);
         chart.setScaleEnabled(true);
         chart.setDragEnabled(true);
         chart.setPinchZoom(false);
+        chart.setVisibleXRangeMaximum(7f);
+
+        chart.setDrawBorders(true);
+        chart.setBorderColor(Color.parseColor("#973200"));
+        chart.setBorderWidth(1);
+
+        chart.setNoDataText(getString(R.string.detail_bar_chart_no_data));
+        chart.setFitBars(true);
+
         chart.invalidate();
+    }
+
+    private float[] calculateGroupBarSpace(int noOfBars) {
+        // (barwidth + barspace) * noofbars + groupspace = 1
+        float[] data = new float[3];
+        float barWidth;
+        float barSpace;
+        float groupSpace;
+        if(noOfBars <= 5) {
+            barWidth = 0.15f;
+            groupSpace = 0.14f;
+        } else if(noOfBars <= 10) {
+            barWidth = 0.09f;
+            groupSpace = 0.09f;
+        } else {
+            barWidth = 0.05f;
+            groupSpace = 0.07f;
+        }
+        barSpace = (1f - groupSpace) / noOfBars - barWidth;
+        data[0] = barWidth;
+        data[1] = barSpace;
+        data[2] = groupSpace;
+        return data;
     }
 
     private void setUpMoreGroupBarChartLonger(List<ActivityTime> activityTimes, long from, long to) {
@@ -601,14 +873,15 @@ public class PersonalStatisticsFragment extends Fragment {
         long daysBetween = DAYS.between(dateBefore, dateAfter);
 
         int MAX_X_VALUE = (int) daysBetween;
-        String[] NAMES = new String[MAX_X_VALUE];
+        String[] DAYS = new String[MAX_X_VALUE];
 
         chart.getDescription().setEnabled(false);
-        chart.setDrawValueAboveBar(false);
+        chart.setDrawValueAboveBar(true);
         chart.setDrawGridBackground(false);
         chart.setDrawBarShadow(false);
 
         Legend legend = chart.getLegend();
+        legend.setEnabled(false);
 
         ArrayList<ArrayList<BarEntry>> values = new ArrayList<>();
         for (int k = 0; k < activities.size(); k++) {
@@ -620,27 +893,33 @@ public class PersonalStatisticsFragment extends Fragment {
         long millis = to;
         while (millis != from) {
             for (int j = 0; j < activities.size(); j++) {
-                values.get(j).add(new BarEntry(i, containsName(activityTimes, activities.get(j), millis)));
+                values.get(j).add(new BarEntry(i, containsIdAndDate(activityTimes, activities.get(j), millis)));
             }
-            NAMES[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
+            DAYS[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
             i++;
             localDate = localDate.minusDays(1);
             millis = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
         }
 
         XAxis xAxis = chart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(NAMES));
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(DAYS));
         xAxis.setCenterAxisLabels(true);
         xAxis.setGranularity(1);
         xAxis.setGranularityEnabled(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextSize(12f);
+        xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisLeft = chart.getAxisLeft();
-        axisLeft.setGranularity(0.5f);
+        axisLeft.setGranularity(1.0f);
         axisLeft.setAxisMinimum(0);
+        axisLeft.setDrawTopYLabelEntry(true);
+        axisLeft.setValueFormatter(new HourValueFormatter());
+        axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisRight = chart.getAxisRight();
-        axisRight.setGranularity(0.5f);
-        axisRight.setAxisMinimum(0);
+        axisRight.setEnabled(false);
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
 
@@ -648,21 +927,36 @@ public class PersonalStatisticsFragment extends Fragment {
         for (ArrayList<BarEntry> be : values) {
             BarDataSet set1 = new BarDataSet(be, names.get(l));
             set1.setColors(colors.get(l));
+            set1.setValueFormatter(new HourValueFormatter());
             l++;
             dataSets.add(set1);
         }
 
         BarData data = new BarData(dataSets);
 
-        float barSpace = 0.2f;
-        float groupSpace = 0.8f;
+        float[] spaces = calculateGroupBarSpace(activities.size());
+        /*data.setBarWidth(0.16f);
+        float barSpace = 0.05f;
+        float groupSpace = 0.16f;*/
+        data.setBarWidth(spaces[0]);
+        float barSpace = spaces[1];
+        float groupSpace = spaces[2];
 
         data.setValueTextSize(12f);
-        data.setBarWidth(0.15f);
+        data.setValueFormatter(new HourValueFormatter());
+
         chart.setData(data);
         chart.setScaleEnabled(true);
         chart.setDragEnabled(true);
         chart.setPinchZoom(false);
+        chart.setVisibleXRangeMaximum(3f);
+
+        chart.setDrawBorders(true);
+        chart.setBorderColor(Color.parseColor("#973200"));
+        chart.setBorderWidth(1);
+
+        chart.setNoDataText(getString(R.string.detail_bar_chart_no_data));
+        chart.setFitBars(true);
 
         chart.groupBars(0, groupSpace, barSpace);
         chart.invalidate();
@@ -671,7 +965,11 @@ public class PersonalStatisticsFragment extends Fragment {
     private void setUpMorePieChartForLonger(List<ActivityTime> activityTimes) {
         PieChart chart = binding.morePieChart;
 
-        chart.getDescription().setEnabled(false);
+        chart.getDescription().setEnabled(true);
+        chart.getDescription().setText(getString(R.string.pie_description_longer));
+
+        Legend legend = chart.getLegend();
+        legend.setEnabled(false);
 
         ArrayList<PieEntry> values = new ArrayList<>();
         for (int i = 0; i < activities.size(); i++) {
@@ -680,16 +978,116 @@ public class PersonalStatisticsFragment extends Fragment {
             values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(sum), names.get(i)));
         }
 
-        PieDataSet set1 = new PieDataSet(values, "- all time spent in minutes");
+        PieDataSet set1 = new PieDataSet(values, "");
         set1.setColors(colors);
+        set1.setValueTextColor(Color.BLACK);
+        set1.setValueTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         PieData pieData = new PieData(set1);
+
         pieData.setValueTextSize(12f);
+        pieData.setValueTextColor(Color.BLACK);
+        pieData.setValueFormatter(new PieValueFormatter());
 
         chart.setData(pieData);
+        chart.setEntryLabelColor(Color.BLACK);
+        chart.setEntryLabelTextSize(14f);
+        chart.setEntryLabelTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
+        if (periodType == 2) {
+            chart.setCenterText(getString(R.string.pie_center_week)
+                    + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 3) {
+            chart.setCenterText(getString(R.string.pie_center_two_weeks)
+                    + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 4) {
+            chart.setCenterText(getString(R.string.pie_center_month)
+                    + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 5) {
+            chart.setCenterText(getString(R.string.pie_center_three_month)
+                    + "\n" + getString(R.string.pie_sum));
+        } else if (periodType == 7) {
+            chart.setCenterText(
+                    DateConverter.longMillisToStringForSimpleDateDialog(fromMillis) + "\n" +
+                            DateConverter.longMillisToStringForSimpleDateDialog(toMillis)
+                            + "\n" + getString(R.string.pie_sum)
+            );
+        } else {
+            chart.setCenterText("");
+        }
+        chart.setCenterTextSize(16f);
+
         chart.invalidate();
     }
 
+    private void setUpMoreAveragePieChartForLonger(List<ActivityTime> activityTimes, long from, long to) {
+        PieChart chart = binding.moreAveragePieChart;
+
+        chart.getDescription().setEnabled(true);
+        chart.getDescription().setText(getString(R.string.pie_description_average));
+
+        Legend legend = chart.getLegend();
+        legend.setEnabled(false);
+
+        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
+        long daysBetween = DAYS.between(dateBefore, dateAfter);
+
+        ArrayList<PieEntry> values = new ArrayList<>();
+        for (int i = 0; i < activities.size(); i++) {
+            final int j = i;
+            long sum = activityTimes.stream().filter(a -> a.getaId() == activities.get(j)).mapToLong(ActivityTime::getT).sum();
+            long average = sum / daysBetween;
+            values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(average), names.get(i)));
+        }
+
+        PieDataSet set1 = new PieDataSet(values, getString(R.string.pie_description_average));
+        set1.setColors(colors);
+        set1.setValueTextColor(Color.BLACK);
+        set1.setValueTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+        PieData pieData = new PieData(set1);
+
+        pieData.setValueTextSize(12f);
+        pieData.setValueTextColor(Color.BLACK);
+        pieData.setValueFormatter(new PieValueFormatter());
+
+        chart.setData(pieData);
+        chart.setEntryLabelColor(Color.BLACK);
+        chart.setEntryLabelTextSize(14f);
+        chart.setEntryLabelTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
+        if (periodType == 2) {
+            chart.setCenterText(getString(R.string.pie_center_week)
+                    + "\n" + getString(R.string.pie_average));
+        } else if (periodType == 3) {
+            chart.setCenterText(getString(R.string.pie_center_two_weeks)
+                    + "\n" + getString(R.string.pie_average));
+        } else if (periodType == 4) {
+            chart.setCenterText(getString(R.string.pie_center_month)
+                    + "\n" + getString(R.string.pie_average));
+        } else if (periodType == 5) {
+            chart.setCenterText(getString(R.string.pie_center_three_month)
+                    + "\n" + getString(R.string.pie_average));
+        } else if (periodType == 7) {
+            chart.setCenterText(
+                    DateConverter.longMillisToStringForSimpleDateDialog(fromMillis) + "\n" +
+                            DateConverter.longMillisToStringForSimpleDateDialog(toMillis)
+                            + "\n" + getString(R.string.pie_average)
+            );
+        } else {
+            chart.setCenterText("");
+        }
+        chart.setCenterTextSize(16f);
+
+        chart.invalidate();
+    }
+
+    /**
+     * Returns the time of activity with the given id if the list includes it, otherwise returns 0.
+     *
+     * @param list list of times
+     * @param id   id of activity
+     * @return the time an activity with the given id if the list includes it, otherwise 0
+     */
     private float containsId(final List<ActivityTime> list, final long id) {
         ActivityTime activityTime = list.stream()
                 .filter(at -> at.getaId() == id)
@@ -702,7 +1100,14 @@ public class PersonalStatisticsFragment extends Fragment {
         }
     }
 
-    private float containsName(final List<ActivityTime> list, final long date) {
+    /**
+     * Returns the time an activity with the given date if the list includes it, otherwise returns 0.
+     *
+     * @param list list of times
+     * @param date date
+     * @return the time of activity with the given date if the list includes it, otherwise 0
+     */
+    private float containsDate(final List<ActivityTime> list, final long date) {
         ActivityTime activityTime = list.stream()
                 .filter(at -> at.getD() == date)
                 .findAny()
@@ -714,7 +1119,15 @@ public class PersonalStatisticsFragment extends Fragment {
         }
     }
 
-    private float containsName(final List<ActivityTime> list, final long id, final long date) {
+    /**
+     * Returns the time an activity with the given date and id if the list includes it, otherwise returns 0.
+     *
+     * @param list list of times
+     * @param id   id of activity
+     * @param date date
+     * @return the time of activity with the given date and id if the list includes it, otherwise 0
+     */
+    private float containsIdAndDate(final List<ActivityTime> list, final long id, final long date) {
         ActivityTime activityTime = list.stream()
                 .filter(at -> at.getaId() == id && at.getD() == date)
                 .findAny()
@@ -724,6 +1137,20 @@ public class PersonalStatisticsFragment extends Fragment {
         } else {
             return 0f;
         }
+    }
+
+    /**
+     * Darkens the given colour int.
+     *
+     * @param color the colour int we want to be darker
+     * @return a darker colour int
+     */
+    @ColorInt
+    int darkenColor(@ColorInt int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.8f;
+        return Color.HSVToColor(hsv);
     }
 
     @Override

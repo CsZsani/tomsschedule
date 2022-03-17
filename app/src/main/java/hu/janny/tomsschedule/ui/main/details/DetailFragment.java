@@ -216,6 +216,7 @@ public class DetailFragment extends Fragment {
         YAxis axisLeft = chart.getAxisLeft();
         axisLeft.setGranularity(1.0f);
         axisLeft.setAxisMinimum(0);
+        axisLeft.setDrawTopYLabelEntry(true);
         axisLeft.setValueFormatter(new HourValueFormatter());
         axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
@@ -236,6 +237,7 @@ public class DetailFragment extends Fragment {
 
         data.setValueTextSize(12f);
         data.setValueFormatter(new HourValueFormatter());
+
         chart.setData(data);
         chart.setScaleEnabled(true);
         chart.setDragEnabled(true);

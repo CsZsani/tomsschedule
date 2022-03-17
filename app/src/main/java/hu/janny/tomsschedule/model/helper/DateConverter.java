@@ -264,6 +264,18 @@ public final class DateConverter {
         return String.format(Locale.getDefault(), "%dh %dm", hours, minutes);
     }
 
+    /**
+     * Converts float value to string for axis.
+     * @param value value in float
+     * @return string e.g. "1h 23m"
+     */
+    public static String chartTimeConverterFromInt(float value) {
+        int allMinutes = (int) value;
+        int hours = (int) (allMinutes / 60);
+        int minutes = allMinutes - (hours * 60);
+        return String.format(Locale.getDefault(), "%dh %dm", hours, minutes);
+    }
+
     public static void exampleLongToTime(long millis) {
         int h = (int) ((millis / 1000) / 3600);
         int m = (int) (((millis / 1000) / 60) % 60);

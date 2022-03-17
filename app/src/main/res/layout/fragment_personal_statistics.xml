@@ -66,7 +66,7 @@
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/allBarChart"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="350dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
@@ -75,7 +75,7 @@
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/allStackedBarChart"
                 android:layout_width="match_parent"
-                android:layout_height="600dp"
+                android:layout_height="480dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
@@ -84,7 +84,7 @@
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/allPieChart"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="350dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
@@ -111,7 +111,7 @@
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/moreStackedChart"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="480dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
@@ -120,7 +120,7 @@
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/moreGroupChart"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="350dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
@@ -135,6 +135,14 @@
                 android:visibility="gone"
                 tools:visibility="visible" />
 
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/moreAveragePieChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
         </LinearLayout>
     </ScrollView>

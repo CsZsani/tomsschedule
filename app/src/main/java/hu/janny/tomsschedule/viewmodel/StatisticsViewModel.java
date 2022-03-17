@@ -16,14 +16,18 @@ import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.model.repository.Repository;
 import hu.janny.tomsschedule.model.repository.UserRepository;
 
+/**
+ * The view model of personal statistics that gets data from the local database.
+ */
 public class StatisticsViewModel extends AndroidViewModel {
 
     private final Repository repository;
     private final UserRepository userRepository;
+
     private final LiveData<User> user;
     private final LiveData<List<ActivityFilter>> filterActivities;
     private final MutableLiveData<List<ActivityTime>> timesList;
-
+    // Parameters to share between filter fragment and the personal statistics fragment
     private int pPeriodType = 0;
     private int pActivityNum = 0;
     private long fromTime = 0L;
@@ -90,9 +94,15 @@ public class StatisticsViewModel extends AndroidViewModel {
         return filterActivities;
     }
 
+    /**
+     * Returns the times list we searched for displaying data.
+     * @return list of times
+     */
     public MutableLiveData<List<ActivityTime>> getTimesList() {
         return timesList;
     }
+
+    // Setters and getters of parameters to share between filter fragment and the personal statistics fragment
 
     public int getpPeriodType() {
         return pPeriodType;
