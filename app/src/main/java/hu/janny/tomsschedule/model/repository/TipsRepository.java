@@ -31,25 +31,39 @@ import java.util.Locale;
 import hu.janny.tomsschedule.model.entities.Tip;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
 
+/**
+ * The repository of tips. It gets them from assets\base_tips.json and from Firebase Storage (tips\tips.json).
+ */
 public class TipsRepository {
-
+    // Tip we searched for, clicked on to view its details
     private final MutableLiveData<Tip> tip = new MutableLiveData<>();
-    private final MutableLiveData<List<Tip>> tips = new MutableLiveData<>();
-    private List<Tip> allTips = new ArrayList<>();
+    // Tip we searched for, clicked on to view its details
     private Tip tipFilter;
+    // The list of tips
+    private final MutableLiveData<List<Tip>> tips = new MutableLiveData<>();
+    // The list of tips
+    private List<Tip> allTips = new ArrayList<>();
+
+    // Comes from assets\base_tips.json
     private List<Tip> fixTips = new ArrayList<>();
+    // Comes from Firebase Storage tips.json
     private List<Tip> cache = new ArrayList<>();
-    private Context context;
+
+    private final Context context;
 
     private final FirebaseStorage db;
 
     public TipsRepository(Application application) {
         db = FirebaseManager.storage;
         context = application.getApplicationContext();
+
         loadFixTips();
         loadFirebase();
     }
 
+    /**
+     * Sets the tips list to allTips when we loaded the tips.
+     */
     Handler handlerTips = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -57,6 +71,9 @@ public class TipsRepository {
         }
     };
 
+    /**
+     * Sets the tip to tipFilter when we get the we have searched for.
+     */
     Handler handlerFilter = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
@@ -64,14 +81,21 @@ public class TipsRepository {
         }
     };
 
+    /**
+     * Loads tips from Firebase Storage tips\tips.json.
+     */
     private void loadFirebase() {
-        System.out.println(cache + " cahce");
-        if(cache.isEmpty()) {
+        if (cache.isEmpty()) {
             StorageReference storageReference = db.getReference().child("tips/tips.json");
             loadFromFirebaseReference(storageReference);
         }
     }
 
+    /**
+     * Loads tips from Firebase Storage with the given reference.
+     *
+     * @param storageReference the reference to load tips from Firebase Storage
+     */
     private void loadFromFirebaseReference(StorageReference storageReference) {
         try {
             File localFile = File.createTempFile("tips", ".json");
@@ -81,62 +105,84 @@ public class TipsRepository {
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     // Local temp file has been created
                     String json = readFromTempFile(localFile);
-                    if(json != null) {
+                    if (json != null) {
                         try {
                             JSONObject obj = new JSONObject(json);
                             loadTips(obj, cache);
-                            setAllTips();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
+                    setAllTips();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle any errors
+                    setAllTips();
                 }
             });
         } catch (IOException e) {
             e.printStackTrace();
+            setAllTips();
         }
     }
 
+    /**
+     * Sets the tip list to the loaded tips and sends an empty message to the handler of tips to set mutable live data.
+     */
     private void setAllTips() {
         List<Tip> list = new ArrayList<>(fixTips);
-        if(!cache.isEmpty()) {
+        if (!cache.isEmpty()) {
             list.addAll(cache);
         }
         allTips = list;
         handlerTips.sendEmptyMessage(0);
     }
 
+    /**
+     * Load the given file and returns a string.
+     *
+     * @param localFile the file that contains tips json
+     * @return string of tips json
+     */
     private String readFromTempFile(File localFile) {
-        String json = null;
         try {
             InputStream is = new FileInputStream(localFile);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, StandardCharsets.UTF_8);
+            return new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             ex.printStackTrace();
+            return null;
         }
-        return json;
     }
 
+    /**
+     * Loads the fix tips from assets\base_tips.json
+     */
     private void loadFixTips() {
-        if(fixTips.isEmpty()) {
+        if (fixTips.isEmpty()) {
             try {
-                JSONObject obj = new JSONObject(loadFromAsset());
-                loadTips(obj, fixTips);
+                String loaded = loadFromAsset();
+                if (loaded != null) {
+                    JSONObject obj = new JSONObject(loaded);
+                    loadTips(obj, fixTips);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * Loads tips from the given JSONObject and adds to the list.
+     *
+     * @param jsonObject string of json object
+     * @param list       list of tips to which we want to add tips
+     */
     private void loadTips(JSONObject jsonObject, List<Tip> list) {
         try {
             JSONArray tips = jsonObject.getJSONArray("tips");
@@ -153,8 +199,9 @@ public class TipsRepository {
                 String source = tip.getString("source");
                 String color = tip.getString("hexColor");
                 Tip newTip = new Tip(id, time, title, text, author, source, color);
-                JSONArray tags = tip.getJSONArray("tags");
-                for (int j = 0; j<tags.length(); j++) {
+                JSONObject tagObj = tip.getJSONObject("tags");
+                JSONArray tags = tagObj.getJSONArray(Locale.getDefault().getLanguage());
+                for (int j = 0; j < tags.length(); j++) {
                     String tag = tags.getString(j);
                     newTip.addTag(tag);
                 }
@@ -165,49 +212,34 @@ public class TipsRepository {
         }
     }
 
+    /**
+     * Loads assets\base_tips.json as a string.
+     *
+     * @return the string of the json
+     */
     private String loadFromAsset() {
-        String json = null;
         try {
             InputStream is = context.getAssets().open("base_tips.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, StandardCharsets.UTF_8);
+            return new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
-        return json;
     }
 
-    public void findTipId(int id) {
-        Tip tip = null;
-        for(Tip t : fixTips) {
-            if(t.getId() == id) {
-                tip = t;
-            }
-        }
-        if(tip != null) {
-            tipFilter = tip;
-        }
-        for(Tip t : cache) {
-            if(t.getId() == id) {
-                tip = t;
-            }
-        }
-        if(tip != null) {
-            tipFilter = tip;
-        } else {
-            tipFilter = fixTips.get(0);
-        }
-        handlerFilter.sendEmptyMessage(0);
-    }
-
+    /**
+     * Searches for the given tip.
+     *
+     * @param tip the tip we are searching for
+     */
     public void findTip(Tip tip) {
-        if(fixTips.contains(tip)) {
+        if (fixTips.contains(tip)) {
             tipFilter = fixTips.get(fixTips.indexOf(tip));
-        } else if(cache.contains(tip)) {
+        } else if (cache.contains(tip)) {
             tipFilter = cache.get(cache.indexOf(tip));
         } else {
             tipFilter = fixTips.get(0);
@@ -217,16 +249,26 @@ public class TipsRepository {
 
     public List<Tip> getTips() {
         List<Tip> list = new ArrayList<>(fixTips);
-        if(!cache.isEmpty()) {
+        if (!cache.isEmpty()) {
             list.addAll(cache);
         }
         return list;
     }
 
+    /**
+     * Returns the tip we clicked on to view its details.
+     *
+     * @return the tip we have searched for
+     */
     public MutableLiveData<Tip> getTip() {
         return tip;
     }
 
+    /**
+     * Returns the list of tips.
+     *
+     * @return the list of tips
+     */
     public MutableLiveData<List<Tip>> getTipsList() {
         return tips;
     }

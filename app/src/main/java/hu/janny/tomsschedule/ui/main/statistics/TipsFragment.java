@@ -25,46 +25,51 @@ import hu.janny.tomsschedule.viewmodel.adapter.TipsRecyclerAdapter;
 
 public class TipsFragment extends Fragment {
 
-
     private FragmentTipsBinding binding;
     private TipsRecyclerAdapter adapter;
     private TipsViewModel viewModel;
 
-    public static TipsFragment newInstance() {
-        return new TipsFragment();
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        // Binds layout
         binding = FragmentTipsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Gets a TipViewModel instance
         viewModel = new ViewModelProvider(requireActivity()).get(TipsViewModel.class);
 
-        recyclerSetup(root);
+        recyclerSetup(view);
+
+        // Observer of the tip list
         viewModel.getTipsList().observe(getViewLifecycleOwner(), new Observer<List<Tip>>() {
             @Override
             public void onChanged(List<Tip> tips) {
-                adapter.setActivityList(tips);
+                adapter.setTipsList(tips);
             }
         });
-        //adapter.setActivityList(viewModel.getTips());
-
-        return root;
     }
 
+    /**
+     * Sets up the recycler adapter for the tip list.
+     * Includes an onClickListener for navigating to the detail fragment of the clicked tip.
+     */
     private void recyclerSetup(View fragView) {
         View.OnClickListener onClickListener = itemView -> {
             Tip item = (Tip) itemView.getTag();
-            Bundle arguments = new Bundle();
-            arguments.putLong(TipDetailFragment.TIP_ITEM_ID, item.getId());
             viewModel.findTip(item);
-            Navigation.findNavController(itemView).navigate(R.id.action_nav_statistics_to_tipDetailFragment, arguments);
+            Navigation.findNavController(itemView).navigate(R.id.action_nav_statistics_to_tipDetailFragment);
         };
 
+        // Creates a new adapter with layout of the tip list, item onClickListener and context
         adapter = new TipsRecyclerAdapter(R.layout.tip_list_item, onClickListener, fragView.getContext());
-        binding.tipsRecyclerView.setLayoutManager(
-                new LinearLayoutManager(getContext()));
+        // Sets the layout recycler view of the tip
+        binding.tipsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.tipsRecyclerView.setAdapter(adapter);
     }
 

@@ -63,7 +63,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * Sets up the recycler adapter fot he activity list.
+     * Sets up the recycler adapter for the activity list.
      * Includes an onClickListener for navigating to the detail fragment of the clicked activity.
      */
     private void recyclerSetup() {

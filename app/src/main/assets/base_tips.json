@@ -15,7 +15,10 @@
       "source":"source",
       "url": "",
       "hexColor": "#F6AA9C",
-      "tags": []
+      "tags": {
+        "en": [],
+        "hu": []
+      }
     },
     {
       "id": 12,
@@ -32,7 +35,10 @@
       "source":"source",
       "url": "",
       "hexColor": "#F6AA9C",
-      "tags": []
+      "tags": {
+        "en": [],
+        "hu": []
+      }
     },
     {
       "id": 13,
@@ -49,7 +55,10 @@
       "source":"source",
       "url": "",
       "hexColor": "#F6AA9C",
-      "tags": []
+      "tags": {
+        "en": [],
+        "hu": []
+      }
     },
     {
       "id": 14,
@@ -66,7 +75,10 @@
       "source":"source",
       "url": "",
       "hexColor": "#F6AA9C",
-      "tags": []
+      "tags": {
+        "en": [],
+        "hu": []
+      }
     },
     {
       "id": 15,
@@ -83,7 +95,10 @@
       "source":"source",
       "url": "",
       "hexColor": "#F6AA9C",
-      "tags": []
+      "tags": {
+        "en": [],
+        "hu": []
+      }
     },
     {
       "id": 16,
@@ -100,7 +115,10 @@
       "source":"source",
       "url": "",
       "hexColor": "#F6AA9C",
-      "tags": []
+      "tags": {
+        "en": [],
+        "hu": []
+      }
     },
     {
       "id": 17,
@@ -117,7 +135,10 @@
       "source":"source",
       "url": "",
       "hexColor": "#F6AA9C",
-      "tags": []
+      "tags": {
+        "en": [],
+        "hu": []
+      }
     },
     {
       "id": 18,
@@ -134,7 +155,10 @@
       "source":"source",
       "url": "",
       "hexColor": "#F6AA9C",
-      "tags": []
+      "tags": {
+        "en": [],
+        "hu": []
+      }
     }
   ]
 }

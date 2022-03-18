@@ -49,7 +49,7 @@ public class CustomActivityRecyclerAdapter
     }
 
     /**
-     * The ViewHolder
+     * The view holder
      */
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView activityName;

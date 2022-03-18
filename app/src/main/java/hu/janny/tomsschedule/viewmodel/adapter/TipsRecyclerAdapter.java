@@ -18,6 +18,9 @@ import java.util.List;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.model.entities.Tip;
 
+/**
+ * This is recycler adapter of the card view of tips.
+ */
 public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapter.ViewHolder>{
 
     private final int listItemLayout;
@@ -31,7 +34,12 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
         this.context = context;
     }
 
-    public void setActivityList(List<Tip> tips) {
+    /**
+     * Sets the list to the given one.
+     *
+     * @param tips the tip list to display
+     */
+    public void setTipsList(List<Tip> tips) {
         this.tips = tips;
         notifyDataSetChanged();
     }
@@ -43,6 +51,9 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
         return new TipsRecyclerAdapter.ViewHolder(v);
     }
 
+    /**
+     * The view holder
+     */
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tipTitle;
         TextView tipText;
@@ -61,6 +72,12 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
         }
     }
 
+    /**
+     * Binds the view holder and sets the UI.
+     *
+     * @param viewHolder view holder
+     * @param i          the index of tip in the list
+     */
     @Override
     public void onBindViewHolder(@NonNull TipsRecyclerAdapter.ViewHolder viewHolder, int i) {
         viewHolder.itemView.setOnClickListener(onClickListener);
@@ -82,6 +99,11 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
         }
     }
 
+    /**
+     * Returns how many tip are in the list.
+     *
+     * @return the list size of tip list
+     */
     @Override
     public int getItemCount() {
         if(tips == null) {

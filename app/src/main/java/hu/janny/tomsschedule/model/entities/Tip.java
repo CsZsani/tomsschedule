@@ -31,6 +31,8 @@ public class Tip {
     // Tags - to which fix activity(es) belongs to the tip
     private List<String> tags = new ArrayList<>();
 
+    // Constructors
+
     public Tip(int id, long time, String title, String text, String author, String source, String hexColor) {
         this.id = id;
         this.time = time;
@@ -40,6 +42,8 @@ public class Tip {
         this.source = source;
         this.hexColor = hexColor;
     }
+
+    // Setters and getters
 
     public int getId() {
         return id;
