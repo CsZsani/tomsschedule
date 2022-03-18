@@ -12,16 +12,21 @@ import hu.janny.tomsschedule.model.entities.ActivityTimeFirebase;
 import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
 import hu.janny.tomsschedule.model.repository.GlobalStatisticsRepository;
 
+/**
+ * View model of the global statistics.
+ */
 public class GlobalStatisticsViewModel extends AndroidViewModel {
 
-    private GlobalStatisticsRepository repository;
+    private final GlobalStatisticsRepository repository;
     private final MutableLiveData<List<ActivityTimeFirebase>> timesList;
 
+    // Parameters to share between filter fragment and the global statistics fragment
     private int gender = 0;
     private int ageGroup = -1;
     private String name = "";
     private long from = 0L;
     private long to = 0L;
+    private boolean loading = false;
 
     public GlobalStatisticsViewModel(@NonNull Application application) {
         super(application);
@@ -33,17 +38,33 @@ public class GlobalStatisticsViewModel extends AndroidViewModel {
         return timesList;
     }
 
+    /**
+     * Searches for the global data of the given activity on yesterday.
+     * @param name name of the fix activity
+     */
     public void findYesterdayData(String name) {
         repository.getExactDayData(name, CustomActivityHelper.minusDaysMillis(1));
     }
 
+    /**
+     * Searches for the global data of the given activity on the given day.
+     * @param name name of the fix activity
+     * @param millis day in long millis
+     */
     public void findExactDayData(String name, long millis) {
         repository.getExactDayData(name, millis);
     }
 
+    /**
+     * Searches for the global data of the given activity. This is used when we search a longer period,
+     * not just a day.
+     * @param name name of the fix activity
+     */
     public void findActivity(String name) {
         repository.getActivityData(name);
     }
+
+    // Setters and getters of parameters to share between filter fragment and the global statistics fragment
 
     public int getGender() {
         return gender;
@@ -83,5 +104,13 @@ public class GlobalStatisticsViewModel extends AndroidViewModel {
 
     public void setTo(long to) {
         this.to = to;
+    }
+
+    public boolean isLoading() {
+        return loading;
+    }
+
+    public void setLoading(boolean loading) {
+        this.loading = loading;
     }
 }

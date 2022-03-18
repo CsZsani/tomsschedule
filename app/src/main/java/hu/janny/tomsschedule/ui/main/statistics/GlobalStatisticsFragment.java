@@ -5,8 +5,8 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -48,28 +49,22 @@ import hu.janny.tomsschedule.model.entities.ActivityTimeFirebase;
 import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.viewmodel.GlobalStatisticsViewModel;
 
+/**
+ * This fragment displays the data we have filtered in global filter fragment.
+ */
 public class GlobalStatisticsFragment extends Fragment {
 
     private FragmentGlobalStatisticsBinding binding;
     private GlobalStatisticsViewModel viewModel;
-    private Context context;
 
-    /*private final int[] femaleColors = new int[]{ResourcesCompat.getColor(getActivity().getResources(), R.color.female_0, null),
-            ResourcesCompat.getColor(getActivity().getResources(), R.color.female_1, null), R.color.female_2, R.color.female_3, R.color.female_4, R.color.female_5};
-    private final int[] maleColors = new int[]{R.color.male_0, R.color.male_1, R.color.male_2, R.color.male_3, R.color.male_4, R.color.male_5};
-    private final int[] allColors = new int[]{R.color.female_0, R.color.female_1, R.color.female_2, R.color.female_3, R.color.female_4, R.color.female_5,
-            R.color.male_0, R.color.male_1, R.color.male_2, R.color.male_3, R.color.male_4, R.color.male_5};*/
-    private final int[] femaleColors = new int[]{Color.parseColor("#FFB5E6"), Color.parseColor("#FF96DC"), Color.parseColor("#FF74D0"),
-            Color.parseColor("#FF54C5"), Color.parseColor("#FF29B7"), Color.parseColor("#FF00A9")};
-    private final int[] maleColors = new int[]{Color.parseColor("#A7C5FF"), Color.parseColor("#84AEFF"), Color.parseColor("#6297FF"),
-            Color.parseColor("#4A88FF"), Color.parseColor("#256FFF"), Color.parseColor("#0057FF")};
     private final int[] allColors = new int[]{Color.parseColor("#FFB5E6"), Color.parseColor("#FF96DC"), Color.parseColor("#FF74D0"),
             Color.parseColor("#FF54C5"), Color.parseColor("#FF29B7"), Color.parseColor("#FF00A9"),
             Color.parseColor("#A7C5FF"), Color.parseColor("#84AEFF"), Color.parseColor("#6297FF"),
             Color.parseColor("#4A88FF"), Color.parseColor("#256FFF"), Color.parseColor("#0057FF")};
-    private String[] labelFemale;
-    private String[] labelMale;
-    private String[] labelAll;
+    private final String[] labelAll = new String[]{getString(R.string.fe_0), getString(R.string.fe_1), getString(R.string.fe_2),
+            getString(R.string.fe_3), getString(R.string.fe_4), getString(R.string.fe_5),
+            getString(R.string.ma_0), getString(R.string.ma_1), getString(R.string.ma_2),
+            getString(R.string.ma_3), getString(R.string.ma_4), getString(R.string.ma_5)};
 
     private long from = 0L;
     private long to = 0L;
@@ -80,125 +75,165 @@ public class GlobalStatisticsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(requireActivity()).get(GlobalStatisticsViewModel.class);
+        // Binds layout
         binding = FragmentGlobalStatisticsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
 
-        labelFemale = new String[]{getActivity().getString(R.string.fe_0), getActivity().getString(R.string.fe_1), getActivity().getString(R.string.fe_2),
-                getActivity().getString(R.string.fe_3), getActivity().getString(R.string.fe_4), getActivity().getString(R.string.fe_5)};
-        labelMale = new String[]{getActivity().getString(R.string.ma_0), getActivity().getString(R.string.ma_1), getActivity().getString(R.string.ma_2),
-                getActivity().getString(R.string.ma_3), getActivity().getString(R.string.ma_4), getActivity().getString(R.string.ma_5)};
-        labelAll = new String[]{getActivity().getString(R.string.fe_0), getActivity().getString(R.string.fe_1), getActivity().getString(R.string.fe_2),
-                getActivity().getString(R.string.fe_3), getActivity().getString(R.string.fe_4), getActivity().getString(R.string.fe_5),
-                getActivity().getString(R.string.ma_0), getActivity().getString(R.string.ma_1), getActivity().getString(R.string.ma_2),
-                getActivity().getString(R.string.ma_3), getActivity().getString(R.string.ma_4), getActivity().getString(R.string.ma_5)};
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        initFilterButton(root);
+        // Gets a GlobasStatisticsViewModel instance
+        viewModel = new ViewModelProvider(requireActivity()).get(GlobalStatisticsViewModel.class);
+
+        initFilterButton(view);
 
         observeDataChanges();
 
-        return root;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (viewModel.isLoading()) {
+            progressVisible();
+        } else {
+            progressGone();
+        }
+    }
+
+    /**
+     * Sets the progress bar to visible and the linear layout to gone.
+     */
+    private void progressVisible() {
+        binding.gStatisticsScrollView.setVisibility(View.GONE);
+        binding.gStatisticsLoadingText.setVisibility(View.VISIBLE);
+        binding.gStatisticsProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Sets the progress bar to gone and the linear layout to visible.
+     */
+    private void progressGone() {
+        binding.gStatisticsScrollView.setVisibility(View.VISIBLE);
+        binding.gStatisticsLoadingText.setVisibility(View.GONE);
+        binding.gStatisticsProgressBar.setVisibility(View.GONE);
+    }
+
+    /**
+     * Sets the charts and they description to gone.
+     */
+    private void chartsGone() {
+        binding.gDayBarChart.setVisibility(View.GONE);
+        binding.gAverageGenderAndAge.setVisibility(View.GONE);
+        binding.gLongerBarChart.setVisibility(View.GONE);
+        binding.gAverageDaily.setVisibility(View.GONE);
+        binding.gLongerPieChart.setVisibility(View.GONE);
+    }
+
+    /**
+     * Observer of list of times that we have searched for in global filter fragment
+     */
     private void observeDataChanges() {
         viewModel.getTimesList().observe(getViewLifecycleOwner(), new Observer<List<ActivityTimeFirebase>>() {
             @Override
             public void onChanged(List<ActivityTimeFirebase> activityTimeFirebases) {
+                viewModel.setLoading(false);
+                progressGone();
+                binding.gPleaseFilter.setVisibility(View.GONE);
+                chartsGone();
+                // Gets the parameters from filtering to know what charts should be displayed
                 from = viewModel.getFrom();
                 to = viewModel.getTo();
                 ageGroup = viewModel.getAgeGroup();
                 gender = viewModel.getGender();
                 name = viewModel.getName();
                 System.out.println(from + " " + to + " " + gender + " " + ageGroup + " " + name);
-                setUpCharts(activityTimeFirebases);
+                // When the times list is empty, we display that there is no data in the given period
+                if (activityTimeFirebases.isEmpty()) {
+                    Toast.makeText(getActivity(), getString(R.string.no_data_available_in_period), Toast.LENGTH_LONG).show();
+                    binding.gPleaseFilter.setVisibility(View.VISIBLE);
+                } else {
+                    setUpCharts(activityTimeFirebases);
+                }
             }
         });
     }
 
+    /**
+     * Shows the charts based on the filtering.
+     *
+     * @param list the list of times
+     */
     private void setUpCharts(List<ActivityTimeFirebase> list) {
-        if(list.isEmpty()) {
-            Toast.makeText(getActivity(), "There is no data!", Toast.LENGTH_LONG).show();
-            binding.gPleaseFilter.setVisibility(View.VISIBLE);
-            return;
-        }
-        binding.gDayBarChart.setVisibility(View.GONE);
-        binding.gLongerBarChart.setVisibility(View.GONE);
-        binding.gLongerPieChart.setVisibility(View.GONE);
-        if(from == 0L) {
+        if (from == 0L) {
             setUpDayBarChart(list, to);
+            binding.gAverageGenderAndAge.setVisibility(View.VISIBLE);
             binding.gDayBarChart.setVisibility(View.VISIBLE);
         } else {
-            setUpLongerBarChart(list, from, to);
+            setUpLongerBarChart(list, from, to, gender, ageGroup);
+            binding.gAverageDaily.setVisibility(View.VISIBLE);
             binding.gLongerBarChart.setVisibility(View.VISIBLE);
-            setUpLongerPieChart(list);
-            binding.gLongerPieChart.setVisibility(View.VISIBLE);
+            if (gender == 0 || ageGroup == -1) {
+                setUpLongerPieChart(list, from, to, gender, ageGroup);
+                binding.gLongerPieChart.setVisibility(View.VISIBLE);
+            }
         }
 
     }
 
+    /**
+     * Sets up the bar chart when we searched for the data of just one day.
+     *
+     * @param list list of times
+     * @param date day in millis
+     */
     private void setUpDayBarChart(List<ActivityTimeFirebase> list, long date) {
         BarChart chart = binding.gDayBarChart;
 
-        int MAX_X_VALUE = 12;
-        String SET_LABEL = "Time spent on this activity on " + DateConverter.longMillisToStringForSimpleDateDialog(date);
-        String[] NAMES = new String[MAX_X_VALUE];
-
         chart.getDescription().setEnabled(false);
         chart.setDrawValueAboveBar(true);
+        chart.setDrawGridBackground(false);
+        chart.setDrawBarShadow(false);
 
         ArrayList<BarEntry> values = new ArrayList<>();
         int a = 0;
-        for (int i = 2; i>0; i--) {
-            for(int j = 0; j<6; j++) {
+        for (int i = 2; i > 0; i--) {
+            for (int j = 0; j < 6; j++) {
                 values.add(new BarEntry(a, containsType(list, i, j)));
-                System.out.println("itt");
-                //NAMES[i * j + 1] = labelAll[i * j + 1];
                 a++;
             }
         }
 
         Legend legend = chart.getLegend();
-        /*LegendEntry[] legendEntries = new LegendEntry[12];
-        for(int i = 0; i< legendEntries.length / 2; i++) {
-            LegendEntry legendEntry = new LegendEntry();
-            legendEntry.formColor = femaleColors[i];
-            legendEntry.label = labelFemale[i];
-            legendEntries[i] = legendEntry;
-            LegendEntry legendEntry2 = new LegendEntry();
-            legendEntry.formColor = maleColors[i];
-            legendEntry.label = labelMale[i];
-            legendEntries[i + 6] = legendEntry2;
-        }
-        legend.setCustom(legendEntries);*/
         legend.setEnabled(false);
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(labelAll));
         xAxis.setCenterAxisLabels(false);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1);
         xAxis.setGranularityEnabled(true);
-        xAxis.setEnabled(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setLabelRotationAngle(290f);
+        xAxis.setTextSize(12f);
+        xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisLeft = chart.getAxisLeft();
-        axisLeft.setGranularity(0.25f);
+        axisLeft.setGranularity(1.0f);
         axisLeft.setAxisMinimum(0);
-//        axisLeft.setAxisMaximum(12.0f);
         axisLeft.setDrawTopYLabelEntry(true);
+        axisLeft.setValueFormatter(new HourValueFormatter());
+        axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisRight = chart.getAxisRight();
-        axisRight.setGranularity(0.25f);
-        axisRight.setAxisMinimum(0);
-//        axisRight.setAxisMinimum(12.0f);
-        axisRight.setDrawTopYLabelEntry(true);
+        axisRight.setEnabled(false);
 
-        BarDataSet set1 = new BarDataSet(values, SET_LABEL);
+        BarDataSet set1 = new BarDataSet(values, "");
         set1.setColors(allColors);
-        /*String[] labels = new String[names.size()];
-        for(int k = 0; k<names.size(); k++) {
-            labels[k] = names.get(k);
-        }
-        set1.setStackLabels(labels);*/
+        set1.setValueFormatter(new HourValueFormatter());
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
@@ -206,20 +241,64 @@ public class GlobalStatisticsFragment extends Fragment {
         BarData data = new BarData(dataSets);
 
         data.setValueTextSize(12f);
-        data.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getBarLabel(BarEntry barEntry) {
-                return super.getBarLabel(barEntry);
-            }
-        });
+        data.setValueFormatter(new HourValueFormatter());
+
         chart.setData(data);
         chart.setScaleEnabled(true);
         chart.setDragEnabled(true);
         chart.setPinchZoom(false);
+        chart.setVisibleXRangeMaximum(7f);
+
+        chart.setDrawBorders(true);
+        chart.setBorderColor(Color.parseColor("#973200"));
+        chart.setBorderWidth(1);
+
+        chart.setNoDataText(getString(R.string.detail_bar_chart_no_data));
+        chart.setFitBars(true);
+
         chart.invalidate();
     }
 
-    private void setUpLongerBarChart(List<ActivityTimeFirebase> list, long from, long to) {
+    /**
+     * Formats the value of bar chart axis and data label from float to hour and minutes.
+     * E.g. 1.5f -> 1h 30m
+     */
+    private static class HourValueFormatter extends ValueFormatter {
+        @Override
+        public String getAxisLabel(float value, AxisBase axis) {
+            return DateConverter.chartTimeConverter(value);
+        }
+
+        @Override
+        public String getBarLabel(BarEntry barEntry) {
+            String label = DateConverter.chartTimeConverter(barEntry.getY());
+            if (label.equals("0h 0m")) {
+                return "0h";
+            } else {
+                return label;
+            }
+        }
+    }
+
+    /**
+     * Formats the value of pie chart data value from float to hour and minutes.
+     * E.g. 1.5f -> 1h 30m
+     */
+    private static class PieValueFormatter extends ValueFormatter {
+        @Override
+        public String getPieLabel(float value, PieEntry pieEntry) {
+            return DateConverter.chartTimeConverterFromInt(value);
+        }
+    }
+
+    /**
+     * Sets up the bar chart when we searched for an activity but for an interval.
+     *
+     * @param list list of times
+     * @param from beginning of interval in long millis
+     * @param to   end of interval in long millis
+     */
+    private void setUpLongerBarChart(List<ActivityTimeFirebase> list, long from, long to, int gender, int ageGroup) {
         BarChart chart = binding.gLongerBarChart;
 
         LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
@@ -239,10 +318,11 @@ public class GlobalStatisticsFragment extends Fragment {
 
         ArrayList<BarEntry> values = new ArrayList<>();
         int i = 0;
+
         LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
         long millis = to;
-        while(millis != from) {
-            values.add(new BarEntry(i, containsDate(list, millis)));
+        while (millis != from) {
+            values.add(new BarEntry(i, containsDate(list, millis, gender, ageGroup)));
             NAMES[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
             i++;
             localDate = localDate.minusDays(1);
@@ -250,108 +330,207 @@ public class GlobalStatisticsFragment extends Fragment {
         }
 
         XAxis xAxis = chart.getXAxis();
-        /*xAxis.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return NAMES[(int) value];
-            }
-        });*/
         xAxis.setValueFormatter(new IndexAxisValueFormatter(NAMES));
         xAxis.setCenterAxisLabels(false);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1);
         xAxis.setGranularityEnabled(true);
-        xAxis.setEnabled(true);
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextSize(12f);
+        xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisLeft = chart.getAxisLeft();
-        axisLeft.setGranularity(0.5f);
+        axisLeft.setGranularity(1.0f);
         axisLeft.setAxisMinimum(0);
+        axisLeft.setDrawTopYLabelEntry(true);
+        axisLeft.setValueFormatter(new HourValueFormatter());
+        axisLeft.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         YAxis axisRight = chart.getAxisRight();
-        axisRight.setGranularity(0.5f);
-        axisRight.setAxisMinimum(0);
+        axisRight.setEnabled(false);
 
-        BarDataSet set1 = new BarDataSet(values, "Average time spent in hours");
+        BarDataSet set1 = new BarDataSet(values, "");
         set1.setColor(Objects.requireNonNull(getActivity()).getResources().getColor(R.color.toms_400, null));
+        set1.setValueFormatter(new HourValueFormatter());
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
 
-        //BarData data = new BarData(set1);
         BarData data = new BarData(dataSets);
 
         data.setValueTextSize(12f);
+        data.setValueFormatter(new HourValueFormatter());
+
         chart.setData(data);
         chart.setScaleEnabled(true);
         chart.setDragEnabled(true);
         chart.setPinchZoom(false);
+        chart.setVisibleXRangeMaximum(7f);
+
+        chart.setDrawBorders(true);
+        chart.setBorderColor(Color.parseColor("#973200"));
+        chart.setBorderWidth(1);
+
+        chart.setNoDataText(getString(R.string.detail_bar_chart_no_data));
+        chart.setFitBars(true);
+
         chart.invalidate();
     }
 
-    private void setUpLongerPieChart(List<ActivityTimeFirebase> list) {
+    /**
+     * Sets up the pie chart when we searched for an activity but for an interval.
+     *
+     * @param list list of times
+     */
+    private void setUpLongerPieChart(List<ActivityTimeFirebase> list, long from, long to, int gender, int ageGroup) {
         PieChart chart = binding.gLongerPieChart;
 
-        chart.getDescription().setEnabled(false);
+        chart.getDescription().setEnabled(true);
+        chart.getDescription().setText(getString(R.string.pie_description_global_average));
+
+        Legend legend = chart.getLegend();
+        legend.setEnabled(false);
 
         List<Integer> colors = new ArrayList<>();
         ArrayList<PieEntry> values = new ArrayList<>();
-        for (int i = 2; i>0; i--) {
+        for (int i = 2; i > 0; i--) {
             for (int j = 0; j < 6; j++) {
-                float result = containsGroup(list, i, j);
-                if(result != 0f) {
-                    int a;
-                    if (i == 1) {
-                        a = 6;
-                    } else {
-                        a = 0;
-                    }
+                float result = containsGroup(list, i, j, from, gender, ageGroup);
+                if (result != 0f) {
+                    int a = i == 1 ? 6 : 0;
                     values.add(new PieEntry(DateConverter.durationConverterForPieChart(result), labelAll[a + j]));
-                    colors.add(allColors[a+j]);
+                    colors.add(allColors[a + j]);
                 }
             }
         }
 
-        PieDataSet set1 = new PieDataSet(values, "All time spent in minutes");
+        PieDataSet set1 = new PieDataSet(values, "");
         set1.setColors(colors);
+        set1.setValueTextColor(Color.BLACK);
+        set1.setValueTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
         PieData pieData = new PieData(set1);
+
         pieData.setValueTextSize(12f);
+        pieData.setValueTextColor(Color.BLACK);
+        pieData.setValueFormatter(new PieValueFormatter());
+
         chart.setData(pieData);
+        chart.setEntryLabelColor(Color.BLACK);
+        chart.setEntryLabelTextSize(14f);
+        chart.setEntryLabelTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
+        chart.setCenterTextSize(16f);
+        chart.setCenterText(
+                DateConverter.longMillisToStringForSimpleDateDialog(from) + "\n" +
+                        DateConverter.longMillisToStringForSimpleDateDialog(to)
+                        + "\n" + getString(R.string.pie_average)
+        );
+
         chart.invalidate();
     }
 
+    /**
+     * Returns the average time of activity with the given gender and age group if the list includes it,
+     * otherwise returns 0. It divides time with count.
+     *
+     * @param list     list of time
+     * @param gender   gender we search for
+     * @param ageGroup age group we search0
+     * @return the average time of activity with the given gender and age group if the list includes it, otherwise 0
+     */
     private float containsType(List<ActivityTimeFirebase> list, int gender, int ageGroup) {
         ActivityTimeFirebase activityTime = list.stream()
                 .filter(at -> at.getG() == gender && at.getA() == ageGroup)
                 .findAny()
                 .orElse(null);
-        if(activityTime != null) {
+        if (activityTime != null) {
             return DateConverter.durationConverterFromLongToBarChart(activityTime.getT() / activityTime.getC());
         } else {
             return 0f;
         }
     }
 
-    private float containsDate(List<ActivityTimeFirebase> list, long date) {
-        long sum = list.stream().filter(a -> a.getD() == date).mapToLong(ActivityTimeFirebase::getT).sum();
-        long count = list.stream().filter(a -> a.getD() == date).mapToInt(ActivityTimeFirebase::getC).sum();
-        if(sum != 0L && count != 0) {
+    /**
+     * Returns the average time of activity in the list with the given date if the list includes it,
+     * otherwise returns 0. It divides the sum of time with the sum of count.
+     *
+     * @param list     list of times
+     * @param date     date we search for
+     * @param gender   gender we searched for
+     * @param ageGroup age group we searched for
+     * @return the average time of activities with the given date if the list includes it, otherwise 0
+     */
+    private float containsDate(List<ActivityTimeFirebase> list, long date, int gender, int ageGroup) {
+        long sum = 0L;
+        long count = 0L;
+        if (gender != 0) {
+            if (ageGroup != -1) {
+                sum = list.stream().filter(a -> a.getD() == date && a.getG() == gender && a.getA() == ageGroup).mapToLong(ActivityTimeFirebase::getT).sum();
+                count = list.stream().filter(a -> a.getD() == date && a.getG() == gender && a.getA() == ageGroup).mapToInt(ActivityTimeFirebase::getC).sum();
+            } else {
+                sum = list.stream().filter(a -> a.getD() == date && a.getG() == gender).mapToLong(ActivityTimeFirebase::getT).sum();
+                count = list.stream().filter(a -> a.getD() == date && a.getG() == gender).mapToInt(ActivityTimeFirebase::getC).sum();
+            }
+        } else {
+            if (ageGroup != -1) {
+                sum = list.stream().filter(a -> a.getD() == date && a.getA() == ageGroup).mapToLong(ActivityTimeFirebase::getT).sum();
+                count = list.stream().filter(a -> a.getD() == date && a.getA() == ageGroup).mapToInt(ActivityTimeFirebase::getC).sum();
+            } else {
+                sum = list.stream().filter(a -> a.getD() == date).mapToLong(ActivityTimeFirebase::getT).sum();
+                count = list.stream().filter(a -> a.getD() == date).mapToInt(ActivityTimeFirebase::getC).sum();
+            }
+        }
+        if (sum != 0L && count != 0) {
             return DateConverter.durationConverterFromLongToBarChart(sum / count);
         } else {
             return 0f;
         }
     }
 
-    private float containsGroup(List<ActivityTimeFirebase> list, int gender, int ageGroup) {
-        long sum = list.stream().filter(a -> a.getG() == gender && a.getA() == ageGroup).mapToLong(ActivityTimeFirebase::getT).sum();
-        int count = list.stream().filter(a -> a.getG() == gender && a.getA() == ageGroup).mapToInt(ActivityTimeFirebase::getC).sum();
-        if(sum != 0L && count != 0) {
+    /**
+     * Returns the average time of activity in the list with the given gender and age group if the list includes it
+     * and is later then the given date,
+     * otherwise returns 0. It divides the sum of time with the sum of count.
+     *
+     * @param list     list of times
+     * @param gender   gender we want to return
+     * @param ageGroup age group we want to return
+     * @param from     date after which we searched for
+     * @param g        gender we searched for
+     * @param ag       age group we searched for
+     * @return the average time of activities with the given gender and age group if the list includes it, otherwise 0
+     */
+    private float containsGroup(List<ActivityTimeFirebase> list, int gender, int ageGroup, long from, int g, int ag) {
+        long sum = 0L;
+        long count = 0L;
+        if (g == 0 && ag == -1) {
+            sum = list.stream().filter(a -> a.getG() == gender && a.getA() == ageGroup && a.getD() >= from)
+                    .mapToLong(ActivityTimeFirebase::getT).sum();
+            count = list.stream().filter(a -> a.getG() == gender && a.getA() == ageGroup && a.getD() >= from)
+                    .mapToInt(ActivityTimeFirebase::getC).sum();
+        } else if (g != 0) {
+            sum = list.stream().filter(a -> a.getG() == gender && a.getG() == g && a.getA() == ageGroup && a.getD() >= from)
+                    .mapToLong(ActivityTimeFirebase::getT).sum();
+            count = list.stream().filter(a -> a.getG() == gender && a.getG() == g && a.getA() == ageGroup && a.getD() >= from)
+                    .mapToInt(ActivityTimeFirebase::getC).sum();
+        } else if (ag != 0) {
+            sum = list.stream().filter(a -> a.getG() == gender && a.getA() == ag && a.getA() == ageGroup && a.getD() >= from)
+                    .mapToLong(ActivityTimeFirebase::getT).sum();
+            count = list.stream().filter(a -> a.getG() == gender && a.getA() == ag && a.getA() == ageGroup && a.getD() >= from)
+                    .mapToInt(ActivityTimeFirebase::getC).sum();
+        }
+        if (sum != 0L && count != 0) {
             return (float) (sum / count);
         } else {
             return 0f;
         }
     }
 
+    /**
+     * Initializes filter button which navigates to global filter fragment.
+     *
+     * @param fragView root view of the fragment
+     */
     private void initFilterButton(View fragView) {
         binding.gFilter.setOnClickListener(new View.OnClickListener() {
             @Override

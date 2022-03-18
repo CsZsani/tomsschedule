@@ -3,6 +3,8 @@ package hu.janny.tomsschedule.ui.main.statistics;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -15,7 +17,9 @@ import android.widget.DatePicker;
 
 import com.google.android.material.chip.ChipGroup;
 
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 import hu.janny.tomsschedule.databinding.FragmentGlobalFilterBinding;
 import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
@@ -27,22 +31,33 @@ public class GlobalFilterFragment extends Fragment {
     private FragmentGlobalFilterBinding binding;
     private GlobalStatisticsViewModel viewModel;
 
-    final Calendar calDay = Calendar.getInstance();
+    private LocalDate ldDay;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(requireActivity()).get(GlobalStatisticsViewModel.class);
+
+        // Binds the layout
         binding = FragmentGlobalFilterBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        initCalendars();
-        initPeriodGroup();
-        initFilterButton(root);
-
-        return root;
+        return binding.getRoot();
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Gets a GlobalStatisticsViewModel instance
+        viewModel = new ViewModelProvider(requireActivity()).get(GlobalStatisticsViewModel.class);
+
+        fixActivitySpinnerListener();
+        initCalendars();
+        initPeriodGroup();
+        initFilterButton(view);
+    }
+
+    /**
+     * Initializes the time period chip group, sets its click listener.
+     */
     private void initPeriodGroup() {
         binding.gPeriodChipGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
             @Override
@@ -61,20 +76,23 @@ public class GlobalFilterFragment extends Fragment {
         });
     }
 
+    /**
+     * Initializes fix activity choosing spinner. Sets its onItemSelectedListener.
+     */
     private void fixActivitySpinnerListener() {
         binding.gSelectActivitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {}
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
     }
 
+    /**
+     * Initializes the filter button. It gets the selected data and navigates back to global statistics fragment.
+     * @param fragView the root view of fragment
+     */
     private void initFilterButton(View fragView) {
         binding.gFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,11 +100,15 @@ public class GlobalFilterFragment extends Fragment {
                 getGender();
                 getAgeGroup();
                 getData();
+                viewModel.setLoading(true);
                 Navigation.findNavController(fragView).popBackStack();
             }
         });
     }
 
+    /**
+     * Searches for the data based on the UI selction.
+     */
     private void getData() {
         String activity = CustomActivityHelper.getSelectedFixActivityName(binding.gSelectActivitySpinner.getSelectedItem().toString().trim());
         viewModel.setName(activity);
@@ -96,8 +118,9 @@ public class GlobalFilterFragment extends Fragment {
             viewModel.findYesterdayData(activity);
         } else if(binding.gCustomDayChip.isChecked()) {
             viewModel.setFrom(0L);
-            viewModel.setTo(calDay.getTimeInMillis());
-            viewModel.findExactDayData(activity, calDay.getTimeInMillis());
+            Instant custom = ldDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            viewModel.setTo(custom.toEpochMilli());
+            viewModel.findExactDayData(activity, custom.toEpochMilli());
         } else if(binding.gWeekChip.isChecked()) {
             viewModel.setFrom(CustomActivityHelper.minusWeekMillis(1));
             viewModel.setTo(CustomActivityHelper.todayMillis());
@@ -109,6 +132,9 @@ public class GlobalFilterFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets the gender in the view model based on the UI selection.
+     */
     private void getGender() {
         if(binding.gBothGenderChip.isChecked()) {
             viewModel.setGender(0);
@@ -119,6 +145,9 @@ public class GlobalFilterFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets the age group in the view model based on the UI selection.
+     */
     private void getAgeGroup() {
         if(binding.gAgeGroupAllChip.isChecked()) {
             viewModel.setAgeGroup(-1);
@@ -137,6 +166,9 @@ public class GlobalFilterFragment extends Fragment {
         }
     }
 
+    /**
+     * Hides gender and age group chips. Sets their visibility to GONE.
+     */
     private void hideChips() {
         binding.gFemaleChip.setVisibility(View.GONE);
         binding.gMaleChip.setVisibility(View.GONE);
@@ -150,6 +182,9 @@ public class GlobalFilterFragment extends Fragment {
         binding.gAgeGroupAllChip.setChecked(true);
     }
 
+    /**
+     * Shows gender and age group chips. Sets their visibility to VISIBLE.
+     */
     private void showChips() {
         binding.gFemaleChip.setVisibility(View.VISIBLE);
         binding.gMaleChip.setVisibility(View.VISIBLE);
@@ -163,29 +198,37 @@ public class GlobalFilterFragment extends Fragment {
         binding.gAgeGroupAllChip.setChecked(true);
     }
 
+    /**
+     * Initializes date picker dialog and set on click listener to this date picker dialog.
+     */
     private void initCalendars() {
 
         DatePickerDialog.OnDateSetListener dateDay = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calDay.clear();
-                calDay.set(year, month, day);
-                updateLabelStartDay();
+                month++;
+                ldDay = LocalDate.of(year, month, day);
+                updateLabelCustomDay();
             }
         };
 
         binding.gCustomDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(getActivity(),dateDay,calDay.get(Calendar.YEAR),calDay.get(Calendar.MONTH),calDay.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(getActivity(),dateDay,ldDay.getYear(), ldDay.getMonthValue() - 1, ldDay.getDayOfMonth()).show();
             }
         });
 
+        ldDay = LocalDate.now();
+        updateLabelCustomDay();
     }
 
-    private void updateLabelStartDay(){
+    /**
+     * Displays the date of custom day.
+     */
+    private void updateLabelCustomDay(){
         binding.gCustomDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
-                calDay.get(Calendar.DATE), calDay.get(Calendar.MONTH) + 1, calDay.get(Calendar.YEAR)));
+                ldDay.getYear(), ldDay.getMonthValue(), ldDay.getDayOfMonth()));
     }
 
     @Override

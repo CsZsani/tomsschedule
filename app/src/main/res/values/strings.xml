@@ -253,10 +253,14 @@
     <string name="pie_center_month">Last month</string>
     <string name="pie_center_three_month">Last 3 months</string>
     <string name="pie_description_longer">The sum of time spent on activities in period</string>
+    <string name="pie_description_global_average">The average of time spent on activities in period</string>
     <string name="pie_description_average">The daily average of time spent on activities in period</string>
     <string name="pie_description_one_day">Time spent on activities in the day</string>
     <string name="pie_sum">(sum)</string>
     <string name="pie_average">(average)</string>
+    <string name="statistics_loading">Loading…</string>
+    <string name="global_statistics_average_gender_and_age_group">Average by gender and age group</string>
+    <string name="global_statistics_average_daily">Daily average</string>
     <!-- Statistics filter -->
     <string name="filter_from_to_error">The beginning must be before the end date!</string>
     <string name="must_choose_one_error">You must choose All or at least one activity!</string>
@@ -291,18 +295,18 @@
     <string name="age_group_6" translatable="false">\u003E 60</string>
     <string name="both">Both</string>
     <string name="all_age_group_chip">All</string>
-    <string name="fe_0">Female \u003C20</string>
+    <string name="fe_0">Female &lt;20</string>
     <string name="fe_1">Female 20–29</string>
     <string name="fe_2">Female 30–39</string>
     <string name="fe_3">Female 40–49</string>
     <string name="fe_4">Female 50–59</string>
-    <string name="fe_5">Female \u003E60</string>
-    <string name="ma_0">Male \u003C20</string>
+    <string name="fe_5">Female &gt;60</string>
+    <string name="ma_0">Male &lt;20</string>
     <string name="ma_1">Male 20–29</string>
     <string name="ma_2">Male 30–39</string>
     <string name="ma_3">Male 40–49</string>
     <string name="ma_4">Male 50–59</string>
-    <string name="ma_5">Male \u003E60</string>
+    <string name="ma_5">Male &gt;60</string>
 
     <!-- Settings ad backup -->
     <string name="dark_mode">Dark mode</string>

@@ -375,7 +375,7 @@ public class PersonalStatisticsFragment extends Fragment {
     }
 
     /**
-     * Formats the value of bar chart axis and data label from float to hour and minutes.
+     * Formats the value of pie chart data value from float to hour and minutes.
      * E.g. 1.5f -> 1h 30m
      */
     private static class PieValueFormatter extends ValueFormatter {
@@ -1101,10 +1101,10 @@ public class PersonalStatisticsFragment extends Fragment {
     }
 
     /**
-     * Returns the time an activity with the given date if the list includes it, otherwise returns 0.
+     * Returns the time of activity with the given date if the list includes it, otherwise returns 0.
      *
      * @param list list of times
-     * @param date date
+     * @param date date we search for
      * @return the time of activity with the given date if the list includes it, otherwise 0
      */
     private float containsDate(final List<ActivityTime> list, final long date) {
@@ -1120,11 +1120,11 @@ public class PersonalStatisticsFragment extends Fragment {
     }
 
     /**
-     * Returns the time an activity with the given date and id if the list includes it, otherwise returns 0.
+     * Returns the time of activity with the given date and id if the list includes it, otherwise returns 0.
      *
      * @param list list of times
      * @param id   id of activity
-     * @param date date
+     * @param date date we search for
      * @return the time of activity with the given date and id if the list includes it, otherwise 0
      */
     private float containsIdAndDate(final List<ActivityTime> list, final long id, final long date) {

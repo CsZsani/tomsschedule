@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="16dp"
-                app:checkedChip="@id/gWeekChip"
+                app:checkedChip="@id/gMonthChip"
                 app:selectionRequired="true"
                 app:singleSelection="true">
 
@@ -258,7 +258,7 @@
                 android:id="@+id/gFilterButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/filter"
                 android:textSize="20sp"
                 android:textStyle="bold" />

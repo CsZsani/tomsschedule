@@ -331,7 +331,7 @@ public class PersonalFilterFragment extends Fragment {
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 month++;
                 ldCustom = LocalDate.of(year, month, day);
-                updateLabelStartDay();
+                updateLabelCustomDay();
             }
         };
 
@@ -340,7 +340,7 @@ public class PersonalFilterFragment extends Fragment {
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 month++;
                 ldFrom = LocalDate.of(year, month, day);
-                updateLabelEndDay();
+                updateLabelStartDay();
             }
         };
 
@@ -349,7 +349,7 @@ public class PersonalFilterFragment extends Fragment {
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 month++;
                 ldTo = LocalDate.of(year, month, day);
-                updateLabelEndDate();
+                updateLabelEndDay();
             }
         };
 
@@ -380,33 +380,33 @@ public class PersonalFilterFragment extends Fragment {
      */
     private void initTodayDate() {
         ldCustom = LocalDate.now();
-        updateLabelStartDay();
+        updateLabelCustomDay();
         ldFrom = LocalDate.now();
-        updateLabelEndDay();
+        updateLabelStartDay();
         ldTo = LocalDate.now();
-        updateLabelEndDate();
+        updateLabelEndDay();
     }
 
     /**
-     * Displays start day's date.
+     * Displays the date of custom day.
      */
-    private void updateLabelStartDay() {
+    private void updateLabelCustomDay() {
         binding.pCustomDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 ldCustom.getYear(), ldCustom.getMonthValue(), ldCustom.getDayOfMonth()));
     }
 
     /**
-     * Displays end day's date.
+     * Displays the date of start day.
      */
-    private void updateLabelEndDay() {
+    private void updateLabelStartDay() {
         binding.pFromDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 ldFrom.getYear(), ldFrom.getMonthValue(), ldFrom.getDayOfMonth()));
     }
 
     /**
-     * Displays end date's date.
+     * Displays the date of end day.
      */
-    private void updateLabelEndDate() {
+    private void updateLabelEndDay() {
         binding.pToDay.setText(DateConverter.makeDateStringForSimpleDateDialog(
                 ldTo.getYear(), ldTo.getMonthValue(), ldTo.getDayOfMonth()));
     }

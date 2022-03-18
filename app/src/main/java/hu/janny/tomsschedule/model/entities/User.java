@@ -112,13 +112,13 @@ public class User {
             case 0:
                 return "<20";
             case 1:
-                return "20-30";
+                return "20-29";
             case 2:
-                return "30-40";
+                return "30-39";
             case 3:
-                return "40-50";
+                return "40-49";
             case 4:
-                return "50-60";
+                return "50-59";
             case 5:
                 return ">60";
             default:
