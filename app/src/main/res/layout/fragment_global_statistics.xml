@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout5"
+    android:name=".ui.main.statistics.GlobalStatisticsFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.statistics.GlobalStatisticsFragment" >
+    tools:context=".ui.main.statistics.GlobalStatisticsFragment">
 
     <TextView
         android:id="@+id/gStatisticsLoadingText"

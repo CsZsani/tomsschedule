@@ -61,10 +61,7 @@ public class GlobalStatisticsFragment extends Fragment {
             Color.parseColor("#FF54C5"), Color.parseColor("#FF29B7"), Color.parseColor("#FF00A9"),
             Color.parseColor("#A7C5FF"), Color.parseColor("#84AEFF"), Color.parseColor("#6297FF"),
             Color.parseColor("#4A88FF"), Color.parseColor("#256FFF"), Color.parseColor("#0057FF")};
-    private final String[] labelAll = new String[]{getString(R.string.fe_0), getString(R.string.fe_1), getString(R.string.fe_2),
-            getString(R.string.fe_3), getString(R.string.fe_4), getString(R.string.fe_5),
-            getString(R.string.ma_0), getString(R.string.ma_1), getString(R.string.ma_2),
-            getString(R.string.ma_3), getString(R.string.ma_4), getString(R.string.ma_5)};
+    private String[] labelAll;
 
     private long from = 0L;
     private long to = 0L;
@@ -86,6 +83,11 @@ public class GlobalStatisticsFragment extends Fragment {
 
         // Gets a GlobasStatisticsViewModel instance
         viewModel = new ViewModelProvider(requireActivity()).get(GlobalStatisticsViewModel.class);
+
+        labelAll = new String[]{getString(R.string.fe_0), getString(R.string.fe_1), getString(R.string.fe_2),
+                getString(R.string.fe_3), getString(R.string.fe_4), getString(R.string.fe_5),
+                getString(R.string.ma_0), getString(R.string.ma_1), getString(R.string.ma_2),
+                getString(R.string.ma_3), getString(R.string.ma_4), getString(R.string.ma_5)};
 
         initFilterButton(view);
 

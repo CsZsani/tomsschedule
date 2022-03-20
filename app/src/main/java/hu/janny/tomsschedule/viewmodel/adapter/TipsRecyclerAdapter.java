@@ -17,6 +17,8 @@ import java.util.List;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.model.entities.Tip;
+import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
+import hu.janny.tomsschedule.model.helper.DateConverter;
 
 /**
  * This is recycler adapter of the card view of tips.
@@ -26,7 +28,7 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
     private final int listItemLayout;
     private final View.OnClickListener onClickListener;
     private List<Tip> tips;
-    private Context context;
+    private final Context context;
 
     public TipsRecyclerAdapter(int layoutId, View.OnClickListener onClickListener, Context context) {
         this.listItemLayout = layoutId;
@@ -60,6 +62,7 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
         View divider;
         TextView tipAuthor;
         TextView tipSource;
+        TextView tipTime;
         ChipGroup tipTags;
         ViewHolder(View itemView) {
             super(itemView);
@@ -68,6 +71,7 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
             divider = itemView.findViewById(R.id.tipCardDivider);
             tipAuthor = itemView.findViewById(R.id.tipAuthor);
             tipSource = itemView.findViewById(R.id.tipSource);
+            tipTime = itemView.findViewById(R.id.tipTime);
             tipTags = itemView.findViewById(R.id.tipTags);
         }
     }
@@ -88,13 +92,16 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
         viewHolder.tipAuthor.setText(tips.get(i).getAuthor());
         viewHolder.tipSource.setText(tips.get(i).getSource());
         viewHolder.divider.setBackgroundColor(tips.get(i).getColorInt());
+        viewHolder.tipTime.setText(DateConverter.longMillisToStringForSimpleDateDialog(tips.get(i).getTime()));
         if(!tips.get(i).getTags().isEmpty()) {
-            for(String s : tips.get(i).getTags()) {
-                Chip chip = new Chip(context);
-                chip.setId(ViewCompat.generateViewId());
-                chip.setText(s);
-                chip.setCheckable(false);
-                viewHolder.tipTags.addView(chip);
+            if(viewHolder.tipTags.getChildCount() < tips.get(i).getTagsCount()) {
+                for(String s : tips.get(i).getTags()) {
+                    Chip chip = new Chip(context);
+                    chip.setId(ViewCompat.generateViewId());
+                    chip.setText(s);
+                    chip.setCheckable(false);
+                    viewHolder.tipTags.addView(chip);
+                }
             }
         }
     }

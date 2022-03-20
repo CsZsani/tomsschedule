@@ -16,8 +16,8 @@
       "url": "",
       "hexColor": "#F6AA9C",
       "tags": {
-        "en": [],
-        "hu": []
+        "en": ["Sleeping", "Tip"],
+        "hu": ["Alvás", "Tipp"]
       }
     },
     {
@@ -56,8 +56,8 @@
       "url": "",
       "hexColor": "#F6AA9C",
       "tags": {
-        "en": [],
-        "hu": []
+        "en": ["Workout"],
+        "hu": ["Edzés"]
       }
     },
     {
@@ -96,8 +96,8 @@
       "url": "",
       "hexColor": "#F6AA9C",
       "tags": {
-        "en": [],
-        "hu": []
+        "en": ["Learning"],
+        "hu": ["Tanulás"]
       }
     },
     {

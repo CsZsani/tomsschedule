@@ -191,16 +191,35 @@ public class TipsRepository {
                 JSONObject tip = tips.getJSONObject(i);
                 int id = tip.getInt("id");
                 long time = tip.getLong("time");
+
                 JSONObject titleObj = tip.getJSONObject("title");
-                String title = titleObj.getString(Locale.getDefault().getLanguage());
+                String title;
+                if (!titleObj.isNull(Locale.getDefault().getLanguage())) {
+                    title = titleObj.getString(Locale.getDefault().getLanguage());
+                } else {
+                    title = titleObj.getString("en");
+                }
+
                 JSONObject textObj = tip.getJSONObject("text");
-                String text = textObj.getString(Locale.getDefault().getLanguage());
+                String text;
+                if (!textObj.isNull(Locale.getDefault().getLanguage())) {
+                    text = textObj.getString(Locale.getDefault().getLanguage());
+                } else {
+                    text = textObj.getString("en");
+                }
+
                 String author = tip.getString("author");
                 String source = tip.getString("source");
                 String color = tip.getString("hexColor");
                 Tip newTip = new Tip(id, time, title, text, author, source, color);
+
                 JSONObject tagObj = tip.getJSONObject("tags");
-                JSONArray tags = tagObj.getJSONArray(Locale.getDefault().getLanguage());
+                JSONArray tags;
+                if (!tagObj.isNull(Locale.getDefault().getLanguage())) {
+                    tags = tagObj.getJSONArray(Locale.getDefault().getLanguage());
+                } else {
+                    tags = tagObj.getJSONArray("en");
+                }
                 for (int j = 0; j < tags.length(); j++) {
                     String tag = tags.getString(j);
                     newTip.addTag(tag);
@@ -245,14 +264,6 @@ public class TipsRepository {
             tipFilter = fixTips.get(0);
         }
         handlerFilter.sendEmptyMessage(0);
-    }
-
-    public List<Tip> getTips() {
-        List<Tip> list = new ArrayList<>(fixTips);
-        if (!cache.isEmpty()) {
-            list.addAll(cache);
-        }
-        return list;
     }
 
     /**

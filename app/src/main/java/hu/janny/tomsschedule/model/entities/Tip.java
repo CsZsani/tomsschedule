@@ -118,6 +118,16 @@ public class Tip {
     }
 
     /**
+     * Returns the list size of tags.
+     *
+     * @return the size of tags list
+     */
+    @Exclude
+    public int getTagsCount() {
+        return tags.size();
+    }
+
+    /**
      * Returns the colour of the tip in int.
      *
      * @return color int
