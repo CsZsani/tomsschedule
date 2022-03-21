@@ -212,7 +212,7 @@
     <string name="fab_plus_time">Add time</string>
     <string name="fab_edit">Edit activity</string>
     <string name="fab_delete">Delete activity</string>
-    <string name="sure_delete_acitvity">Do you really want to delete this activity?</string>
+    <string name="sure_delete_activity">Do you really want to delete this activity?</string>
     <string name="detail_act_no_act">I can\'t find this activity!</string>
     <string name="detail_bar_chart_label">Time spent on this activity in the last week</string>
     <string name="detail_bar_chart_no_data">No data is available!</string>
@@ -237,7 +237,7 @@
     <string name="remaining">Remaining:</string>
     <string name="so_far">So far:</string>
     <string name="timer_no_activity">I can\'t find this activity! Something went wrong :(</string>
-    <string name="timer_activit_is_in_progress">Activity is in progress!</string>
+    <string name="timer_activity_is_in_progress">Activity is in progress!</string>
     <string name="timer_finish">Finish</string>
 
     <!-- Statistics -->
@@ -261,6 +261,7 @@
     <string name="statistics_loading">Loading…</string>
     <string name="global_statistics_average_gender_and_age_group">Average by gender and age group</string>
     <string name="global_statistics_average_daily">Daily average</string>
+
     <!-- Statistics filter -->
     <string name="filter_from_to_error">The beginning must be before the end date!</string>
     <string name="must_choose_one_error">You must choose All or at least one activity!</string>
@@ -316,8 +317,8 @@
     <string name="restore_backup">Restore backup (internet connection required)</string>
     <string name="download_data">Download data</string>
     <string name="download_data_warning">Your local data will be overwritten. Make sure that you already have a backup or you will lose all your data. Do you want to continue?</string>
-    <string name="create_backup_progress">Creating backup is in progress. Please wait…</string>
-    <string name="restore_backup_progress">Restoring backup is in progress. Please wait…</string>
+    <string name="create_backup_progress">Creating backup is in progress. Please do not leave this site…</string>
+    <string name="restore_backup_progress">Restoring backup is in progress. Please do not leave this site…</string>
     <string name="create_backup_done">Creating backup is done.</string>
     <string name="restore_backup_done">Restoring backup is done.</string>
     <string name="create_backup_fail">Creating backup failed. Please try again with stable Internet connection!</string>

@@ -11,12 +11,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentSettingsBinding;
-import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.model.helper.SuccessCallback;
 import hu.janny.tomsschedule.viewmodel.BackUpViewModel;
 
@@ -80,7 +78,8 @@ public class SettingsFragment extends Fragment {
                 showProgress(R.string.create_backup_progress);
                 loaded[0] = 0;
                 success[0] = 0;
-                if(!viewModel.saveData(userId, new CreateBackupSuccess())) {
+                if (!viewModel.saveData(userId, new CreateBackupSuccess())) {
+                    // If the save failed
                     hideProgress();
                     Toast.makeText(getContext(), getString(R.string.create_backup_fail), Toast.LENGTH_LONG).show();
                 }
@@ -94,6 +93,11 @@ public class SettingsFragment extends Fragment {
         saveDialog = builder.create();
     }
 
+    /**
+     * Shows the progress bar and text and hides the scroll view
+     *
+     * @param resId the id of the resource to display as a text above progress bar
+     */
     private void showProgress(int resId) {
         binding.settingsScrollView.setVisibility(View.GONE);
         binding.settingsProgressBar.setVisibility(View.VISIBLE);
@@ -101,40 +105,51 @@ public class SettingsFragment extends Fragment {
         binding.settingsProgressText.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Hides the progress bar and text and shows the scroll view
+     */
     private void hideProgress() {
         binding.settingsScrollView.setVisibility(View.VISIBLE);
         binding.settingsProgressBar.setVisibility(View.GONE);
         binding.settingsProgressText.setVisibility(View.GONE);
     }
 
+    /**
+     * This is used when we create a backup. If the activities and times are saved from local database into Firebase,
+     * then it called and it modify the UI and informs the user about the successfulness of the save.
+     */
     private class CreateBackupSuccess implements SuccessCallback {
 
         @Override
         public void onCallback(boolean successful) {
-            if(loaded[0] == 1) {
+            if (loaded[0] == 1) {
                 loaded[0] = 0;
                 hideProgress();
-                if(successful && success[0] == 1) {
+                if (successful && success[0] == 1) {
                     Toast.makeText(getContext(), getString(R.string.create_backup_done), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getContext(), getString(R.string.create_backup_fail), Toast.LENGTH_LONG).show();
                 }
                 success[0] = 0;
-            } else if(loaded[0] == 0) {
+            } else if (loaded[0] == 0) {
                 loaded[0] = 1;
-                if(successful) {
+                if (successful) {
                     success[0] = 1;
                 }
             }
         }
     }
 
+    /**
+     * This is used when we restore a backup. If the activities and times are saved from Firebase into local database,
+     * then it called and it modify the UI and informs the user about the successfulness of the save.
+     */
     private class RestoreBackupSuccess implements SuccessCallback {
 
         @Override
         public void onCallback(boolean successful) {
             hideProgress();
-            if(successful) {
+            if (successful) {
                 Toast.makeText(getContext(), getString(R.string.restore_backup_done), Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(getContext(), getString(R.string.restore_backup_fail), Toast.LENGTH_LONG).show();

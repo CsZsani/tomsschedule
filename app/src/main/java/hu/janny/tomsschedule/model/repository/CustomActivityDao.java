@@ -2,17 +2,14 @@ package hu.janny.tomsschedule.model.repository;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
-import java.util.Map;
 
 import hu.janny.tomsschedule.model.helper.ActivityFilter;
-import hu.janny.tomsschedule.model.entities.ActivityTime;
 import hu.janny.tomsschedule.model.entities.ActivityWithTimes;
 import hu.janny.tomsschedule.model.entities.CustomActivity;
 
@@ -28,12 +25,30 @@ public interface CustomActivityDao {
     void insertActivity(CustomActivity customActivity);
 
     /**
+     * Inserts all the activities from the given list.
+     *
+     * @param activityList list of activities to be inserted
+     */
+    @Transaction
+    @Insert
+    void insertAll(List<CustomActivity> activityList);
+
+    /**
      * Updates the given activity in local database.
      *
      * @param customActivity the activity to be updated
      */
     @Update
     void updateActivity(CustomActivity customActivity);
+
+    /**
+     * Deletes the activities and their times of the user with the given id.
+     *
+     * @param uid id of the user whose activities will be deleted
+     */
+    @Transaction
+    @Query("DELETE FROM customactivities WHERE userId = :uid")
+    void deleteActivityByUserId(String uid);
 
     /**
      * Deletes an activity based on its id.
@@ -90,61 +105,5 @@ public interface CustomActivityDao {
      */
     @Query("SELECT activityId, name, color from customactivities WHERE userId = :uid")
     LiveData<List<ActivityFilter>> getActivityFilter(String uid);
-
-
-    @Transaction
-    @Insert
-    void insertAll(List<CustomActivity> activityList);
-
-
-    @Delete
-    void deleteActivity(CustomActivity customActivity);
-
-    @Query("DELETE FROM customactivities WHERE name = :name")
-    void deleteActivityByName(String name);
-
-
-    @Transaction
-    @Query("DELETE FROM customactivities WHERE userId = :id")
-    void deleteActivityByUserId(String id);
-
-    /**
-     * Returns all activities
-     *
-     * @return
-     */
-    @Query("SELECT * FROM customactivities")
-    LiveData<List<CustomActivity>> getActivitiesList();
-
-    @Transaction
-    @Query("SELECT * FROM customactivities JOIN activitytimes ON customactivities.activityId = activitytimes.actId")
-    LiveData<Map<CustomActivity, List<ActivityTime>>> getAllActivitiesWithTimes();
-
-    @Transaction
-    @Query("SELECT * FROM customactivities JOIN activitytimes ON customactivities.activityId = activitytimes.actId " +
-            "WHERE customactivities.name = :name")
-    Map<CustomActivity, List<ActivityTime>> getActivityByNameWithTimes(String name);
-
-    @Transaction
-    @Query("SELECT * FROM customactivities JOIN activitytimes ON customactivities.activityId = activitytimes.actId " +
-            "WHERE customactivities.activityId = :id")
-    Map<CustomActivity, List<ActivityTime>> getActivityByIdWithTimes(long id);
-
-    @Query("SELECT * FROM customactivities WHERE customactivities.name = :name")
-    CustomActivity getActivityByName(String name);
-
-
-    @Query("SELECT activityId FROM customactivities WHERE customactivities.name = :name")
-    int getIdByName(String name);
-
-
-    @Transaction
-    @Query("SELECT * FROM customactivities where activityId in (:list)")
-    List<ActivityWithTimes> getActivitiesWithTimesFilter(List<Long> list);
-
-    @Transaction
-    @Query("SELECT * FROM customactivities")
-    LiveData<List<ActivityWithTimes>> getActivitiesWithTimesFilterAll();
-
 
 }

@@ -56,35 +56,13 @@ public class MainViewModel extends AndroidViewModel {
         activitiesWithTimesList = Transformations.map(repository.getActivitiesWithTimesEntities(), new DeserializerThird());
     }
 
-    private static class Deserializer implements Function<Map<CustomActivity, List<ActivityTime>>, List<CustomActivity>> {
-        @Override
-        public List<CustomActivity> apply(Map<CustomActivity, List<ActivityTime>> liveData) {
-            List<CustomActivity> list = new ArrayList<>(liveData.keySet());
-            List<CustomActivity> filter = list.stream().filter(ca -> ca.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
-            return filter;
-        }
-    }
-
-    private static class DeserializerSecond implements Function<List<ActivityWithTimes>, List<CustomActivity>> {
-        @Override
-        public List<CustomActivity> apply(List<ActivityWithTimes> liveData) {
-            List<CustomActivity> list = new ArrayList<>();
-            for (ActivityWithTimes at : liveData) {
-                list.add(at.customActivity);
-            }
-            List<CustomActivity> listFiltered = list.stream().filter(ca -> ca.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
-            return listFiltered;
-        }
-    }
-
     /**
      * Filters the activity list ot show just those that belong to the current user.
      */
     private static class DeserializerThird implements Function<List<ActivityWithTimes>, List<ActivityWithTimes>> {
         @Override
         public List<ActivityWithTimes> apply(List<ActivityWithTimes> liveData) {
-            List<ActivityWithTimes> listFiltered = liveData.stream().filter(ca -> ca.customActivity.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
-            return listFiltered;
+            return liveData.stream().filter(ca -> ca.customActivity.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());
         }
     }
 

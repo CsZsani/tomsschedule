@@ -1,13 +1,10 @@
 package hu.janny.tomsschedule.model.repository;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
-import androidx.room.Update;
 
 import java.util.List;
 
@@ -24,6 +21,11 @@ public abstract class ActivityTimeDao {
     @Insert
     public abstract void insertActivityTime(ActivityTime activityTime);
 
+    /**
+     * Inserts all the times from the given list.
+     *
+     * @param activityTimes list of times to be inserted
+     */
     @Transaction
     @Insert
     public abstract void insertAll(List<ActivityTime> activityTimes);
@@ -66,9 +68,6 @@ public abstract class ActivityTimeDao {
     @Query("UPDATE activitytimes SET time = time + :timeAmount WHERE actId = :activityId and date = :date")
     public abstract void update(long activityId, long date, long timeAmount);
 
-    @Query("DELETE FROM activitytimes WHERE actId = :id")
-    public abstract void deleteActivityTimeByActivityId(long id);
-
     // Personal statistics
 
     // For act. today, yesterday
@@ -110,26 +109,6 @@ public abstract class ActivityTimeDao {
     @Query("select * from activitytimes where activitytimes.date >= :from and activitytimes.date <= :to and actId in (:list)")
     public abstract List<ActivityTime> getSomeBetweenTwoDates(long from, long to, List<Long> list);
 
-    // all
-    @Transaction
-    @Query("select * from activitytimes")
-    public abstract List<ActivityTime> getAllAllTheTime();
-
-    @Transaction
-    @Query("select * from activitytimes")
-    public abstract LiveData<List<ActivityTime>> getTimes();
-
-    // For some act. all times
-    @Transaction
-    @Query("select * from activitytimes where actId in (:list)")
-    public abstract List<ActivityTime> getSomeAll(List<Long> list);
-
-    @Query("select * from activitytimes where activitytimes.actId = :id and activitytimes.date >= :from")
-    public abstract List<ActivityTime> getOneByIdLaterDates(long id, long from);
-
-    @Query("select * from activitytimes where activitytimes.actId = :id and activitytimes.date >= :from and activitytimes.date <= :to")
-    public abstract List<ActivityTime> getOneByIdBetweenTwoDates(long id, long from, long to);
-
     //*******//
     // Shelf //
     //*******//
@@ -147,5 +126,15 @@ public abstract class ActivityTimeDao {
     @Transaction
     @Query("select * from activitytimes where activitytimes.date >= :from and activitytimes.date <= :to")
     public abstract List<ActivityTime> getAllBetweenTwoDates(long from, long to);
+
+    // all
+    @Transaction
+    @Query("select * from activitytimes")
+    public abstract List<ActivityTime> getAllAllTheTime();
+
+    // For some act. all times
+    @Transaction
+    @Query("select * from activitytimes where actId in (:list)")
+    public abstract List<ActivityTime> getSomeAll(List<Long> list);
 
 }

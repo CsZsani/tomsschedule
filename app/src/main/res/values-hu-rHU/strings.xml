@@ -125,7 +125,7 @@
     <string name="fab_plus_time">Időmennyiség hozzáadás</string>
     <string name="fab_edit">Tevékenység szerkesztése</string>
     <string name="fab_delete">Tevékenység törlése</string>
-    <string name="sure_delete_acitvity">Valóban ki akarod törölni ezt a tevékenységet?</string>
+    <string name="sure_delete_activity">Valóban ki akarod törölni ezt a tevékenységet?</string>
     <string name="error">Hiba</string>
     <string name="global_activity_name_immutable">tevékenység neve (globális tevékenységek neveit nem lehet szerkeszteni)</string>
     <string name="edit">Szerkeszt</string>
@@ -205,9 +205,9 @@
     <string name="save_data_warning">Az utolsó mentésed felülíródik. Biztosan folytatod?</string>
     <string name="restore_backup">Mentett adatok letöltése (internet kapcsolattal)</string>
     <string name="download_data">Letöltés</string>
-    <string name="download_data_warning">A helyi adatok felülíródnak. Biztosan folytatod?</string>
-    <string name="create_backup_progress">Mentés folyamatban, kérlek várj...</string>
-    <string name="restore_backup_progress">Letöltés folyamatban, kérlek várj...</string>
+    <string name="download_data_warning">A helyi adatok felülíródnak. Ha nem töltöttél fel ezelőtt adatot, minden eddigi el fog veszni. Biztosan folytatod?</string>
+    <string name="create_backup_progress">Feltöltés folyamatban. Kérlek, ne hagyd el ezt az oldalt...</string>
+    <string name="restore_backup_progress">Letöltés folyamatban. Kérlek, ne hagyd el ezt az oldalt...</string>
     <string name="registration_in_progress">Regisztráció folyamatban. Kérlek, várj…</string>
     <string name="registration_email_required">Email cím megadása kötelező!</string>
     <string name="registration_valid_email">Kérlek, valós email címet adj meg!</string>
@@ -275,7 +275,7 @@
     <string name="add_time_time_required">Időmennyiség megadása kötelező!</string>
     <string name="under_zero">Az időmennyiség 0 alá csökkenne! Adj meg kevesebbet!</string>
     <string name="timer_no_activity">Nincs ilyen tevékenység!</string>
-    <string name="timer_activit_is_in_progress">A tevékenység folyamatban van</string>
+    <string name="timer_activity_is_in_progress">A tevékenység folyamatban van</string>
     <string name="timer_finish">Befejez</string>
     <string name="custom">egyedi</string>
     <string name="new_act_end_date_error">A határidő nem lehet korábban mint a mai nap!</string>
@@ -301,4 +301,8 @@
     <string name="global_statistics_average_daily">Naponkénti átlag</string>
     <string name="global_statistics_average_gender_and_age_group">Átlag nemenként és korosztályonként az adott napra</string>
     <string name="pie_description_global_average">Ebben az időszakban a tevékenységgel töltött átlagos idő</string>
+    <string name="create_backup_done">Adatok feltöltése sikeresen megtörtént!</string>
+    <string name="restore_backup_done">Adatok letöltése megtörtént!</string>
+    <string name="create_backup_fail">Adatok feltöltése sikertelen. Kérlek, próbáld újra stabil internet kapcsolattal!</string>
+    <string name="restore_backup_fail">Adatok letöltése sikertelen. Kérlek, próbáld újra stabil internet kapcsolattal!</string>
 </resources>

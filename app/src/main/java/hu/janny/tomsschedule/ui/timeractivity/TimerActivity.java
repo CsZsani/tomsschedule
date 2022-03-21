@@ -321,7 +321,7 @@ public class TimerActivity extends AppCompatActivity {
                 CustomActivityHelper.isFixActivity(customActivityName)
                         ? getString(CustomActivityHelper.getStringResourceOfFixActivity(customActivityName))
                         : customActivityName,
-                getString(R.string.timer_activit_is_in_progress));
+                getString(R.string.timer_activity_is_in_progress));
     }
 
     /**
@@ -373,7 +373,7 @@ public class TimerActivity extends AppCompatActivity {
                         .setContentTitle(CustomActivityHelper.isFixActivity(customActivityName)
                                 ? getString(CustomActivityHelper.getStringResourceOfFixActivity(customActivityName))
                                 : customActivityName)
-                        .setContentText(getString(R.string.timer_activit_is_in_progress))
+                        .setContentText(getString(R.string.timer_activity_is_in_progress))
                         .setSmallIcon(R.drawable.ic_timer)
                         .setChannelId(channelID)
                         .setContentIntent(pendingIntent)

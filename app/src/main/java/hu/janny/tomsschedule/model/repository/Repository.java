@@ -6,11 +6,8 @@ import android.os.Looper;
 import android.os.Message;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,16 +17,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import hu.janny.tomsschedule.model.helper.ActivityFilter;
 import hu.janny.tomsschedule.model.entities.ActivityTime;
@@ -60,38 +53,14 @@ public class Repository {
     // Times are searched in personal statistics
     private List<ActivityTime> allTimes;
 
-    private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activitiesWithTimesData = new MutableLiveData<>();
-    private final MutableLiveData<Map<CustomActivity, List<ActivityTime>>> activityByIdWithTimesData = new MutableLiveData<>();
-
-    private Map<CustomActivity, List<ActivityTime>> activitiesWithTimes;
-    private Map<CustomActivity, List<ActivityTime>> activityByIdWithTimes;
-    private final LiveData<Map<CustomActivity, List<ActivityTime>>> allActivitiesWithTimes;
-    // All activities in list
-    private final LiveData<List<CustomActivity>> activities;
-    // All times in list
-    private final LiveData<List<ActivityTime>> times;
-
-    private final MutableLiveData<List<ActivityWithTimes>> activityWithTimesFilterList = new MutableLiveData<>();
-    private List<ActivityWithTimes> activityWithTimesFilter;
-
-    private final MutableLiveData<List<ActivityTime>> oneActivitiesTime = new MutableLiveData<>();
-
-    private List<ActivityTime> oneTimes;
-
-    private final MutableLiveData<Boolean> ready = new MutableLiveData<>();
-    private MediatorLiveData<List<CustomActivity>> mediatorActivity = new MediatorLiveData<>();
-
     public Repository(Application application) {
         ActivityRoomDatabase db;
         db = ActivityRoomDatabase.getDatabase(application);
         customActivityDao = db.customActivityDao();
         activityTimeDao = db.activityTimeDao();
+
         activitiesWithTimesEntities = customActivityDao.getActivitiesWithTimes();
         filterActivities = customActivityDao.getActivityFilter(FirebaseManager.auth.getUid());
-
-        allActivitiesWithTimes = customActivityDao.getAllActivitiesWithTimes();
-        activities = customActivityDao.getActivitiesList();
-        times = activityTimeDao.getTimes();
     }
 
     //**********//
@@ -136,7 +105,7 @@ public class Repository {
     //************************//
 
     /**
-     * Inserts new activity with the first activity time because it is necessary for showing the deteails.
+     * Inserts new activity with the first activity time because it is necessary for showing the details.
      *
      * @param customActivity the activity to be inserted
      */
@@ -159,9 +128,7 @@ public class Repository {
      */
     public void updateActivity(CustomActivity customActivity) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            customActivityDao.updateActivity(customActivity);
-        });
+        executor.submit(() -> customActivityDao.updateActivity(customActivity));
         executor.shutdown();
     }
 
@@ -182,7 +149,7 @@ public class Repository {
             Thread.sleep(300);
         }
         Boolean result = future.get();
-        boolean canceled = future.cancel(true);
+        future.cancel(true);
         executor.shutdown();
         return result;
     }
@@ -195,7 +162,7 @@ public class Repository {
      */
     public void updateOrInsertTimeSingle(ActivityTime activityTime) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<Boolean> future = executor.submit(() -> activityTimeDao.insertOrUpdateTime(activityTime));
+        executor.submit(() -> activityTimeDao.insertOrUpdateTime(activityTime));
         executor.shutdown();
     }
 
@@ -207,9 +174,7 @@ public class Repository {
      */
     public void deleteActivityById(long id) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            customActivityDao.deleteActivityById(id);
-        });
+        executor.submit(() -> customActivityDao.deleteActivityById(id));
         executor.shutdown();
     }
 
@@ -366,10 +331,7 @@ public class Repository {
      */
     public void deleteActivitiesByUserId(String userId) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            customActivityDao.deleteActivityByUserId(userId);
-
-        });
+        executor.submit(() -> customActivityDao.deleteActivityByUserId(userId));
         //executor.shutdown();
         awaitTerminationAfterShutdown(executor);
     }
@@ -411,6 +373,11 @@ public class Repository {
         });
     }
 
+    /**
+     * Retrieves activities from a data snapshot and saves into local database.
+     * @param ds data snapshot which includes the activities
+     * @param callback called when activities and times are inserted into local database
+     */
     private void retrieveActivities(DataSnapshot ds, SuccessCallback callback) {
         List<CustomActivity> activityList = new ArrayList<>();
         DataSnapshot acts = ds.child("activities");
@@ -423,6 +390,11 @@ public class Repository {
         restoreActivities(activityList, callback);
     }
 
+    /**
+     * Retrieves times from a data snapshot and saves into local database.
+     * @param ds data snapshot which includes the times
+     * @param callback called when activities and times are inserted into local database
+     */
     private void retrieveTimes(DataSnapshot ds, SuccessCallback callback) {
         List<ActivityTime> timeList = new ArrayList<>();
         DataSnapshot times = ds.child("times");
@@ -435,13 +407,19 @@ public class Repository {
         restoreTimes(timeList, callback);
     }
 
+    /**
+     * This is an effectively final integer to help restore backup.
+     */
     private final int[] restoreReady = new int[1];
 
+    /**
+     * Saves the given list of activities into local database.
+     * @param list list of activities
+     * @param callback called when both the activities and the times are saved
+     */
     public void restoreActivities(List<CustomActivity> list, SuccessCallback callback) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            customActivityDao.insertAll(list);
-        });
+        executor.submit(() -> customActivityDao.insertAll(list));
         executor.shutdown();
         //awaitTerminationAfterShutdown(executor);
         restoreReady[0]++;
@@ -450,11 +428,14 @@ public class Repository {
         }
     }
 
+    /**
+     * Saves the given list of times into local database.
+     * @param list list of times
+     * @param callback called when both the activities and the times are saved
+     */
     public void restoreTimes(List<ActivityTime> list, SuccessCallback callback) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activityTimeDao.insertAll(list);
-        });
+        executor.submit(() -> activityTimeDao.insertAll(list));
         executor.shutdown();
         //awaitTerminationAfterShutdown(executor);
         restoreReady[0]++;
@@ -517,27 +498,6 @@ public class Repository {
      */
     public MutableLiveData<List<ActivityTime>> getAllActivitiesTime() {
         return allActivitiesTime;
-    }
-
-    public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivitiesWithTimesData() {
-        return activitiesWithTimesData;
-    }
-
-    public LiveData<Map<CustomActivity, List<ActivityTime>>> getAllActivitiesWithTimes() {
-        return allActivitiesWithTimes;
-    }
-
-
-    public MutableLiveData<List<ActivityTime>> getOneActivitiesTime() {
-        return oneActivitiesTime;
-    }
-
-    public LiveData<List<CustomActivity>> getActivities() {
-        return activities;
-    }
-
-    public MutableLiveData<Map<CustomActivity, List<ActivityTime>>> getActivityByIdWithTimesData() {
-        return activityByIdWithTimesData;
     }
 
     //*******//

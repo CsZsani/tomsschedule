@@ -38,7 +38,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -354,7 +353,7 @@ public class DetailFragment extends Fragment {
      */
     private void setUpDeleteDialog(long activityId, View fragView) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.sure_delete_acitvity);
+        builder.setMessage(R.string.sure_delete_activity);
         builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
