@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentSettingsBinding;
 import hu.janny.tomsschedule.model.entities.User;
+import hu.janny.tomsschedule.model.helper.SuccessCallback;
 import hu.janny.tomsschedule.viewmodel.BackUpViewModel;
 
 /**
@@ -34,6 +35,9 @@ public class SettingsFragment extends Fragment {
     // Current user's id
     private String userId;
 
+    private final int[] loaded = new int[1];
+    private final int[] success = new int[1];
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -49,19 +53,14 @@ public class SettingsFragment extends Fragment {
         // Gets a BackUpViewModel instance
         viewModel = new ViewModelProvider(this).get(BackUpViewModel.class);
 
+        loaded[0] = 0;
+        success[0] = 0;
+
         setUpSaveDialog();
         setUpRestoreDialog();
 
         // Gets the current user's id
         viewModel.getUser().observe(getViewLifecycleOwner(), user -> userId = user.getUid());
-
-        // Gets the state of creating an restoring backup
-        viewModel.getReady().observe(getViewLifecycleOwner(), ready -> {
-            if (ready) {
-                Toast.makeText(getActivity(), "Save/restore is done!", Toast.LENGTH_SHORT).show();
-                viewModel.setReady(true);
-            }
-        });
 
         binding.createBackupButton.setOnClickListener(view1 -> saveDialog.show());
 
@@ -78,8 +77,13 @@ public class SettingsFragment extends Fragment {
         builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(), R.string.create_backup_progress, Toast.LENGTH_LONG).show();
-                viewModel.saveData(userId);
+                showProgress(R.string.create_backup_progress);
+                loaded[0] = 0;
+                success[0] = 0;
+                if(!viewModel.saveData(userId, new CreateBackupSuccess())) {
+                    hideProgress();
+                    Toast.makeText(getContext(), getString(R.string.create_backup_fail), Toast.LENGTH_LONG).show();
+                }
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -90,6 +94,54 @@ public class SettingsFragment extends Fragment {
         saveDialog = builder.create();
     }
 
+    private void showProgress(int resId) {
+        binding.settingsScrollView.setVisibility(View.GONE);
+        binding.settingsProgressBar.setVisibility(View.VISIBLE);
+        binding.settingsProgressText.setText(getString(resId));
+        binding.settingsProgressText.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgress() {
+        binding.settingsScrollView.setVisibility(View.VISIBLE);
+        binding.settingsProgressBar.setVisibility(View.GONE);
+        binding.settingsProgressText.setVisibility(View.GONE);
+    }
+
+    private class CreateBackupSuccess implements SuccessCallback {
+
+        @Override
+        public void onCallback(boolean successful) {
+            if(loaded[0] == 1) {
+                loaded[0] = 0;
+                hideProgress();
+                if(successful && success[0] == 1) {
+                    Toast.makeText(getContext(), getString(R.string.create_backup_done), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), getString(R.string.create_backup_fail), Toast.LENGTH_LONG).show();
+                }
+                success[0] = 0;
+            } else if(loaded[0] == 0) {
+                loaded[0] = 1;
+                if(successful) {
+                    success[0] = 1;
+                }
+            }
+        }
+    }
+
+    private class RestoreBackupSuccess implements SuccessCallback {
+
+        @Override
+        public void onCallback(boolean successful) {
+            hideProgress();
+            if(successful) {
+                Toast.makeText(getContext(), getString(R.string.restore_backup_done), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getContext(), getString(R.string.restore_backup_fail), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
     /**
      * Sets up the confirmation dialog for restoring backup. Has two button: confirm and cancel
      */
@@ -97,8 +149,8 @@ public class SettingsFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.download_data_warning);
         builder.setPositiveButton(R.string.confirm, (dialogInterface, i) -> {
-            Toast.makeText(getActivity(), R.string.restore_backup_progress, Toast.LENGTH_LONG).show();
-            viewModel.restoreBackup(userId);
+            showProgress(R.string.restore_backup_progress);
+            viewModel.restoreBackup(userId, new RestoreBackupSuccess());
         });
         builder.setNegativeButton(R.string.cancel, (dialog, id) -> {
             // User cancelled the dialog

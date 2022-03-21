@@ -54,6 +54,7 @@ public interface CustomActivityDao {
 
     /**
      * Searches an activity with its times based on its id.
+     *
      * @param id id of the activity we search for
      * @return the activity with times with the given id
      */
@@ -71,7 +72,19 @@ public interface CustomActivityDao {
     LiveData<List<ActivityWithTimes>> getActivitiesWithTimes();
 
     /**
+     * Returns the list of activities with their times (basically for creating backup). It gives back
+     * the activities that belong to the user with the given uid.
+     *
+     * @param uid id of the user
+     * @return list of activities with their times
+     */
+    @Transaction
+    @Query("SELECT * FROM customactivities WHERE userId == :uid ")
+    List<ActivityWithTimes> getActivitiesWithTimesForBackup(String uid);
+
+    /**
      * Returns the list of activities the given user has to filter.
+     *
      * @param uid the uid of the user
      * @return the list of activities to filter
      */
@@ -95,6 +108,11 @@ public interface CustomActivityDao {
     @Query("DELETE FROM customactivities WHERE userId = :id")
     void deleteActivityByUserId(String id);
 
+    /**
+     * Returns all activities
+     *
+     * @return
+     */
     @Query("SELECT * FROM customactivities")
     LiveData<List<CustomActivity>> getActivitiesList();
 
@@ -116,11 +134,8 @@ public interface CustomActivityDao {
     CustomActivity getActivityByName(String name);
 
 
-
     @Query("SELECT activityId FROM customactivities WHERE customactivities.name = :name")
     int getIdByName(String name);
-
-
 
 
     @Transaction

@@ -24,6 +24,7 @@ import hu.janny.tomsschedule.model.entities.ActivityTime;
 import hu.janny.tomsschedule.model.entities.ActivityTimeFirebase;
 import hu.janny.tomsschedule.model.entities.CustomActivity;
 import hu.janny.tomsschedule.model.entities.User;
+import hu.janny.tomsschedule.model.helper.SuccessCallback;
 
 public final class FirebaseManager {
 
@@ -145,33 +146,29 @@ public final class FirebaseManager {
     }
 
     /**
-     * Saves the activities to Firebase Realtime database during creating backup. Path "backups/{userId}/activities"
+     * Saves the activities to Firebase Realtime database during creating backup. Path "backups/{userId}/activities".
      *
      * @param list CustomActivity list to save
      */
-    public static void saveToFirebaseActivities(List<CustomActivity> list) {
+    public static void saveToFirebaseActivities(List<CustomActivity> list, SuccessCallback callback) {
         database.getReference().child("backups").child(user.getUid()).child("activities").setValue(list).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (!task.isSuccessful()) {
-                    //System.out.println("Saved activities into firebase");
-                }
+                callback.onCallback(task.isSuccessful());
             }
         });
     }
 
     /**
-     * Saves the activity times to Firebase Realtime database during creating backup. Path "backups/{userId}/times"
+     * Saves the activity times to Firebase Realtime database during creating backup. Path "backups/{userId}/times".
      *
      * @param list ActivityTime list to save
      */
-    public static void saveToFirebaseTimes(List<ActivityTime> list) {
+    public static void saveToFirebaseTimes(List<ActivityTime> list, SuccessCallback callback) {
         database.getReference().child("backups").child(user.getUid()).child("times").setValue(list).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (!task.isSuccessful()) {
-                    //System.out.println("Saved times into firebase");
-                }
+                callback.onCallback(task.isSuccessful());
             }
         });
     }

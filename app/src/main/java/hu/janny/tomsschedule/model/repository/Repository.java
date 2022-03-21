@@ -36,6 +36,7 @@ import hu.janny.tomsschedule.model.entities.ActivityTime;
 import hu.janny.tomsschedule.model.entities.ActivityWithTimes;
 import hu.janny.tomsschedule.model.entities.CustomActivity;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
+import hu.janny.tomsschedule.model.helper.SuccessCallback;
 
 public class Repository {
 
@@ -119,27 +120,6 @@ public class Repository {
         }
     };
 
-    Handler handler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            activitiesWithTimesData.setValue(activitiesWithTimes);
-        }
-    };
-
-    Handler handlerFilter = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            activityWithTimesFilterList.setValue(activityWithTimesFilter);
-        }
-    };
-
-    Handler handlerSingleActivityWithTimes = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            activityByIdWithTimesData.setValue(activityByIdWithTimes);
-        }
-    };
-
     /**
      * When we search for times of activities in personal statistics, we send an empty message,
      * so the mutable live data will get a new value.
@@ -148,13 +128,6 @@ public class Repository {
         @Override
         public void handleMessage(Message msg) {
             allActivitiesTime.setValue(allTimes);
-        }
-    };
-
-    Handler handlerOneTimes = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            oneActivitiesTime.setValue(oneTimes);
         }
     };
 
@@ -328,23 +301,11 @@ public class Repository {
     // Creating and restoring backup //
     //*******************************//
 
-    public static <T> T getValue(LiveData<T> liveData) throws InterruptedException {
-        final Object[] objects = new Object[1];
-        final CountDownLatch latch = new CountDownLatch(1);
-
-        Observer observer = new Observer() {
-            @Override
-            public void onChanged(@Nullable Object o) {
-                objects[0] = o;
-                latch.countDown();
-                liveData.removeObserver(this);
-            }
-        };
-        liveData.observeForever(observer);
-        latch.await(2, TimeUnit.SECONDS);
-        return (T) objects[0];
-    }
-
+    /**
+     * Waits until the executor service finishes its task and become shut down.
+     *
+     * @param threadPool the executor service
+     */
     public void awaitTerminationAfterShutdown(ExecutorService threadPool) {
         threadPool.shutdown();
         try {
@@ -357,39 +318,52 @@ public class Repository {
         }
     }
 
-
-    public void saveData(String userId) {
-        List<CustomActivity> activitiesSecond;
-        List<ActivityTime> timesSecond;
+    /**
+     * Saves the data from local database to Firebase Realtime database. It saves the activities and
+     * times that belong to the user with the given id.
+     *
+     * @param userId   the id of the user who creates backup
+     * @param callback called when the Firebase finishes saving
+     * @return false if getting data from the local database is failed, true is it was successful
+     */
+    public boolean saveData(String userId, SuccessCallback callback) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<List<ActivityWithTimes>> future = executor.submit(() -> customActivityDao.getActivitiesWithTimesForBackup(userId));
+        List<ActivityWithTimes> result;
         try {
-            activitiesSecond = getValue(activities);
-            timesSecond = getValue(times);
-        } catch (InterruptedException e) {
+            result = future.get();
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return;
+            return false;
         }
-        if (activitiesSecond == null) {
-            System.out.println("null in saving data activities");
-            return;
-        }
-        if (timesSecond == null) {
-            System.out.println("null in saving data times");
-            return;
-        }
-
-        List<CustomActivity> customActivities = new ArrayList<>();
-        List<ActivityTime> activityTimes = new ArrayList<>();
-        for (CustomActivity activity : activitiesSecond) {
-            if (activity.getUserId().equals(userId)) {
-                customActivities.add(activity);
-                List<ActivityTime> tmp = timesSecond.stream().filter(a -> a.getaId() == activity.getId()).collect(Collectors.toList());
-                activityTimes.addAll(tmp);
-            }
-        }
-        FirebaseManager.saveToFirebaseActivities(customActivities);
-        FirebaseManager.saveToFirebaseTimes(activityTimes);
+        future.cancel(true);
+        executor.shutdown();
+        saveToFirebase(result, callback);
+        return true;
     }
 
+    /**
+     * Saves the given activities with times to Firebase Realtime database.
+     *
+     * @param result   activities with their times
+     * @param callback called when the Firebase finishes saving
+     */
+    private void saveToFirebase(List<ActivityWithTimes> result, SuccessCallback callback) {
+        List<CustomActivity> activities = new ArrayList<>();
+        List<ActivityTime> times = new ArrayList<>();
+        for (ActivityWithTimes at : result) {
+            activities.add(at.customActivity);
+            times.addAll(at.activityTimes);
+        }
+        FirebaseManager.saveToFirebaseActivities(activities, callback);
+        FirebaseManager.saveToFirebaseTimes(times, callback);
+    }
+
+    /**
+     * Deletes all the activities and times that belong to the user with the given id.
+     *
+     * @param userId the id of the user whose data we want to delete
+     */
     public void deleteActivitiesByUserId(String userId) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -400,36 +374,44 @@ public class Repository {
         awaitTerminationAfterShutdown(executor);
     }
 
-    public MutableLiveData<Boolean> getReady() {
-        return ready;
-    }
-
-    public void setReady(boolean ready) {
-        this.ready.setValue(ready);
-    }
-
-    public void restoreBackup(String userId) {
+    /**
+     * Restores the data of the user with the given id from Firebase to local database.
+     *
+     * @param userId   id of the user who restores backup
+     * @param callback called when the data is saved into the local database
+     */
+    public void restoreBackup(String userId, SuccessCallback callback) {
         restoreReady[0] = 0;
         deleteActivitiesByUserId(userId);
-        restoreData(userId);
+        restoreData(userId, callback);
     }
 
-    public void restoreData(String userId) {
+    /**
+     * Gets data from Firebase to restore them into local database.
+     *
+     * @param userId   id of the user who restores backup
+     * @param callback called when there is no data to restore or when it is done successfully
+     */
+    public void restoreData(String userId, SuccessCallback callback) {
         FirebaseManager.database.getReference().child("backups").child(userId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful()) {
                     DataSnapshot ds = task.getResult();
                     if (ds != null) {
-                        retrieveActivities(ds);
-                        retrieveTimes(ds);
+                        retrieveActivities(ds, callback);
+                        retrieveTimes(ds, callback);
+                    } else {
+                        callback.onCallback(false);
                     }
+                } else {
+                    callback.onCallback(false);
                 }
             }
         });
     }
 
-    private void retrieveActivities(DataSnapshot ds) {
+    private void retrieveActivities(DataSnapshot ds, SuccessCallback callback) {
         List<CustomActivity> activityList = new ArrayList<>();
         DataSnapshot acts = ds.child("activities");
         for (DataSnapshot actSnapshot : acts.getChildren()) {
@@ -438,10 +420,10 @@ public class Repository {
                 activityList.add(activity);
             }
         }
-        restoreActivities(activityList);
+        restoreActivities(activityList, callback);
     }
 
-    private void retrieveTimes(DataSnapshot ds) {
+    private void retrieveTimes(DataSnapshot ds, SuccessCallback callback) {
         List<ActivityTime> timeList = new ArrayList<>();
         DataSnapshot times = ds.child("times");
         for (DataSnapshot timeSnapshot : times.getChildren()) {
@@ -450,118 +432,37 @@ public class Repository {
                 timeList.add(time);
             }
         }
-        restoreTimes(timeList);
+        restoreTimes(timeList, callback);
     }
 
     private final int[] restoreReady = new int[1];
 
-    public void restoreActivities(List<CustomActivity> list) {
+    public void restoreActivities(List<CustomActivity> list, SuccessCallback callback) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             customActivityDao.insertAll(list);
         });
-        //executor.shutdown();
-        awaitTerminationAfterShutdown(executor);
+        executor.shutdown();
+        //awaitTerminationAfterShutdown(executor);
         restoreReady[0]++;
         if (restoreReady[0] == 2) {
-            ready.setValue(true);
+            callback.onCallback(true);
         }
     }
 
-    public void restoreTimes(List<ActivityTime> list) {
+    public void restoreTimes(List<ActivityTime> list, SuccessCallback callback) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             activityTimeDao.insertAll(list);
         });
-        //executor.shutdown();
-        awaitTerminationAfterShutdown(executor);
+        executor.shutdown();
+        //awaitTerminationAfterShutdown(executor);
         restoreReady[0]++;
         if (restoreReady[0] == 2) {
-            ready.setValue(true);
+            callback.onCallback(true);
         }
     }
 
-    public void getActivityByNameWithTimes(String name) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activitiesWithTimes = customActivityDao.getActivityByNameWithTimes(name);
-            handler.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public void getActivityByIdWithTimes(long id) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activitiesWithTimes = customActivityDao.getActivityByIdWithTimes(id);
-            handler.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public void getSingleActivityByIdWithTimes(long id) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activityByIdWithTimes = customActivityDao.getActivityByIdWithTimes(id);
-            handlerSingleActivityWithTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-
-    public void getFilterSomeAcivity(List<Long> list) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activityWithTimesFilter = customActivityDao.getActivitiesWithTimesFilter(list);
-            handlerFilter.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public int getActivityIdByName(String name) {
-        final int[] id = new int[1];
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            id[0] = customActivityDao.getIdByName(name);
-        });
-        executor.shutdown();
-        return id[0];
-    }
-
-    public void insertTime(ActivityTime activityTime) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activityTimeDao.insertActivityTime(activityTime);
-        });
-        executor.shutdown();
-    }
-
-
-    public void deleteTimesByActivityId(long id) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            activityTimeDao.deleteActivityTimeByActivityId(id);
-        });
-        executor.shutdown();
-    }
-
-    public void getOneByIdLaterDates(int id, long from) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            oneTimes = activityTimeDao.getOneByIdLaterDates(id, from);
-            handlerOneTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
-
-    public void getOneByIdBetweenTwoDates(int id, long from, long to) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            oneTimes = activityTimeDao.getOneByIdBetweenTwoDates(id, from, to);
-            handlerOneTimes.sendEmptyMessage(0);
-        });
-        executor.shutdown();
-    }
 
     //*********//
     // Getters //

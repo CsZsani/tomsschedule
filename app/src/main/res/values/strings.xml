@@ -315,9 +315,13 @@
     <string name="save_data_warning">Your last backup will be overwritten. Do you want to continue?</string>
     <string name="restore_backup">Restore backup (internet connection required)</string>
     <string name="download_data">Download data</string>
-    <string name="download_data_warning">Your local data will be overwritten. Do you want to continue?</string>
+    <string name="download_data_warning">Your local data will be overwritten. Make sure that you already have a backup or you will lose all your data. Do you want to continue?</string>
     <string name="create_backup_progress">Creating backup is in progress. Please wait…</string>
     <string name="restore_backup_progress">Restoring backup is in progress. Please wait…</string>
+    <string name="create_backup_done">Creating backup is done.</string>
+    <string name="restore_backup_done">Restoring backup is done.</string>
+    <string name="create_backup_fail">Creating backup failed. Please try again with stable Internet connection!</string>
+    <string name="restore_backup_fail">Restoring backup failed. Please try again with stable Internet connection!</string>
 
     <!-- Timer assets -->
     <string name="blue">Blue</string>
