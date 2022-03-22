@@ -33,6 +33,7 @@ import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.ColorPickerDialog;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -283,7 +284,9 @@ public class AddCustomActivityFragment extends Fragment {
             Toast.makeText(getActivity(), getString(R.string.new_act_format_add_time), Toast.LENGTH_LONG).show();
             return true;
         }
-        customActivity.setDur(DateConverter.durationTimeConverterFromIntToLong(day, hour, minute));
+        long duration = DateConverter.durationTimeConverterFromIntToLong(day, hour, minute);
+        customActivity.setDur(duration);
+        customActivity.setRe(duration);
         return false;
     }
 
@@ -434,47 +437,69 @@ public class AddCustomActivityFragment extends Fragment {
      * @return true if there was not error, false otherwise
      */
     private boolean setTimeForFixedDays() {
+        DayOfWeek today = CustomActivityHelper.whatDayOfWeekToday();
         long i;
         if(binding.monday.isChecked()) {
             i = setTimeForDay(binding.activityMondayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setMon(i);
+                if(today.equals(DayOfWeek.MONDAY)) {
+                    customActivity.setRe(i);
+                }
             }
         }
         if(binding.tuesday.isChecked()) {
             i = setTimeForDay(binding.activityTuesdayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setTue(i);
+                if(today.equals(DayOfWeek.TUESDAY)) {
+                    customActivity.setRe(i);
+                }
             }
         }
         if(binding.wednesday.isChecked()) {
             i = setTimeForDay(binding.activityWednesdayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setWed(i);
+                if(today.equals(DayOfWeek.WEDNESDAY)) {
+                    customActivity.setRe(i);
+                }
             }
         }
         if(binding.thursday.isChecked()) {
             i = setTimeForDay(binding.activityThursdayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setThu(i);
+                if(today.equals(DayOfWeek.THURSDAY)) {
+                    customActivity.setRe(i);
+                }
             }
         }
         if(binding.friday.isChecked()) {
             i = setTimeForDay(binding.activityFridayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setFri(i);
+                if(today.equals(DayOfWeek.FRIDAY)) {
+                    customActivity.setRe(i);
+                }
             }
         }
         if(binding.saturday.isChecked()) {
             i = setTimeForDay(binding.activitySaturdayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setSat(i);
+                if(today.equals(DayOfWeek.SATURDAY)) {
+                    customActivity.setRe(i);
+                }
             }
         }
         if(binding.sunday.isChecked()) {
             i = setTimeForDay(binding.activitySundayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setSun(i);
+                if(today.equals(DayOfWeek.SUNDAY)) {
+                    customActivity.setRe(i);
+                }
             }
         }
         return true;

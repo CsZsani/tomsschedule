@@ -702,11 +702,10 @@ public final class CustomActivityHelper {
                 if (activityTime.getD() >= customActivity.getsD() && activityTime.getD() <= customActivity.geteD()) {
                     if (customActivity.getlD() < customActivity.getsD()) {
                         customActivity.setsF(activityTime.getT());
-                        customActivity.setRe(Math.max((customActivity.getDur() - activityTime.getT()), 0L));
                     } else {
                         customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                        customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
                     }
+                    customActivity.setRe(Math.max((customActivity.getDur() - customActivity.getsF()), 0L));
                 }
                 break;
             case 8:
@@ -747,11 +746,10 @@ public final class CustomActivityHelper {
     private static void updateDailyFields(CustomActivity customActivity, ActivityTime activityTime, long todayMillis) {
         if (customActivity.getlD() != todayMillis) {
             customActivity.setsF(activityTime.getT());
-            customActivity.setRe(Math.max((customActivity.getDur() - activityTime.getT()), 0L));
         } else {
             customActivity.setsF(customActivity.getsF() + activityTime.getT());
-            customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
         }
+        customActivity.setRe(Math.max((customActivity.getDur() - customActivity.getsF()), 0L));
     }
 
     /**
@@ -783,11 +781,10 @@ public final class CustomActivityHelper {
     private static void updateMonthlyFields(CustomActivity customActivity, ActivityTime activityTime, long firstDayOfThisMonth) {
         if(customActivity.getlD() < firstDayOfThisMonth) {
             customActivity.setsF(activityTime.getT());
-            customActivity.setRe(Math.max((customActivity.getDur() - activityTime.getT()), 0L));
         } else {
             customActivity.setsF(customActivity.getsF() + activityTime.getT());
-            customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
         }
+        customActivity.setRe(Math.max((customActivity.getDur() - customActivity.getsF()), 0L));
     }
 
     /**
@@ -819,11 +816,10 @@ public final class CustomActivityHelper {
     private static void updateWeeklyFields(CustomActivity customActivity, ActivityTime activityTime, long thisMonday) {
         if(customActivity.getlD() < thisMonday) {
             customActivity.setsF(activityTime.getT());
-            customActivity.setRe(Math.max((customActivity.getDur() - activityTime.getT()), 0L));
         } else {
             customActivity.setsF(customActivity.getsF() + activityTime.getT());
-            customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
         }
+        customActivity.setRe(Math.max((customActivity.getDur() - customActivity.getsF()), 0L));
     }
 
     /**
@@ -834,14 +830,15 @@ public final class CustomActivityHelper {
      */
     private static void updateSumTime(CustomActivity customActivity, ActivityTime activityTime) {
         if (customActivity.geteD() == 0L) {
-            if (customActivity.getsF() < customActivity.getDur()) {
+            //if (customActivity.getsF() < customActivity.getDur()) {
                 customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
-            }
+                customActivity.setRe(Math.max((customActivity.getDur() - customActivity.getsF()), 0L));
+            //}
         } else {
-            if (customActivity.getsF() < customActivity.getDur() && activityTime.getD() <= customActivity.geteD()) {
+            //if (customActivity.getsF() < customActivity.getDur() && activityTime.getD() <= customActivity.geteD()) {
+            if (activityTime.getD() <= customActivity.geteD()) {
                 customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
+                customActivity.setRe(Math.max((customActivity.getDur() - customActivity.getsF()), 0L));
             }
         }
     }
@@ -878,11 +875,10 @@ public final class CustomActivityHelper {
     private static void updateCustomFields(CustomActivity customActivity, ActivityTime activityTime, long todayMillis) {
         if (customActivity.getlD() != todayMillis) {
             customActivity.setsF(activityTime.getT());
-            customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - activityTime.getT()), 0L));
         } else {
             customActivity.setsF(customActivity.getsF() + activityTime.getT());
-            customActivity.setRe(Math.max((customActivity.getRe() - activityTime.getT()), 0L));
         }
+        customActivity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(customActivity.getCustomWeekTime()) - customActivity.getsF()), 0L));
     }
 
     /**

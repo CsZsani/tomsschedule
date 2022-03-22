@@ -11,7 +11,10 @@ import hu.janny.tomsschedule.model.entities.CustomActivity;
 import hu.janny.tomsschedule.model.entities.CustomWeekTime;
 import hu.janny.tomsschedule.model.entities.User;
 
-@Database(entities = {User.class, CustomActivity.class, CustomWeekTime.class, ActivityTime.class}, version = 1)
+/**
+ * This is the database class, it provides the Room for other classes. Just one database instance is acceptable in the app.
+ */
+@Database(entities = {User.class, CustomActivity.class, ActivityTime.class}, version = 1)
 public abstract class ActivityRoomDatabase extends RoomDatabase {
 
     public abstract CustomActivityDao customActivityDao();

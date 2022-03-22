@@ -320,6 +320,16 @@ public class CustomActivityRecyclerAdapter
         return activityList.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
     /**
      * Darkens the given colour.
      *
