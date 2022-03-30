@@ -91,10 +91,10 @@
     <string name="priority">Priority (1–10)</string>
     <string name="priority_detail">Priority</string>
     <string name="has_deadline">It has just a deadline</string>
-    <string name="regularity">It is a regular activity</string>
+    <string name="regularity">Regular activity</string>
     <string name="regularity_detail">Regularity</string>
-    <string name="just_interval">It is just an interval or has a deadline</string>
-    <string name="just_time_measure">Neither of them</string>
+    <string name="just_interval">An interval or a deadline</string>
+    <string name="just_time_measure">Neither of them (e.g. hobby)</string>
     <string name="dates_type">Select the regularity type</string>
     <string name="deadline">Deadline</string>
     <string name="daily">Daily</string>

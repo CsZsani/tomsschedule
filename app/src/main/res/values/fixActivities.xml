@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="fixActivities">
-        <item>@string/fa_sleeping</item>
         <item>@string/fa_work</item>
         <item>@string/fa_school</item>
+        <item>@string/fa_sleeping</item>
         <item>@string/fa_housework</item>
         <item>@string/fa_cooking</item>
         <item>@string/fa_learning</item>
