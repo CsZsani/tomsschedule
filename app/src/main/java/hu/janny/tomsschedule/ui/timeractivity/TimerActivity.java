@@ -36,6 +36,7 @@ import hu.janny.tomsschedule.model.helper.CustomActivityHelper;
 import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.model.helper.TimerAssets;
 import hu.janny.tomsschedule.model.entities.User;
+import hu.janny.tomsschedule.ui.splashscreen.SplashScreenActivity;
 import hu.janny.tomsschedule.viewmodel.MainViewModel;
 
 /**
@@ -70,6 +71,7 @@ public class TimerActivity extends AppCompatActivity {
     private int maxAssetNum;
     // The time spent with this activity from starting the timer
     private long currentTime = 0L;
+    private boolean showOtherData = false;
 
     private ActionBar actionBar;
     private Intent musicIntent;
@@ -137,6 +139,21 @@ public class TimerActivity extends AppCompatActivity {
             public void onChanged(CustomActivity activity) {
                 if (activity != null) {
                     customActivity = activity;
+                    // According to the type of activity we show or hide sofar and remaining texts and times
+                    if (customActivity.gettN() == 1 || customActivity.gettN() == 6 ||
+                            customActivity.gettN() == 5 || (customActivity.geteD() != 0L && customActivity.geteD() < CustomActivityHelper.todayMillis())) {
+                        binding.soFar.setVisibility(View.GONE);
+                        binding.remaining.setVisibility(View.GONE);
+                        binding.soFarText.setVisibility(View.GONE);
+                        binding.remainingText.setVisibility(View.GONE);
+                        showOtherData = false;
+                    } else {
+                        binding.soFar.setVisibility(View.VISIBLE);
+                        binding.remaining.setVisibility(View.VISIBLE);
+                        binding.soFarText.setVisibility(View.VISIBLE);
+                        binding.remainingText.setVisibility(View.VISIBLE);
+                        showOtherData = true;
+                    }
                 } else {
                     Toast.makeText(TimerActivity.this, getString(R.string.timer_no_activity), Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(TimerActivity.this, MainActivity.class);
@@ -351,7 +368,7 @@ public class TimerActivity extends AppCompatActivity {
 
         int notificationID = 101;
 
-        Intent resultIntent = new Intent(this, TimerActivity.class);
+        Intent resultIntent = new Intent(this, SplashScreenActivity.class);
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(
                         this,
@@ -446,12 +463,7 @@ public class TimerActivity extends AppCompatActivity {
         currentTime = SystemClock.uptimeMillis() - initialMillis;
         binding.timerTextView.setText(DateConverter.durationConverterFromLongToStringToTimer(currentTime));
         //binding.today.setText(DateConverter.durationConverterFromLongToStringToTimer(today + currentTime));
-        if (customActivity.gettN() == 1 || customActivity.gettN() == 6 || (customActivity.geteD() != 0L && customActivity.geteD() < CustomActivityHelper.todayMillis())) {
-            binding.soFar.setVisibility(View.GONE);
-            binding.remaining.setVisibility(View.GONE);
-            binding.soFarText.setVisibility(View.GONE);
-            binding.remainingText.setVisibility(View.GONE);
-        } else {
+        if(showOtherData) {
             binding.soFar.setText(DateConverter.durationConverterFromLongToStringToTimer(customActivity.getsF() + currentTime));
             binding.remaining.setText(DateConverter.durationConverterFromLongToStringToTimer(customActivity.getRe() - currentTime));
         }

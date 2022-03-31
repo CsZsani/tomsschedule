@@ -32,7 +32,7 @@
     <string name="confirm">Megerősít</string>
     <string name="cancel">Bezár</string>
     <string name="color_pick">Válassz egy színt</string>
-    <string name="priority">Prioritás (1-10)</string>
+    <string name="priority">Prioritás (1–10)</string>
     <string name="has_deadline">Csak egy határidő</string>
     <string name="regularity">Rendszeres tevékenység</string>
     <string name="just_interval">Csak egy intervallum vagy határidős</string>
@@ -84,8 +84,8 @@
     <string name="fa_reading">Olvasás</string>
     <string name="notification_type">Válaszd ki, hogy milyen típusú a tevékenység!</string>
     <string name="days">Napok (>=0)</string>
-    <string name="hours">Órák (0-23)</string>
-    <string name="minutes">Percek (0-59)</string>
+    <string name="hours">Órák (0–23)</string>
+    <string name="minutes">Percek (0–59)</string>
     <string name="days_hint">Nap</string>
     <string name="hours_hint">Óra</string>
     <string name="minutes_hint">Perc</string>
@@ -99,7 +99,7 @@
     <string name="choose_daily_time_for_interval">Mennyi időt szeretnél tölteni vele naponta?</string>
     <string name="choose_daily_time">Mennyi időt szeretnél tölteni vele naponta?</string>
     <string name="save">Mentés</string>
-    <string name="turn_off_notifications">Akarod...?</string>
+    <string name="turn_off_notifications">Akarod…?</string>
     <string name="hello_blank_fragment">something</string>
     <string name="detail_fragment_label">Részletek</string>
     <string name="details_daily">napi</string>
@@ -188,16 +188,16 @@
     <string name="all_age_group_chip">Összes</string>
     <string name="fe_0">Nő &lt;20</string>
     <string name="tip">Javaslat</string>
-    <string name="fe_1">Nő 20-29</string>
-    <string name="fe_2">Nő 30-39</string>
-    <string name="fe_3">Nő 40-49</string>
-    <string name="fe_4">Nő 50-59</string>
+    <string name="fe_1">Nő 20–29</string>
+    <string name="fe_2">Nő 30–39</string>
+    <string name="fe_3">Nő 40–49</string>
+    <string name="fe_4">Nő 50–59</string>
     <string name="fe_5">Nő &gt;60</string>
     <string name="ma_0">Férfi &lt;20</string>
-    <string name="ma_1">Férfi 20-29</string>
-    <string name="ma_2">Férfi 30-39</string>
-    <string name="ma_3">Férfi 40-49</string>
-    <string name="ma_4">Férfi 50-59</string>
+    <string name="ma_1">Férfi 20–29</string>
+    <string name="ma_2">Férfi 30–39</string>
+    <string name="ma_3">Férfi 40–49</string>
+    <string name="ma_4">Férfi 50–59</string>
     <string name="ma_5">Férfi &gt;60</string>
     <string name="dark_mode">Sötét téma</string>
     <string name="create_backup">"Adatok mentése felhőbe (internet kapcsolattal) "</string>
@@ -206,8 +206,8 @@
     <string name="restore_backup">Mentett adatok letöltése (internet kapcsolattal)</string>
     <string name="download_data">Letöltés</string>
     <string name="download_data_warning">A helyi adatok felülíródnak. Ha nem töltöttél fel ezelőtt adatot, minden eddigi el fog veszni. Biztosan folytatod?</string>
-    <string name="create_backup_progress">Feltöltés folyamatban. Kérlek, ne hagyd el ezt az oldalt...</string>
-    <string name="restore_backup_progress">Letöltés folyamatban. Kérlek, ne hagyd el ezt az oldalt...</string>
+    <string name="create_backup_progress">Feltöltés folyamatban. Kérlek, ne hagyd el ezt az oldalt…</string>
+    <string name="restore_backup_progress">Letöltés folyamatban. Kérlek, ne hagyd el ezt az oldalt…</string>
     <string name="registration_in_progress">Regisztráció folyamatban. Kérlek, várj…</string>
     <string name="registration_email_required">Email cím megadása kötelező!</string>
     <string name="registration_valid_email">Kérlek, valós email címet adj meg!</string>
@@ -249,12 +249,14 @@
     <string name="new_act_end_day_required">A befejezés napja kötelező intervallumnál!</string>
     <string name="new_act_must_add_time">Meg kell adnod a napokat, órákat és perceket is (lehet 0 is)!</string>
     <string name="new_act_must_add_time_for_a_day">Óra és perc megadása kötelező (lehet 0 is)!</string>
-    <string name="new_act_format_add_time"><![CDATA[Az óra egész szám legyen 0–23 között, a percek 0–59 között és a napok is >=0!]]></string>
-    <string name="new_act_format_add_time_for_a_day">"Az óra egész szám legyen 0-23 között és a percek is 0-59 között! "</string>
+    <string name="new_act_format_add_time">Az óra egész szám legyen 0–23 között, a percek 0–59 között és a napok is >=0!</string>
+    <string name="new_act_format_add_time_for_a_day">"Az óra egész szám legyen 0–23 között és a percek is 0–59 között! "</string>
     <string name="new_act_must_set_one_day">Legalább egy nap kiválasztása kötelező!</string>
     <string name="new_act_must_choose_reg_type">A gyakoriság megadása kötelező rendszeres tevékenységnél!</string>
-    <string name="new_act_must_choose_type">A rendszeresség megadása kötelező!</string>
+    <string name="new_act_must_choose_type">A tevékenység típus megadása kötelező!</string>
     <string name="new_act_must_add_end_date">Utolsó nap megadása kötelező!</string>
+    <string name="new_act_end_date_error">A határidő nem lehet korábban mint a mai nap!</string>
+    <string name="new_act_interval_date_error">A kezdő napnak korábban kell lennie az utolsó napnál!</string>
     <string name="add_time_no_activity">Nincs ilyen tevékenység!</string>
     <string name="detail_bar_chart_no_data">Nem érhető el adat!</string>
     <string name="detail_act_no_act">Nincs ilyen tevékenység!</string>
@@ -265,8 +267,8 @@
     <string name="edit_act_end_day_required">A befejezés napja kötelező intervallumnál!</string>
     <string name="edit_act_must_add_time">Meg kell adnod a napokat, órákat és perceket is (lehet 0 is)!</string>
     <string name="edit_act_must_add_time_for_a_day">Óra és perc megadása kötelező (lehet 0 is)!</string>
-    <string name="edit_act_format_add_time"><![CDATA[Az óra egész szám legyen 0–23 között, a percek 0–59 között és a napok is >=0!]]></string>
-    <string name="edit_act_format_add_time_for_a_day">"Az óra egész szám legyen 0-23 között és a percek is 0-59 között! "</string>
+    <string name="edit_act_format_add_time">Az óra egész szám legyen 0–23 között, a percek 0–59 között és a napok is >=0!</string>
+    <string name="edit_act_format_add_time_for_a_day">"Az óra egész szám legyen 0–23 között és a percek is 0–59 között! "</string>
     <string name="edit_act_must_set_one_day">Legalább egy nap kiválasztása kötelező!</string>
     <string name="edit_act_must_choose_reg_type">A gyakoriság megadása kötelező rendszeres tevékenységnél!</string>
     <string name="edit_act_must_choose_type">A rendszeresség megadása kötelező!</string>
@@ -278,11 +280,9 @@
     <string name="timer_activity_is_in_progress">A tevékenység folyamatban van</string>
     <string name="timer_finish">Befejez</string>
     <string name="custom">egyedi</string>
-    <string name="new_act_end_date_error">A határidő nem lehet korábban mint a mai nap!</string>
-    <string name="new_act_interval_date_error">A kezdő napnak korábban kell lennie az utolsó napnál!</string>
     <string name="edit_act_interval_date_error">A kezdő napnak korábban kell lennie az utolsó napnál!</string>
     <string name="edit_act_end_date_error">A határidő nem lehet korábban mint a mai nap!</string>
-    <string name="statistics_loading">Töltés...</string>
+    <string name="statistics_loading">Töltés…</string>
     <string name="pie_average">(átlag)</string>
     <string name="pie_sum">(összeg)</string>
     <string name="no_data_available_in_period">Nem érhető el adat!</string>

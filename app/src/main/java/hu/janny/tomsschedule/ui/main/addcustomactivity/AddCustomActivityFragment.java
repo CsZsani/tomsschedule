@@ -554,7 +554,7 @@ public class AddCustomActivityFragment extends Fragment {
             // Checks if end date is set
             String ed = binding.activityEndDate.getText().toString().trim();
             if(ed.isEmpty()) {
-                Toast.makeText(getActivity(), getString(R.string.new_act_format_add_time), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.new_act_must_add_end_date), Toast.LENGTH_LONG).show();
                 return false;
             }
             Instant d = ldEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
