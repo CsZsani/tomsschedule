@@ -1,23 +1,23 @@
 {
   "tips": [
     {
-      "id": 11,
-      "time": 1645867073148,
+      "id": 1,
+      "time": 1648771200000,
       "title": {
-        "en": "Tip 11",
-        "hu": "Javaslat 11"
+        "en": "Be well-organized",
+        "hu": "Légy rendezett!"
       },
       "text": {
-        "en": "urfhl ejrnf eliruhfne rjfneiruf erjejiru fejrneiurfh ielrf el rf leruerif ie rufbejfb eiuvbe riubekvbrjbly.aéo éauwfh iauef iekg wlfiuwgfwheuf oiuh.",
-        "hu": "magyar urfhl ejrnf eliruhfne rjfneiruf erjejiru fejrneiurfh ielrf el rf leruerif ie rufbejfb eiuvbe riubekvbrjbly.aéo éauwfh iauef iekg wlfiuwgfwheuf oiuh."
+        "en": "The best way of sparing some time is organizing our thoughts. Reforming our morning routine is a great start. If we have problems with leaving the house, then prepare the clothes, keys, bag, and shoes ahead in the evening, so you don't have to bother with them in the morning",
+        "hu": "Leginkább úgy nyerhetünk időt, ha rendezzük a gondolatainkat; ezt kezdhetjük a reggeli rutin átalakításával. Ha problémát okoz az indulás, akkor előző este készítsd ki a ruháidat, rakd össze a kulcsokat, a táskádat és a cipőt, hogy csak felkaphasd őket indulás előtt. (Rendezd át a bejáratnál az előszobát, ha szükséges!) Minden hétvégén tervezd meg a következő hetet, és nézd meg, van-e valami extra dolog, amit még be kell szerezned. Ha kevesebbet szorongsz és stresszelsz, akkor több időd juthat arra, hogy élvezd a hét eseményeit."
       },
-      "author": "author",
-      "source":"source",
+      "author": "Vicki Vrint",
+      "source": "A kevesebb több - Örömteli minimalizmus",
       "url": "",
-      "hexColor": "#F6AA9C",
+      "hexColor": "#a6f2ff",
       "tags": {
-        "en": ["Sleeping", "Tip"],
-        "hu": ["Alvás", "Tipp"]
+        "en": [],
+        "hu": []
       }
     },
     {

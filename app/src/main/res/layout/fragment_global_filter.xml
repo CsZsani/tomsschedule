@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/select_activity"
                 android:textSize="16sp"
-                android:textStyle="italic" />
+                android:textStyle="bold|italic" />
 
             <Spinner
                 android:id="@+id/gSelectActivitySpinner"
@@ -48,7 +48,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/select_time_period_chip"
                 android:textSize="16sp"
-                android:textStyle="italic" />
+                android:textStyle="bold|italic" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/gPeriodChipGroup"
@@ -122,7 +122,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/select_gender"
                 android:textSize="16sp"
-                android:textStyle="italic" />
+                android:textStyle="bold|italic" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/gGenderChipGroup"
@@ -171,7 +171,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/select_age_group"
                 android:textSize="16sp"
-                android:textStyle="italic" />
+                android:textStyle="bold|italic" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/pAgeGroupChipGroup"
