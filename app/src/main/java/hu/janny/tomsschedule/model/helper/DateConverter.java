@@ -46,11 +46,6 @@ public final class DateConverter {
      * @return string for displaying
      */
     public static String longMillisToStringForSimpleDateDialog(long millis) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(millis);
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
         LocalDate ld = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate();
         return makeDateStringForSimpleDateDialog(ld.getDayOfMonth(), ld.getMonthValue(), ld.getYear());
     }
@@ -63,7 +58,7 @@ public final class DateConverter {
      */
     public static int birthDateFromSimpleDateDialogToAgeGroupInt(String birthDateString) {
         Calendar birthDateCal = Calendar.getInstance();
-        birthDateCal.set(Integer.parseInt(birthDateString.split(" ")[2]), getMonthIntFromMonthFormat(birthDateString.split(" ")[0]),
+        birthDateCal.set(Integer.parseInt(birthDateString.split(" ")[2]), getMonthIntFromMonthFormat(birthDateString.split(" ")[0])-1,
                 Integer.parseInt(birthDateString.split(" ")[1]));
 
         Calendar today = Calendar.getInstance();
@@ -103,19 +98,6 @@ public final class DateConverter {
     public static long durationTimeConverterFromIntToLongForDays(int hours, int minutes) {
         long hourMillis = hours * 60L * 60L * 1000L;
         long minMillis = minutes * 60L * 1000L;
-        return hourMillis + minMillis;
-    }
-
-    public static long durationTimeConverterFromStringToLong(String days, String hours, String minutes) {
-        long dayMillis = Long.parseLong(days) * 24L * 60L * 60L * 1000L;
-        long hourMillis = Long.parseLong(hours) * 60L * 60L * 1000L;
-        long minMillis = Long.parseLong(minutes) * 60L * 1000L;
-        return dayMillis + hourMillis + minMillis;
-    }
-
-    public static long durationTimeConverterFromStringToLongForDays(String hours, String minutes) {
-        long hourMillis = Long.parseLong(hours) * 60L * 60L * 1000L;
-        long minMillis = Long.parseLong(minutes) * 60L * 1000L;
         return hourMillis + minMillis;
     }
 
@@ -185,7 +167,7 @@ public final class DateConverter {
     /**
      * Returns time in float minutes for pie charts.
      *
-     * @param milliseconds long milliseconds
+     * @param milliseconds float milliseconds
      * @return time in float minutes for pie chart
      */
     public static int durationConverterForPieChart(float milliseconds) {

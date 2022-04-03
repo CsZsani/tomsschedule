@@ -31,7 +31,12 @@ public final class CustomActivityHelper {
      * @return true if it is a fix activity, false otherwise
      */
     public static boolean isFixActivity(String string) {
-        return list.contains(string);
+        for (int i = 0; i< list.size(); i++) {
+            if(string.equals(list.get(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -78,8 +83,9 @@ public final class CustomActivityHelper {
             case "Reading":
             case "Olvasás":
                 return "READING";
+            default:
+                return "ERROR";
         }
-        return "ERROR";
     }
 
     /**
