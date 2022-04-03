@@ -94,7 +94,8 @@ public class CustomActivityRecyclerAdapter
         viewHolder.divider.setBackgroundColor(activityList.get(i).customActivity.getCol());
         //System.out.printf("#%06X%n", (0xFFFFFF & activityList.get(i).customActivity.getCol()));
         viewHolder.beginActivity.setBackgroundColor(darkenColor(activityList.get(i).customActivity.getCol()));
-        long timeSpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(activityList.get(i).activityTimes);
+        long todayMillis = CustomActivityHelper.todayMillis();
+        long timeSpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(activityList.get(i).activityTimes, todayMillis);
         viewHolder.todayTime.setText(DateConverter.durationConverterFromLongToStringForADay(timeSpentToday));
         viewHolder.detailsText.setText(detailsText(activityList.get(i).customActivity));
         viewHolder.beginActivity.setOnClickListener(new View.OnClickListener() {

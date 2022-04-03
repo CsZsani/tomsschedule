@@ -190,7 +190,8 @@ public class AddTimeFragment extends Fragment {
         // * -1 if we want to subtract the time amount
         if (!isAdd) {
             activityTime.setT(-activityTime.getT());
-            if (!checkingSubtraction(activityTime)) {
+            long todayMillis = CustomActivityHelper.todayMillis();
+            if (!checkingSubtraction(activityTime, todayMillis)) {
                 Toast.makeText(getContext(), getString(R.string.under_zero), Toast.LENGTH_LONG).show();
                 return;
             }
@@ -212,9 +213,10 @@ public class AddTimeFragment extends Fragment {
      * Checks whether the given amount of time will not decrease the time amount in database under 0.
      *
      * @param activityTime the time to be updated
+     * @param todayMillis epoch millis of today
      */
-    private boolean checkingSubtraction(ActivityTime activityTime) {
-        long alreadySpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(times);
+    private boolean checkingSubtraction(ActivityTime activityTime, long todayMillis) {
+        long alreadySpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(times, todayMillis);
         return alreadySpentToday + activityTime.getT() >= 0L;
     }
 

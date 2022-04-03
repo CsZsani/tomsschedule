@@ -31,8 +31,8 @@ public final class CustomActivityHelper {
      * @return true if it is a fix activity, false otherwise
      */
     public static boolean isFixActivity(String string) {
-        for (int i = 0; i< list.size(); i++) {
-            if(string.equals(list.get(i))) {
+        for (int i = 0; i < list.size(); i++) {
+            if (string.equals(list.get(i))) {
                 return true;
             }
         }
@@ -130,8 +130,7 @@ public final class CustomActivityHelper {
      * @param list the times of an activity
      * @return time spent today
      */
-    public static long getHowManyTimeWasSpentTodayOnAct(List<ActivityTime> list) {
-        long todayMillis = CustomActivityHelper.todayMillis();
+    public static long getHowManyTimeWasSpentTodayOnAct(List<ActivityTime> list, long todayMillis) {
         ActivityTime activityTime = list.stream()
                 .filter(at -> at.getD() == todayMillis)
                 .findAny()
@@ -143,9 +142,17 @@ public final class CustomActivityHelper {
         }
     }
 
+    /**
+     * Returns the sum time spent on an activity in the given interval.
+     *
+     * @param list the times of an activity
+     * @param from the beginning date of the interval in epoch millis
+     * @param to   the end date of the interval in epoch millis
+     * @return time spent in the interval
+     */
     public static long getHowManyTimeWasSpentOnActInInterval(List<ActivityTime> list, long from, long to) {
         List<ActivityTime> activityTime = list.stream()
-                .filter(at -> at.getD() > from && at.getD() < to)
+                .filter(at -> at.getD() >= from && at.getD() <= to)
                 .collect(Collectors.toList());
         long sumTime = 0L;
         for (ActivityTime at : activityTime) {
@@ -154,9 +161,16 @@ public final class CustomActivityHelper {
         return sumTime;
     }
 
+    /**
+     * Returns the sum time spent on an activity from the given date.
+     *
+     * @param list the times of an activity
+     * @param from the beginning date of the interval in epoch millis
+     * @return time spent from the given date
+     */
     public static long getHowManyTimeWasSpentFrom(List<ActivityTime> list, long from) {
         List<ActivityTime> activityTime = list.stream()
-                .filter(at -> at.getD() > from)
+                .filter(at -> at.getD() >= from)
                 .collect(Collectors.toList());
         long sumTime = 0L;
         for (ActivityTime at : activityTime) {
@@ -767,11 +781,11 @@ public final class CustomActivityHelper {
     private static void updateMonthly(CustomActivity customActivity, ActivityTime activityTime) {
         long firstDayOfThisMonth = CustomActivityHelper.firstDayOfThisMonth();
         if (customActivity.geteD() == 0L) {
-            if(activityTime.getD() >= firstDayOfThisMonth) {
+            if (activityTime.getD() >= firstDayOfThisMonth) {
                 updateMonthlyFields(customActivity, activityTime, firstDayOfThisMonth);
             }
         } else {
-            if(activityTime.getD() >= firstDayOfThisMonth && activityTime.getD() <= customActivity.geteD()) {
+            if (activityTime.getD() >= firstDayOfThisMonth && activityTime.getD() <= customActivity.geteD()) {
                 updateMonthlyFields(customActivity, activityTime, firstDayOfThisMonth);
             }
         }
@@ -780,12 +794,12 @@ public final class CustomActivityHelper {
     /**
      * Updates soFar and remaining fields of the activity when we add a time to its ActivityTimes if its regularity is "monthly".
      *
-     * @param customActivity the activity to be updated
-     * @param activityTime   the added activity time
-     * @param firstDayOfThisMonth    today in epoch millis
+     * @param customActivity      the activity to be updated
+     * @param activityTime        the added activity time
+     * @param firstDayOfThisMonth today in epoch millis
      */
     private static void updateMonthlyFields(CustomActivity customActivity, ActivityTime activityTime, long firstDayOfThisMonth) {
-        if(customActivity.getlD() < firstDayOfThisMonth) {
+        if (customActivity.getlD() < firstDayOfThisMonth) {
             customActivity.setsF(activityTime.getT());
         } else {
             customActivity.setsF(customActivity.getsF() + activityTime.getT());
@@ -802,11 +816,11 @@ public final class CustomActivityHelper {
     private static void updateWeekly(CustomActivity customActivity, ActivityTime activityTime) {
         long thisMonday = CustomActivityHelper.thisMondayMillis();
         if (customActivity.geteD() == 0L) {
-            if(activityTime.getD() >= thisMonday) {
+            if (activityTime.getD() >= thisMonday) {
                 updateWeeklyFields(customActivity, activityTime, thisMonday);
             }
         } else {
-            if(activityTime.getD() >= thisMonday && activityTime.getD() <= customActivity.geteD()) {
+            if (activityTime.getD() >= thisMonday && activityTime.getD() <= customActivity.geteD()) {
                 updateWeeklyFields(customActivity, activityTime, thisMonday);
             }
         }
@@ -817,10 +831,10 @@ public final class CustomActivityHelper {
      *
      * @param customActivity the activity to be updated
      * @param activityTime   the added activity time
-     * @param thisMonday    today in epoch millis
+     * @param thisMonday     today in epoch millis
      */
     private static void updateWeeklyFields(CustomActivity customActivity, ActivityTime activityTime, long thisMonday) {
-        if(customActivity.getlD() < thisMonday) {
+        if (customActivity.getlD() < thisMonday) {
             customActivity.setsF(activityTime.getT());
         } else {
             customActivity.setsF(customActivity.getsF() + activityTime.getT());
@@ -837,8 +851,8 @@ public final class CustomActivityHelper {
     private static void updateSumTime(CustomActivity customActivity, ActivityTime activityTime) {
         if (customActivity.geteD() == 0L) {
             //if (customActivity.getsF() < customActivity.getDur()) {
-                customActivity.setsF(customActivity.getsF() + activityTime.getT());
-                customActivity.setRe(Math.max((customActivity.getDur() - customActivity.getsF()), 0L));
+            customActivity.setsF(customActivity.getsF() + activityTime.getT());
+            customActivity.setRe(Math.max((customActivity.getDur() - customActivity.getsF()), 0L));
             //}
         } else {
             //if (customActivity.getsF() < customActivity.getDur() && activityTime.getD() <= customActivity.geteD()) {
@@ -863,8 +877,8 @@ public final class CustomActivityHelper {
                 updateCustomFields(customActivity, activityTime, todayMillis);
             }
         } else {
-            if(activityTime.getD() == todayMillis && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0 &&
-            activityTime.getD() <= customActivity.geteD()) {
+            if (activityTime.getD() == todayMillis && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) != 0 &&
+                    activityTime.getD() <= customActivity.geteD()) {
                 updateCustomFields(customActivity, activityTime, todayMillis);
             }
         }
@@ -915,7 +929,7 @@ public final class CustomActivityHelper {
                 if (activity.ishFD()) {
                     if (activity.geteD() < todayMillis && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) != 0) {
                         if (activity.getlD() == todayMillis) {
-                            activity.setsF(getHowManyTimeWasSpentTodayOnAct(times));
+                            activity.setsF(getHowManyTimeWasSpentTodayOnAct(times, todayMillis));
                             activity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(activity.getCustomWeekTime()) - activity.getsF()), 0L));
                         } else {
                             activity.setsF(0L);
@@ -927,7 +941,7 @@ public final class CustomActivityHelper {
                     }
                 } else {
                     if (activity.getlD() == todayMillis) {
-                        activity.setsF(getHowManyTimeWasSpentTodayOnAct(times));
+                        activity.setsF(getHowManyTimeWasSpentTodayOnAct(times, todayMillis));
                         activity.setRe(Math.max(activity.getDur() - activity.getsF(), 0L));
                     } else {
                         activity.setsF(0L);
@@ -995,7 +1009,7 @@ public final class CustomActivityHelper {
                     activity.setRe(0L);
                 } else {
                     if (activity.getlD() == todayMillis && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) != 0) {
-                        activity.setsF(getHowManyTimeWasSpentTodayOnAct(times));
+                        activity.setsF(getHowManyTimeWasSpentTodayOnAct(times, todayMillis));
                         activity.setRe(Math.max((CustomActivityHelper.todayIsAFixedDayAndDuration(activity.getCustomWeekTime()) - activity.getsF()), 0L));
                     } else {
                         activity.setsF(0L);
