@@ -205,7 +205,11 @@ public class PersonalFilterFragment extends Fragment {
         for (int i = 0; i < activityFilters.size(); i++) {
             list.add(activityFilters.get(i).activityId);
             colList.add(activityFilters.get(i).color);
-            names.add(activityFilters.get(i).name);
+            if(CustomActivityHelper.isFixActivity(activityFilters.get(i).name)) {
+                names.add(getString(CustomActivityHelper.getStringResourceOfFixActivity(activityFilters.get(i).name)));
+            } else {
+                names.add(activityFilters.get(i).name);
+            }
         }
         // 0 means that we will display the data of all activities
         statisticsViewModel.setpActivityNum(0);
@@ -236,7 +240,11 @@ public class PersonalFilterFragment extends Fragment {
             if (chip.isChecked()) {
                 list.add(activityFilters.get(i - 1).activityId);
                 colList.add(activityFilters.get(i - 1).color);
-                names.add(activityFilters.get(i - 1).name);
+                if(CustomActivityHelper.isFixActivity(activityFilters.get(i - 1).name)) {
+                    names.add(getString(CustomActivityHelper.getStringResourceOfFixActivity(activityFilters.get(i - 1).name)));
+                } else {
+                    names.add(activityFilters.get(i - 1).name);
+                }
             }
         }
         // Looking for errors

@@ -43,6 +43,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentPersonalStatisticsBinding;
@@ -106,12 +107,15 @@ public class PersonalStatisticsFragment extends Fragment {
                 fromMillis = viewModel.getFromTime();
                 toMillis = viewModel.getToTime();
                 System.out.println(activityNum + " " + periodType);
+                List<ActivityTime> times = activityTimes.stream().filter(a -> a.getT() != 0L).collect(Collectors.toList());
+                System.out.println(activityTimes);
+                System.out.println(times);
                 // When the times list is empty, we display that there is no data in the given period
-                if (activityTimes.isEmpty()) {
+                if (times.isEmpty()) {
                     Toast.makeText(getActivity(), getString(R.string.no_data_available_in_period), Toast.LENGTH_LONG).show();
                     binding.pleaseFilter.setVisibility(View.VISIBLE);
                 } else {
-                    showCharts(activityTimes);
+                    showCharts(times);
                 }
             }
         });
@@ -222,34 +226,33 @@ public class PersonalStatisticsFragment extends Fragment {
     private void setUpAllBarChart(List<ActivityTime> activityTimes) {
         BarChart chart = binding.allBarChart;
 
-        int MAX_X_VALUE = activityTimes.size();
-        //String SET_LABEL = "Time spent each this activity on " + DateConverter.longMillisToStringForSimpleDateDialog(activityTimes.get(0).getD());
-        String[] NAMES = new String[MAX_X_VALUE];
-        int[] EXACT_COLORS = new int[MAX_X_VALUE];
+        List<String> n = new ArrayList<>();
+        List<Integer> col = new ArrayList<>();
 
         chart.getDescription().setEnabled(false);
         chart.setDrawValueAboveBar(true);
         chart.setDrawGridBackground(false);
         chart.setDrawBarShadow(false);
 
-        //LegendEntry[] legendEntries = new LegendEntry[activityTimes.size()];
-
         ArrayList<BarEntry> values = new ArrayList<>();
 
         for (int i = 0; i < activityTimes.size(); i++) {
-            values.add(new BarEntry(i, DateConverter.durationConverterFromLongToBarChart(activityTimes.get(i).getT())));
-            NAMES[i] = names.get(activities.indexOf(activityTimes.get(i).getaId()));
-            EXACT_COLORS[i] = colors.get(activities.indexOf(activityTimes.get(i).getaId()));
-            /*LegendEntry legendEntry = new LegendEntry();
-            legendEntry.formColor = colors.get(activities.indexOf(activityTimes.get(i).getaId()));
-            legendEntry.label = names.get(activities.indexOf(activityTimes.get(i).getaId()));
-            legendEntries[i] = legendEntry;*/
+            if(activityTimes.get(i).getT() != 0L) {
+                values.add(new BarEntry(i, DateConverter.durationConverterFromLongToBarChart(activityTimes.get(i).getT())));
+                n.add(names.get(activities.indexOf(activityTimes.get(i).getaId())));
+                col.add(colors.get(activities.indexOf(activityTimes.get(i).getaId())));
+            }
+        }
+
+        String[] NAMES = new String[n.size()];
+        int[] EXACT_COLORS = new int[col.size()];
+
+        for (int i = 0; i< n.size(); i++) {
+            NAMES[i] = n.get(i);
+            EXACT_COLORS[i] = col.get(i);
         }
 
         Legend legend = chart.getLegend();
-        /*legend.setCustom(legendEntries);
-        legend.setTextSize(12f);
-        legend.setFormSize(12f);*/
         legend.setEnabled(false);
 
         XAxis xAxis = chart.getXAxis();
@@ -493,15 +496,19 @@ public class PersonalStatisticsFragment extends Fragment {
         Legend legend = chart.getLegend();
         legend.setEnabled(false);
 
+        ArrayList<Integer> col = new ArrayList<>();
         ArrayList<PieEntry> values = new ArrayList<>();
         for (int i = 0; i < activities.size(); i++) {
             final int j = i;
             long sum = activityTimes.stream().filter(a -> a.getaId() == activities.get(j)).mapToLong(ActivityTime::getT).sum();
-            values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(sum), names.get(i)));
+            if(sum != 0L) {
+                values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(sum), names.get(i)));
+                col.add(colors.get(i));
+            }
         }
 
         PieDataSet set1 = new PieDataSet(values, "");
-        set1.setColors(colors);
+        set1.setColors(col);
         set1.setValueTextColor(Color.BLACK);
         set1.setValueTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
@@ -971,15 +978,19 @@ public class PersonalStatisticsFragment extends Fragment {
         Legend legend = chart.getLegend();
         legend.setEnabled(false);
 
+        ArrayList<Integer> col = new ArrayList<>();
         ArrayList<PieEntry> values = new ArrayList<>();
         for (int i = 0; i < activities.size(); i++) {
             final int j = i;
             long sum = activityTimes.stream().filter(a -> a.getaId() == activities.get(j)).mapToLong(ActivityTime::getT).sum();
-            values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(sum), names.get(i)));
+            if(sum != 0L) {
+                values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(sum), names.get(i)));
+                col.add(colors.get(i));
+            }
         }
 
         PieDataSet set1 = new PieDataSet(values, "");
-        set1.setColors(colors);
+        set1.setColors(col);
         set1.setValueTextColor(Color.BLACK);
         set1.setValueTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
@@ -1032,16 +1043,20 @@ public class PersonalStatisticsFragment extends Fragment {
         LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
         long daysBetween = DAYS.between(dateBefore, dateAfter);
 
+        ArrayList<Integer> col = new ArrayList<>();
         ArrayList<PieEntry> values = new ArrayList<>();
         for (int i = 0; i < activities.size(); i++) {
             final int j = i;
             long sum = activityTimes.stream().filter(a -> a.getaId() == activities.get(j)).mapToLong(ActivityTime::getT).sum();
-            long average = sum / daysBetween;
-            values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(average), names.get(i)));
+            if(sum != 0L) {
+                long average = sum / daysBetween;
+                values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(average), names.get(i)));
+                col.add(colors.get(i));
+            }
         }
 
         PieDataSet set1 = new PieDataSet(values, getString(R.string.pie_description_average));
-        set1.setColors(colors);
+        set1.setColors(col);
         set1.setValueTextColor(Color.BLACK);
         set1.setValueTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 

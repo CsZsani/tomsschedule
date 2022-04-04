@@ -3,6 +3,7 @@ package hu.janny.tomsschedule.model.entities;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.firebase.database.Exclude;
@@ -37,6 +38,18 @@ public class CustomWeekTime {
     public long sun = -1L;
 
     public CustomWeekTime() {}
+
+    @Ignore
+    public CustomWeekTime(int id, long mon, long tue, long wed, long thu, long fri, long sat, long sun) {
+        this.id = id;
+        this.mon = mon;
+        this.tue = tue;
+        this.wed = wed;
+        this.thu = thu;
+        this.fri = fri;
+        this.sat = sat;
+        this.sun = sun;
+    }
 
     // Getters and setters
 

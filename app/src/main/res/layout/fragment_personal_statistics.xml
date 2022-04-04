@@ -66,7 +66,7 @@
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/allBarChart"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_height="400dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
@@ -102,7 +102,7 @@
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/moreBarChart"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="400dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
@@ -120,7 +120,7 @@
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/moreGroupChart"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_height="400dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
