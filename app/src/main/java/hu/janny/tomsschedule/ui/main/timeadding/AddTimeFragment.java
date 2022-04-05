@@ -190,8 +190,7 @@ public class AddTimeFragment extends Fragment {
         // * -1 if we want to subtract the time amount
         if (!isAdd) {
             activityTime.setT(-activityTime.getT());
-            long todayMillis = CustomActivityHelper.todayMillis();
-            if (!checkingSubtraction(activityTime, todayMillis)) {
+            if (!checkingSubtraction(activityTime, activityTime.getD())) {
                 Toast.makeText(getContext(), getString(R.string.under_zero), Toast.LENGTH_LONG).show();
                 return;
             }

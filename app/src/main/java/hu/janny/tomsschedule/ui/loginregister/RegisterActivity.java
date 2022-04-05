@@ -112,8 +112,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         }
 
         if (birthDate.isEmpty()) {
-            binding.registerBirthDate.setError(getString(R.string.registration_birth_date_required));
-            binding.registerBirthDate.requestFocus();
+            Toast.makeText(RegisterActivity.this, getString(R.string.registration_birth_date_required), Toast.LENGTH_LONG).show();
             return;
         }
 

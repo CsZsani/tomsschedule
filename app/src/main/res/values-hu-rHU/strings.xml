@@ -107,7 +107,7 @@
     <string name="details_weekly_days">Hetente ezeken a napokon</string>
     <string name="details_monthly">havi</string>
     <string name="details_deadline">Határidő</string>
-    <string name="details_interval">Intervallom (kezdete-vége)</string>
+    <string name="details_interval">Intervallum (kezdete-vége)</string>
     <string name="details_end_date">Az utolsó nap</string>
     <string name="details_sum_time">Összesen ennyi időt szeretnél vele tölteni</string>
     <string name="details_daily_time">Naponta ennyi időt szeretnél vele tölteni</string>
@@ -127,7 +127,7 @@
     <string name="fab_delete">Tevékenység törlése</string>
     <string name="sure_delete_activity">Valóban ki akarod törölni ezt a tevékenységet?</string>
     <string name="error">Hiba</string>
-    <string name="global_activity_name_immutable">tevékenység neve (globális tevékenységek neveit nem lehet szerkeszteni)</string>
+    <string name="global_activity_name_immutable">Tevékenység neve (globális tevékenységek neveit nem lehet szerkeszteni)</string>
     <string name="edit">Szerkeszt</string>
     <string name="add_time_to_activity">Időmennyiség hozzáadása</string>
     <string name="add_time_date">Állítsd be a dátumot</string>

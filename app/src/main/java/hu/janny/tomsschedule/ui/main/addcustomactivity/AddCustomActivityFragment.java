@@ -377,10 +377,10 @@ public class AddCustomActivityFragment extends Fragment {
                 if(binding.activityIsSumTime.isChecked()) {
                     customActivity.settT(1);
                     customActivity.settN(5);
-                } else if(binding.activityDaily.isChecked()) {
+                } else if(binding.activityIsTime.isChecked()) {
                     customActivity.settT(2);
                     customActivity.settN(2);
-                } else if(binding.activityWeekly.isChecked()) {
+                } else if(binding.activityIsWeeklyTime.isChecked()) {
                     customActivity.settT(3);
                     customActivity.settN(4);
                 }
@@ -389,9 +389,9 @@ public class AddCustomActivityFragment extends Fragment {
         } else {
             if(binding.activityCustomTime.isChecked()) {
                 customActivity.settN(8);
-            } else if(binding.activityDaily.isChecked()) {
+            } else if(binding.activityIsTime.isChecked()) {
                 customActivity.settN(2);
-            } else if(binding.activityWeekly.isChecked()) {
+            } else if(binding.activityIsWeeklyTime.isChecked()) {
                 customActivity.settN(4);
             }
         }

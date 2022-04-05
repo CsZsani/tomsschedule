@@ -479,27 +479,33 @@ public final class CustomActivityHelper {
                 return "-";
             case 2:
             case 8:
+                if(activity.getReg() == 0 && (activity.getsD() > todayMillis() || activity.geteD() < todayMillis())) {
+                    return "-";
+                }
+                if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
+                }
                 if (activity.getlD() != todayMillis()) {
                     return NULL_MIN;
                 }
-                if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                if(activity.ishFD() && todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) == 0) {
                     return "-";
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getsF());
             case 3:
+                if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
+                }
                 if (activity.getlD() < firstDayOfThisMonth()) {
                     return NULL_MIN;
                 }
-                if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
-                    return "-";
-                }
                 return DateConverter.durationConverterFromLongToString(activity.getsF());
             case 4:
-                if (activity.getlD() < thisMondayMillis()) {
-                    return NULL_MIN;
-                }
                 if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
                     return "-";
+                }
+                if (activity.getlD() < thisMondayMillis()) {
+                    return NULL_MIN;
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getsF());
             case 5:
@@ -509,11 +515,11 @@ public final class CustomActivityHelper {
                 return DateConverter.durationConverterFromLongToString(activity.getsF());
             case 6:
             case 7:
-                if (activity.getlD() < activity.getsD()) {
-                    return NULL_MIN;
-                }
                 if (todayMillis() > activity.geteD()) {
                     return "-";
+                }
+                if (activity.getlD() < activity.getsD()) {
+                    return NULL_MIN;
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getsF());
         }
@@ -532,27 +538,33 @@ public final class CustomActivityHelper {
                 return -1;
             case 2:
             case 8:
+                if(activity.getReg() == 0 && (activity.getsD() > todayMillis() || activity.geteD() < todayMillis())) {
+                    return -1L;
+                }
+                if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return -1L;
+                }
+                if(activity.ishFD() && todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) == 0) {
+                    return -1L;
+                }
                 if (activity.getlD() != todayMillis()) {
                     return 0L;
                 }
+                return activity.getsF();
+            case 3:
                 if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
                     return -1L;
                 }
-                return activity.getsF();
-            case 3:
                 if (activity.getlD() < firstDayOfThisMonth()) {
                     return 0L;
                 }
-                if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
-                    return -1L;
-                }
                 return activity.getsF();
             case 4:
-                if (activity.getlD() < thisMondayMillis()) {
-                    return 0L;
-                }
                 if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
                     return -1L;
+                }
+                if (activity.getlD() < thisMondayMillis()) {
+                    return 0L;
                 }
                 return activity.getsF();
             case 5:
@@ -562,7 +574,7 @@ public final class CustomActivityHelper {
                 return activity.getsF();
             case 6:
             case 7:
-                if (activity.getlD() < activity.getsD() || todayMillis() > activity.geteD()) {
+                if (todayMillis() < activity.getsD() || todayMillis() > activity.geteD()) {
                     return -1L;
                 }
                 return activity.getsF();
@@ -583,6 +595,15 @@ public final class CustomActivityHelper {
                 return "-";
             case 2:
             case 8:
+                if(activity.getReg() == 0 && (activity.getsD() > todayMillis() || activity.geteD() < todayMillis())) {
+                    return "-";
+                }
+                if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return "-";
+                }
+                if(activity.ishFD() && (todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) == 0)) {
+                    return "-";
+                }
                 if (activity.getlD() != todayMillis()) {
                     if (activity.ishFD()) {
                         return goalDurationForFixedDay(activity.getCustomWeekTime(), whatDayOfWeekToday());
@@ -590,28 +611,25 @@ public final class CustomActivityHelper {
                         return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
                     }
                 }
+                return DateConverter.durationConverterFromLongToString(activity.getRe());
+            case 3:
                 if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
                     return "-";
                 }
-                return DateConverter.durationConverterFromLongToString(activity.getRe());
-            case 3:
                 if (activity.getlD() < firstDayOfThisMonth()) {
                     return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
                 }
+                return DateConverter.durationConverterFromLongToString(activity.getRe());
+            case 4:
                 if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
                     return "-";
                 }
-                return DateConverter.durationConverterFromLongToString(activity.getRe());
-            case 4:
                 if (activity.getlD() < thisMondayMillis()) {
                     if (activity.ishFD()) {
                         return goalDurationForFixedDay(activity.getCustomWeekTime(), whatDayOfWeekToday());
                     } else {
                         return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
                     }
-                }
-                if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
-                    return "-";
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getRe());
             case 5:
@@ -620,11 +638,11 @@ public final class CustomActivityHelper {
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getRe());
             case 7:
-                if (activity.getlD() < activity.getsD()) {
-                    return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
-                }
                 if (todayMillis() > activity.geteD()) {
                     return "-";
+                }
+                if (activity.getlD() < activity.getsD()) {
+                    return DateConverter.durationConverterFromLongToStringForADay(activity.getDur());
                 }
                 return DateConverter.durationConverterFromLongToString(activity.getRe());
         }
@@ -644,6 +662,9 @@ public final class CustomActivityHelper {
                 return -1L;
             case 2:
             case 8:
+                if(activity.ishFD() && (todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) == 0)) {
+                    return -1L;
+                }
                 if (activity.getlD() != todayMillis()) {
                     if (activity.ishFD()) {
                         return goalDurationForFixedDayLong(activity.getCustomWeekTime(), whatDayOfWeekToday());

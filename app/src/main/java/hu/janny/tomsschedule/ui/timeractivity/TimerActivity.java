@@ -141,7 +141,8 @@ public class TimerActivity extends AppCompatActivity {
                     customActivity = activity;
                     // According to the type of activity we show or hide sofar and remaining texts and times
                     if (customActivity.gettN() == 1 || customActivity.gettN() == 6 ||
-                            customActivity.gettN() == 5 || (customActivity.geteD() != 0L && customActivity.geteD() < CustomActivityHelper.todayMillis())) {
+                            customActivity.gettN() == 5 || (customActivity.geteD() != 0L && customActivity.geteD() < CustomActivityHelper.todayMillis()) ||
+                            (customActivity.ishFD() && CustomActivityHelper.todayIsAFixedDayAndWhat(customActivity.getCustomWeekTime()) == 0)) {
                         binding.soFar.setVisibility(View.GONE);
                         binding.remaining.setVisibility(View.GONE);
                         binding.soFarText.setVisibility(View.GONE);
@@ -465,7 +466,12 @@ public class TimerActivity extends AppCompatActivity {
         //binding.today.setText(DateConverter.durationConverterFromLongToStringToTimer(today + currentTime));
         if(showOtherData) {
             binding.soFar.setText(DateConverter.durationConverterFromLongToStringToTimer(customActivity.getsF() + currentTime));
-            binding.remaining.setText(DateConverter.durationConverterFromLongToStringToTimer(customActivity.getRe() - currentTime));
+            long re = customActivity.getRe() - currentTime;
+            if(re <= 0L) {
+                binding.remaining.setText("00:00");
+            } else {
+                binding.remaining.setText(DateConverter.durationConverterFromLongToStringToTimer(customActivity.getRe() - currentTime));
+            }
         }
     }
 

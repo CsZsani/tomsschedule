@@ -55,9 +55,6 @@ public class EditActivityFragment extends Fragment{
     private FragmentEditActivityBinding binding;
 
     private AlertDialog colorPickerDialog;
-    final Calendar calStartDay= Calendar.getInstance();
-    final Calendar calEndDay= Calendar.getInstance();
-    final Calendar calEndDate= Calendar.getInstance();
     private LocalDate ldStartDay;
     private LocalDate ldEndDay;
     private LocalDate ldEndDate;
@@ -89,6 +86,7 @@ public class EditActivityFragment extends Fragment{
         // Initializes color picker and the priority spinner
         intiColorPicker();
         prioritySpinnerListener();
+        initCalendars();
 
         // Gets activity id argument from the calling view
         // If there is no argument, pop back stack.
@@ -132,7 +130,6 @@ public class EditActivityFragment extends Fragment{
         });
 
         // Initializes the UI, the on click listeners, and defines changes which occur when an item is selected
-        initCalendars();
         initNotifyTypeRadioButtonGroup();
         initRegularityTypeRadioButtonGroup();
         initHasFixedDaysSwitch();
@@ -183,7 +180,7 @@ public class EditActivityFragment extends Fragment{
             Toast.makeText(getContext(), getString(R.string.edit_act_name_required), Toast.LENGTH_LONG).show();
             return;
         }
-        if(!CustomActivityHelper.isFixActivity(name)) {
+        if(!CustomActivityHelper.isFixActivity(customActivity.getName())) {
             customActivity.setName(name);
         }
         // Sets colour, note, priority of activity
@@ -384,10 +381,10 @@ public class EditActivityFragment extends Fragment{
                 if(binding.activityIsSumTime.isChecked()) {
                     customActivity.settT(1);
                     customActivity.settN(5);
-                } else if(binding.activityDaily.isChecked()) {
+                } else if(binding.activityIsTime.isChecked()) {
                     customActivity.settT(2);
                     customActivity.settN(2);
-                } else if(binding.activityWeekly.isChecked()) {
+                } else if(binding.activityIsWeeklyTime.isChecked()) {
                     customActivity.settT(3);
                     customActivity.settN(4);
                 }
@@ -396,9 +393,9 @@ public class EditActivityFragment extends Fragment{
         } else {
             if(binding.activityCustomTime.isChecked()) {
                 customActivity.settN(8);
-            } else if(binding.activityDaily.isChecked()) {
+            } else if(binding.activityIsTime.isChecked()) {
                 customActivity.settN(2);
-            } else if(binding.activityWeekly.isChecked()) {
+            } else if(binding.activityIsWeeklyTime.isChecked()) {
                 customActivity.settN(4);
             }
         }
@@ -933,8 +930,6 @@ public class EditActivityFragment extends Fragment{
         DatePickerDialog.OnDateSetListener dateStartday = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calStartDay.clear();
-                calStartDay.set(year, month, day);
                 month++;
                 ldStartDay = LocalDate.of(year, month, day);
                 updateLabelStartDay();
@@ -944,8 +939,6 @@ public class EditActivityFragment extends Fragment{
         DatePickerDialog.OnDateSetListener dateEndDay = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calEndDay.clear();
-                calEndDay.set(year, month, day);
                 month++;
                 ldEndDay = LocalDate.of(year, month, day);
                 updateLabelEndDay();
@@ -955,8 +948,6 @@ public class EditActivityFragment extends Fragment{
         DatePickerDialog.OnDateSetListener dateEndDate = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
-                calEndDate.clear();
-                calEndDate.set(year, month, day);
                 month++;
                 ldEndDate = LocalDate.of(year, month, day);
                 updateLabelEndDate();
@@ -991,12 +982,6 @@ public class EditActivityFragment extends Fragment{
      * Initializes start day picker dialog for today date and shows on the UI as well.
      */
     private void initTodayDate() {
-        Calendar helper = Calendar.getInstance();
-        int year = helper.get(Calendar.YEAR);
-        int month = helper.get(Calendar.MONTH);
-        int day = helper.get(Calendar.DATE);
-        calStartDay.clear();
-        calStartDay.set(year, month, day);
         ldStartDay = LocalDate.now();
         updateLabelStartDay();
     }
@@ -1256,9 +1241,8 @@ public class EditActivityFragment extends Fragment{
      * Initializes the start day calendar and UI based on the activity's current fields what come from the database.
      */
     private void setStartDayCalendar() {
-        calStartDay.setTimeInMillis(customActivity.getsD());
         if(customActivity.getsD() != 0L) {
-            ldStartDay = Instant.ofEpochMilli(customActivity.geteD()).atZone(ZoneId.systemDefault()).toLocalDate();
+            ldStartDay = Instant.ofEpochMilli(customActivity.getsD()).atZone(ZoneId.systemDefault()).toLocalDate();
             updateLabelStartDay();
         }
     }
@@ -1267,7 +1251,6 @@ public class EditActivityFragment extends Fragment{
      * Initializes the end day calendar and UI based on the activity's current fields what come from the database.
      */
     private void setEndDayCalendar() {
-        calEndDay.setTimeInMillis(customActivity.geteD());
         if(customActivity.getsD() == 0L && customActivity.geteD() != 0L) {
             ldEndDate = Instant.ofEpochMilli(customActivity.geteD()).atZone(ZoneId.systemDefault()).toLocalDate();
             updateLabelEndDate();
