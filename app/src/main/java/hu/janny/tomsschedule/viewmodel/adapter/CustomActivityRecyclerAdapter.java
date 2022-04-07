@@ -161,6 +161,9 @@ public class CustomActivityRecyclerAdapter
         } else if (activity.ishFD() && activity.gettT() == 3 && soFar < activity.getDur()
                 && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) == 0) {
             return true;
+        } else if (activity.ishFD() && activity.gettN() == 4 && soFar < activity.getDur()
+                && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) == 0) {
+            return true;
         } else if (!activity.ishFD() && activity.gettT() == 3 && soFar < activity.getDur()) {
             return true;
         } else if (activity.gettT() == 4 && soFar < activity.getDur()) {
@@ -189,6 +192,9 @@ public class CustomActivityRecyclerAdapter
                     && soFar < CustomActivityHelper.todayIsAFixedDayAndDuration(activity.getCustomWeekTime())) {
                 return true;
             }
+            if(activity.gettN() == 4 && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) != 0 && soFar < activity.getDur()) {
+                return true;
+            }
         }
         return false;
     }
@@ -203,7 +209,7 @@ public class CustomActivityRecyclerAdapter
      */
     private boolean notificationShown(long soFar, long remaining, CustomActivity activity) {
         if (activity.gettT() == 0 || activity.gettN() == 6 || activity.gettN() == 1 || soFar == -1L ||
-                (activity.ishFD() && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) == 0) ||
+                (activity.ishFD() && activity.gettN() == 4 && CustomActivityHelper.todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) == 0 && soFar > activity.getDur()) ||
                 (activity.gettT() == 1 && activity.geteD() == 0L && soFar >= activity.getDur())) {
             return false;
         }

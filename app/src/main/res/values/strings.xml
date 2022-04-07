@@ -324,6 +324,10 @@
     <string name="create_backup_fail">Creating backup failed. Please try again with stable Internet connection!</string>
     <string name="restore_backup_fail">Restoring backup failed. Please try again with stable Internet connection!</string>
 
+    <!-- Profil -->
+    <string name="profil_edit_name_required">Name is required!</string>
+    <string name="profil_edit_birth_date_required">Birth date is required!</string>
+
     <!-- Timer assets -->
     <string name="blue">Blue</string>
     <string name="green">Green</string>

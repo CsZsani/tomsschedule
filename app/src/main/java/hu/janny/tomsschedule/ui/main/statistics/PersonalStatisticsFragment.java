@@ -106,10 +106,10 @@ public class PersonalStatisticsFragment extends Fragment {
                 names = viewModel.getNames();
                 fromMillis = viewModel.getFromTime();
                 toMillis = viewModel.getToTime();
-                System.out.println(activityNum + " " + periodType);
+                //System.out.println(activityNum + " " + periodType);
                 List<ActivityTime> times = activityTimes.stream().filter(a -> a.getT() != 0L).collect(Collectors.toList());
-                System.out.println(activityTimes);
-                System.out.println(times);
+                //System.out.println(activityTimes);
+                //System.out.println(times);
                 // When the times list is empty, we display that there is no data in the given period
                 if (times.isEmpty()) {
                     Toast.makeText(getActivity(), getString(R.string.no_data_available_in_period), Toast.LENGTH_LONG).show();
@@ -192,8 +192,10 @@ public class PersonalStatisticsFragment extends Fragment {
             // For an interval - stacked bar chart, grouped bar chart and pie chart
             setUpMoreStackedBarChartLonger(activityTimes, fromMillis, toMillis);
             binding.moreStackedChart.setVisibility(View.VISIBLE);
-            setUpMoreGroupBarChartLonger(activityTimes, fromMillis, toMillis);
-            binding.moreGroupChart.setVisibility(View.VISIBLE);
+            if(activityNum <= 10) {
+                setUpMoreGroupBarChartLonger(activityTimes, fromMillis, toMillis);
+                binding.moreGroupChart.setVisibility(View.VISIBLE);
+            }
             setUpMorePieChartForLonger(activityTimes);
             setUpMoreAveragePieChartForLonger(activityTimes, fromMillis, toMillis);
             binding.moreAveragePieChart.setVisibility(View.VISIBLE);
@@ -450,7 +452,7 @@ public class PersonalStatisticsFragment extends Fragment {
 
         BarDataSet set1 = new BarDataSet(values, "");
         set1.setColors(colors);
-        set1.setValueFormatter(new HourValueFormatter());
+        //set1.setValueFormatter(new HourValueFormatter());
         /*String[] labels = new String[names.size()];
         for (int k = 0; k < names.size(); k++) {
             labels[k] = names.get(k);
@@ -554,7 +556,7 @@ public class PersonalStatisticsFragment extends Fragment {
 
         LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
-        long daysBetween = DAYS.between(dateBefore, dateAfter);
+        long daysBetween = DAYS.between(dateBefore, dateAfter) + 1;
 
         int MAX_X_VALUE = (int) daysBetween;
         String[] DAYS = new String[MAX_X_VALUE];
@@ -716,8 +718,8 @@ public class PersonalStatisticsFragment extends Fragment {
     private void setUpMorePieChartForSingleDays(List<ActivityTime> activityTimes) {
         PieChart chart = binding.morePieChart;
 
-        int MAX_X_VALUE = activityTimes.size();
-        int[] EXACT_COLORS = new int[MAX_X_VALUE];
+        //int MAX_X_VALUE = activityTimes.size();
+
 
         chart.getDescription().setEnabled(true);
         chart.getDescription().setText(getString(R.string.pie_description_one_day));
@@ -725,10 +727,28 @@ public class PersonalStatisticsFragment extends Fragment {
         Legend legend = chart.getLegend();
         legend.setEnabled(false);
 
+        ArrayList<Integer> col = new ArrayList<>();
+        ArrayList<PieEntry> values = new ArrayList<>();
+        for (int i = 0; i < activities.size(); i++) {
+            final int j = i;
+            long sum = activityTimes.stream().filter(a -> a.getaId() == activities.get(j)).mapToLong(ActivityTime::getT).sum();
+            if(sum != 0L) {
+                values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(sum), names.get(i)));
+                col.add(colors.get(i));
+            }
+        }
+        /*ArrayList<Integer> col = new ArrayList<>();
         ArrayList<PieEntry> values = new ArrayList<>();
         for (int i = 0; i < activityTimes.size(); i++) {
-            values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(activityTimes.get(i).getT()), names.get(activities.indexOf(activityTimes.get(i).getaId()))));
-            EXACT_COLORS[i] = colors.get(activities.indexOf(activityTimes.get(i).getaId()));
+            if(activityTimes.get(i).getT() != 0L) {
+                values.add(new PieEntry(DateConverter.durationConverterFromLongToChartInt(activityTimes.get(i).getT()), names.get(activities.indexOf(activityTimes.get(i).getaId()))));
+                col.add(colors.get(activities.indexOf(activityTimes.get(i).getaId())));
+            }
+        }*/
+
+        int[] EXACT_COLORS = new int[col.size()];
+        for (int i = 0; i<col.size(); i++) {
+            EXACT_COLORS[i] = col.get(i);
         }
 
         PieDataSet set1 = new PieDataSet(values, "");
@@ -766,7 +786,7 @@ public class PersonalStatisticsFragment extends Fragment {
 
         LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
-        long daysBetween = DAYS.between(dateBefore, dateAfter);
+        long daysBetween = DAYS.between(dateBefore, dateAfter) + 1;
 
         int MAX_X_VALUE = (int) daysBetween;
         String[] NAMES = new String[MAX_X_VALUE];
@@ -877,7 +897,7 @@ public class PersonalStatisticsFragment extends Fragment {
 
         LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
-        long daysBetween = DAYS.between(dateBefore, dateAfter);
+        long daysBetween = DAYS.between(dateBefore, dateAfter) + 1;
 
         int MAX_X_VALUE = (int) daysBetween;
         String[] DAYS = new String[MAX_X_VALUE];
@@ -1041,7 +1061,7 @@ public class PersonalStatisticsFragment extends Fragment {
 
         LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
-        long daysBetween = DAYS.between(dateBefore, dateAfter);
+        long daysBetween = DAYS.between(dateBefore, dateAfter) + 1;
 
         ArrayList<Integer> col = new ArrayList<>();
         ArrayList<PieEntry> values = new ArrayList<>();

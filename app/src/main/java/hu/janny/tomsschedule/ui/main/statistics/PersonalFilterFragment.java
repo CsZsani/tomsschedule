@@ -124,7 +124,11 @@ public class PersonalFilterFragment extends Fragment {
         if (getContext() != null) {
             Chip chip = (Chip) getLayoutInflater().inflate(R.layout.chip_layout, binding.pActivityChipGroup, false);
             chip.setId(ViewCompat.generateViewId());
-            chip.setText(af.name);
+            if(CustomActivityHelper.isFixActivity(af.name)) {
+                chip.setText(getString(CustomActivityHelper.getStringResourceOfFixActivity(af.name)));
+            } else {
+                chip.setText(af.name);
+            }
             chip.setChipBackgroundColor(ColorStateList.valueOf(af.color));
             chip.setCheckable(true);
             chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

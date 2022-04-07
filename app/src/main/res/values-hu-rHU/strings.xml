@@ -297,7 +297,7 @@
     <string name="pie_description_one_day">A napon a tevékenységgel töltött idő</string>
     <string name="filter_from_to_error">Az intervallum kezdetének hamarabb kell lennie mint a végének!</string>
     <string name="must_choose_one_error">Válaszd az Összes-et vagy legalább egy tevékenységet!</string>
-    <string name="one_act_longer_period_error">Egy tevékenység esetén válassz hosszab időtartamot vagy egyedi napot!</string>
+    <string name="one_act_longer_period_error">Egy tevékenység esetén válassz hosszabb időtartamot vagy egyedi napot!</string>
     <string name="global_statistics_average_daily">Naponkénti átlag</string>
     <string name="global_statistics_average_gender_and_age_group">Átlag nemenként és korosztályonként az adott napra</string>
     <string name="pie_description_global_average">Ebben az időszakban a tevékenységgel töltött átlagos idő</string>

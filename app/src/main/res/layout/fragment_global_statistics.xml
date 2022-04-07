@@ -85,7 +85,7 @@
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/gDayBarChart"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_height="450dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"

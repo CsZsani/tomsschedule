@@ -665,6 +665,9 @@ public final class CustomActivityHelper {
                 if(activity.ishFD() && (todayIsAFixedDayAndWhat(activity.getCustomWeekTime()) == 0)) {
                     return -1L;
                 }
+                if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
+                    return -1L;
+                }
                 if (activity.getlD() != todayMillis()) {
                     if (activity.ishFD()) {
                         return goalDurationForFixedDayLong(activity.getCustomWeekTime(), whatDayOfWeekToday());
@@ -672,28 +675,25 @@ public final class CustomActivityHelper {
                         return activity.getDur();
                     }
                 }
+                return activity.getRe();
+            case 3:
                 if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
                     return -1L;
                 }
-                return activity.getRe();
-            case 3:
                 if (activity.getlD() < firstDayOfThisMonth()) {
                     return activity.getDur();
                 }
+                return activity.getRe();
+            case 4:
                 if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
                     return -1L;
                 }
-                return activity.getRe();
-            case 4:
                 if (activity.getlD() < thisMondayMillis()) {
                     if (activity.ishFD()) {
                         return goalDurationForFixedDayLong(activity.getCustomWeekTime(), whatDayOfWeekToday());
                     } else {
                         return activity.getDur();
                     }
-                }
-                if (activity.getsD() == 0L && activity.geteD() != 0L && todayMillis() > activity.geteD()) {
-                    return -1L;
                 }
                 return activity.getRe();
             case 5:
@@ -702,11 +702,11 @@ public final class CustomActivityHelper {
                 }
                 return activity.getRe();
             case 7:
-                if (activity.getlD() < activity.getsD()) {
-                    return activity.getDur();
-                }
                 if (todayMillis() > activity.geteD()) {
                     return -1L;
+                }
+                if (activity.getlD() < activity.getsD()) {
+                    return activity.getDur();
                 }
                 return activity.getRe();
         }

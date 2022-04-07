@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -132,11 +133,18 @@ public class EditAccountFragment extends Fragment implements AdapterView.OnItemS
 
         if (!name.isEmpty()) {
             editUser.setName(name);
+        } else {
+            binding.editUserName.setError(getString(R.string.profil_edit_name_required));
+            binding.editUserName.requestFocus();
+            return;
         }
 
         if (!birthDate.isEmpty()) {
             editUser.setBirthDate(birthDate);
             editUser.setAgeGroup(DateConverter.birthDateFromSimpleDateDialogToAgeGroupInt(birthDate));
+        } else {
+            Toast.makeText(getContext(), R.string.profil_edit_birth_date_required, Toast.LENGTH_LONG).show();
+            return;
         }
 
         editUser.setGender(gender);
