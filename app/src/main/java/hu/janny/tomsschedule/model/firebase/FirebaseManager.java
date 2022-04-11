@@ -1,8 +1,5 @@
 package hu.janny.tomsschedule.model.firebase;
 
-import android.content.Context;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,7 +16,6 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
-import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.model.entities.ActivityTime;
 import hu.janny.tomsschedule.model.entities.ActivityTimeFirebase;
 import hu.janny.tomsschedule.model.entities.CustomActivity;
@@ -177,18 +173,13 @@ public final class FirebaseManager {
      * Updates the given user in Firebase Realtime database on the path "users/{userId}".
      * It replaces the whole user.
      *
-     * @param user    user to be updated
-     * @param context context where we want to show success message
+     * @param user     user to be updated
      */
-    public static void updateUser(User user, Context context) {
+    public static void updateUser(User user) {
         database.getReference().child("users").child(user.getUid()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(context, R.string.edit_was_successful, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, R.string.edit_was_fail, Toast.LENGTH_LONG).show();
-                }
+                task.isSuccessful();
             }
         });
     }

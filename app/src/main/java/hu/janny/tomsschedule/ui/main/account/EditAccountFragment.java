@@ -24,6 +24,7 @@ import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentEditAccountBinding;
 import hu.janny.tomsschedule.model.helper.DateConverter;
 import hu.janny.tomsschedule.model.entities.User;
+import hu.janny.tomsschedule.model.helper.SuccessCallback;
 import hu.janny.tomsschedule.viewmodel.LoginRegisterViewModel;
 
 /**
@@ -160,7 +161,7 @@ public class EditAccountFragment extends Fragment implements AdapterView.OnItemS
      */
     private void updateUser(User user) {
         viewModel.updateUser(user);
-        viewModel.updateUserInFirebase(user, getActivity());
+        viewModel.updateUserInFirebase(user);
     }
 
     /**

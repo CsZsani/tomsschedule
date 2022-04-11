@@ -1,7 +1,6 @@
 package hu.janny.tomsschedule.viewmodel;
 
 import android.app.Application;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -11,6 +10,7 @@ import java.util.List;
 
 import hu.janny.tomsschedule.model.entities.User;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
+import hu.janny.tomsschedule.model.helper.SuccessCallback;
 import hu.janny.tomsschedule.model.repository.UserRepository;
 
 public class LoginRegisterViewModel extends AndroidViewModel {
@@ -50,11 +50,10 @@ public class LoginRegisterViewModel extends AndroidViewModel {
     /**
      * Updates the given user in Firebase database
      *
-     * @param user    user to be updated
-     * @param context context where we want to show successful message
+     * @param user     user to be updated
      */
-    public void updateUserInFirebase(User user, Context context) {
-        FirebaseManager.updateUser(user, context);
+    public void updateUserInFirebase(User user) {
+        FirebaseManager.updateUser(user);
     }
 
     /**
