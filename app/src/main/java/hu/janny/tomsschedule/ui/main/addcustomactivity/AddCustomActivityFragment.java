@@ -225,8 +225,8 @@ public class AddCustomActivityFragment extends Fragment {
             Toast.makeText(getActivity(), getString(R.string.new_act_end_day_required), Toast.LENGTH_LONG).show();
             return false;
         }
-        Instant sd = ldStartDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
-        Instant ed = ldEndDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant sd = ldStartDay.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
+        Instant ed = ldEndDay.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
         if(sd.toEpochMilli() > ed.toEpochMilli()) {
             Toast.makeText(getActivity(), getString(R.string.new_act_interval_date_error), Toast.LENGTH_LONG).show();
             return false;
@@ -265,6 +265,7 @@ public class AddCustomActivityFragment extends Fragment {
         String days = binding.activitySumTimePicker.days.getText().toString().trim();
         String hours = binding.activitySumTimePicker.hours.getText().toString().trim();
         String minutes = binding.activitySumTimePicker.minutes.getText().toString().trim();
+        System.out.println(days + " h:" + hours + " m:" + minutes + "end");
         if(days.isEmpty() || hours.isEmpty() || minutes.isEmpty()) {
             Toast.makeText(getActivity(), getString(R.string.new_act_must_add_time), Toast.LENGTH_LONG).show();
             return true;
@@ -285,6 +286,10 @@ public class AddCustomActivityFragment extends Fragment {
             return true;
         }
         long duration = DateConverter.durationTimeConverterFromIntToLong(day, hour, minute);
+        if(duration == 0L) {
+            Toast.makeText(getActivity(), getString(R.string.new_act_must_add_time), Toast.LENGTH_LONG).show();
+            return true;
+        }
         customActivity.setDur(duration);
         customActivity.setRe(duration);
         return false;
@@ -384,7 +389,7 @@ public class AddCustomActivityFragment extends Fragment {
                     customActivity.settT(3);
                     customActivity.settN(4);
                 }
-                if(!setTimeFromSumTime()) {return true;}
+                return !setTimeFromSumTime();
             }
         } else {
             if(binding.activityCustomTime.isChecked()) {
@@ -446,6 +451,8 @@ public class AddCustomActivityFragment extends Fragment {
                 if(today.equals(DayOfWeek.MONDAY)) {
                     customActivity.setRe(i);
                 }
+            } else {
+                return false;
             }
         }
         if(binding.tuesday.isChecked()) {
@@ -455,6 +462,8 @@ public class AddCustomActivityFragment extends Fragment {
                 if(today.equals(DayOfWeek.TUESDAY)) {
                     customActivity.setRe(i);
                 }
+            } else {
+                return false;
             }
         }
         if(binding.wednesday.isChecked()) {
@@ -464,6 +473,8 @@ public class AddCustomActivityFragment extends Fragment {
                 if(today.equals(DayOfWeek.WEDNESDAY)) {
                     customActivity.setRe(i);
                 }
+            } else {
+                return false;
             }
         }
         if(binding.thursday.isChecked()) {
@@ -473,6 +484,8 @@ public class AddCustomActivityFragment extends Fragment {
                 if(today.equals(DayOfWeek.THURSDAY)) {
                     customActivity.setRe(i);
                 }
+            } else {
+                return false;
             }
         }
         if(binding.friday.isChecked()) {
@@ -482,6 +495,8 @@ public class AddCustomActivityFragment extends Fragment {
                 if(today.equals(DayOfWeek.FRIDAY)) {
                     customActivity.setRe(i);
                 }
+            } else {
+                return false;
             }
         }
         if(binding.saturday.isChecked()) {
@@ -491,6 +506,8 @@ public class AddCustomActivityFragment extends Fragment {
                 if(today.equals(DayOfWeek.SATURDAY)) {
                     customActivity.setRe(i);
                 }
+            } else {
+                return false;
             }
         }
         if(binding.sunday.isChecked()) {
@@ -500,6 +517,8 @@ public class AddCustomActivityFragment extends Fragment {
                 if(today.equals(DayOfWeek.SUNDAY)) {
                     customActivity.setRe(i);
                 }
+            } else {
+                return false;
             }
         }
         return true;
@@ -530,7 +549,12 @@ public class AddCustomActivityFragment extends Fragment {
             Toast.makeText(getActivity(), getString(R.string.new_act_format_add_time_for_a_day), Toast.LENGTH_LONG).show();
             return -1L;
         }
-        return DateConverter.durationTimeConverterFromIntToLongForDays(hour, minute);
+        long duration = DateConverter.durationTimeConverterFromIntToLongForDays(hour, minute);
+        if(duration == 0L) {
+            Toast.makeText(getActivity(), getString(R.string.new_act_must_add_time_for_a_day), Toast.LENGTH_LONG).show();
+            return -1L;
+        }
+        return duration;
     }
 
     /**
@@ -557,7 +581,7 @@ public class AddCustomActivityFragment extends Fragment {
                 Toast.makeText(getActivity(), getString(R.string.new_act_must_add_end_date), Toast.LENGTH_LONG).show();
                 return false;
             }
-            Instant d = ldEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            Instant d = ldEndDate.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
 //            customActivity.seteD(calEndDate.getTimeInMillis());
             if(d.toEpochMilli() < CustomActivityHelper.todayMillis()) {
                 Toast.makeText(getActivity(), getString(R.string.new_act_end_date_error), Toast.LENGTH_LONG).show();

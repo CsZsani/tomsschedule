@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentSettingsBinding;
+import hu.janny.tomsschedule.model.helper.InternetConnectionHelper;
 import hu.janny.tomsschedule.model.helper.SuccessCallback;
 import hu.janny.tomsschedule.viewmodel.BackUpViewModel;
 
@@ -60,9 +61,27 @@ public class SettingsFragment extends Fragment {
         // Gets the current user's id
         viewModel.getUser().observe(getViewLifecycleOwner(), user -> userId = user.getUid());
 
-        binding.createBackupButton.setOnClickListener(view1 -> saveDialog.show());
+        binding.createBackupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!InternetConnectionHelper.hasInternetConnection()) {
+                    Toast.makeText(getContext(), R.string.connect_to_stable_internet, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                saveDialog.show();
+            }
+        });
 
-        binding.restoreBackupButton.setOnClickListener(view12 -> restoreDialog.show());
+        binding.restoreBackupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!InternetConnectionHelper.hasInternetConnection()) {
+                    Toast.makeText(getContext(), R.string.connect_to_stable_internet, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                restoreDialog.show();
+            }
+        });
 
     }
 

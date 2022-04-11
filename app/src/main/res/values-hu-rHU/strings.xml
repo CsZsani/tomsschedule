@@ -247,8 +247,8 @@
     <string name="new_activity_name_is_required">Név megadása kötelező!</string>
     <string name="new_act_start_day_required">A kezdés napja kötelező intervallumnál!</string>
     <string name="new_act_end_day_required">A befejezés napja kötelező intervallumnál!</string>
-    <string name="new_act_must_add_time">Meg kell adnod a napokat, órákat és perceket is (lehet 0 is)!</string>
-    <string name="new_act_must_add_time_for_a_day">Óra és perc megadása kötelező (lehet 0 is)!</string>
+    <string name="new_act_must_add_time">Meg kell adnod a napokat, órákat és perceket is!</string>
+    <string name="new_act_must_add_time_for_a_day">Óra és perc megadása kötelező!</string>
     <string name="new_act_format_add_time">Az óra egész szám legyen 0–23 között, a percek 0–59 között és a napok is >=0!</string>
     <string name="new_act_format_add_time_for_a_day">"Az óra egész szám legyen 0–23 között és a percek is 0–59 között! "</string>
     <string name="new_act_must_set_one_day">Legalább egy nap kiválasztása kötelező!</string>
@@ -265,8 +265,8 @@
     <string name="edit_act_name_required">Név megadása kötelező!</string>
     <string name="edit_act_start_day_required">A kezdés napja kötelező intervallumnál!</string>
     <string name="edit_act_end_day_required">A befejezés napja kötelező intervallumnál!</string>
-    <string name="edit_act_must_add_time">Meg kell adnod a napokat, órákat és perceket is (lehet 0 is)!</string>
-    <string name="edit_act_must_add_time_for_a_day">Óra és perc megadása kötelező (lehet 0 is)!</string>
+    <string name="edit_act_must_add_time">Meg kell adnod a napokat, órákat és perceket is!</string>
+    <string name="edit_act_must_add_time_for_a_day">Óra és perc megadása kötelező!</string>
     <string name="edit_act_format_add_time">Az óra egész szám legyen 0–23 között, a percek 0–59 között és a napok is >=0!</string>
     <string name="edit_act_format_add_time_for_a_day">"Az óra egész szám legyen 0–23 között és a percek is 0–59 között! "</string>
     <string name="edit_act_must_set_one_day">Legalább egy nap kiválasztása kötelező!</string>
@@ -305,4 +305,7 @@
     <string name="restore_backup_done">Adatok letöltése megtörtént!</string>
     <string name="create_backup_fail">Adatok feltöltése sikertelen. Kérlek, próbáld újra stabil internetkapcsolattal!</string>
     <string name="restore_backup_fail">Adatok letöltése sikertelen. Kérlek, próbáld újra stabil internetkapcsolattal!</string>
+    <string name="profil_edit_name_required">Név megadása kötelező!</string>
+    <string name="profil_edit_birth_date_required">Születési dátum megadása kötelező!</string>
+    <string name="above_a_day">Az időmennyiség 24 óra fölé emelkedne! Adj meg kevesebbet!</string>
 </resources>

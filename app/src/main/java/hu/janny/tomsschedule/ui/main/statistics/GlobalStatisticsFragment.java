@@ -47,6 +47,7 @@ import hu.janny.tomsschedule.R;
 import hu.janny.tomsschedule.databinding.FragmentGlobalStatisticsBinding;
 import hu.janny.tomsschedule.model.entities.ActivityTimeFirebase;
 import hu.janny.tomsschedule.model.helper.DateConverter;
+import hu.janny.tomsschedule.model.helper.InternetConnectionHelper;
 import hu.janny.tomsschedule.viewmodel.GlobalStatisticsViewModel;
 
 /**
@@ -303,9 +304,9 @@ public class GlobalStatisticsFragment extends Fragment {
     private void setUpLongerBarChart(List<ActivityTimeFirebase> list, long from, long to, int gender, int ageGroup) {
         BarChart chart = binding.gLongerBarChart;
 
-        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
-        long daysBetween = DAYS.between(dateBefore, dateAfter);
+        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
+        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
+        long daysBetween = DAYS.between(dateBefore, dateAfter) + 1;
 
         int MAX_X_VALUE = (int) daysBetween;
         String[] NAMES = new String[MAX_X_VALUE];
@@ -321,14 +322,14 @@ public class GlobalStatisticsFragment extends Fragment {
         ArrayList<BarEntry> values = new ArrayList<>();
         int i = 0;
 
-        LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
         long millis = to;
-        while (millis != from) {
+        while (millis >= from) {
             values.add(new BarEntry(i, containsDate(list, millis, gender, ageGroup)));
             NAMES[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
             i++;
             localDate = localDate.minusDays(1);
-            millis = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            millis = localDate.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant().toEpochMilli();
         }
 
         XAxis xAxis = chart.getXAxis();
@@ -336,7 +337,7 @@ public class GlobalStatisticsFragment extends Fragment {
         xAxis.setCenterAxisLabels(false);
         xAxis.setGranularity(1);
         xAxis.setGranularityEnabled(true);
-        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
         xAxis.setTextSize(12f);
         xAxis.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
@@ -537,7 +538,11 @@ public class GlobalStatisticsFragment extends Fragment {
         binding.gFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Navigation.findNavController(fragView).navigate(R.id.action_nav_statistics_to_globalFilterFragment);
+                if (!InternetConnectionHelper.hasInternetConnection()) {
+                    Toast.makeText(getContext(), R.string.connect_to_stable_internet, Toast.LENGTH_SHORT).show();
+                } else {
+                    Navigation.findNavController(fragView).navigate(R.id.action_nav_statistics_to_globalFilterFragment);
+                }
             }
         });
     }

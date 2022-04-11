@@ -30,6 +30,7 @@ import java.util.Locale;
 
 import hu.janny.tomsschedule.model.entities.Tip;
 import hu.janny.tomsschedule.model.firebase.FirebaseManager;
+import hu.janny.tomsschedule.model.helper.InternetConnectionHelper;
 
 /**
  * The repository of tips. It gets them from assets\base_tips.json and from Firebase Storage (tips\tips.json).
@@ -97,34 +98,38 @@ public class TipsRepository {
      * @param storageReference the reference to load tips from Firebase Storage
      */
     private void loadFromFirebaseReference(StorageReference storageReference) {
-        try {
-            File localFile = File.createTempFile("tips", ".json");
-
-            storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    // Local temp file has been created
-                    String json = readFromTempFile(localFile);
-                    if (json != null) {
-                        try {
-                            JSONObject obj = new JSONObject(json);
-                            loadTips(obj, cache);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    setAllTips();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                    setAllTips();
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!InternetConnectionHelper.hasInternetConnection()) {
             setAllTips();
+        } else {
+            try {
+                File localFile = File.createTempFile("tips", ".json");
+
+                storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                        // Local temp file has been created
+                        String json = readFromTempFile(localFile);
+                        if (json != null) {
+                            try {
+                                JSONObject obj = new JSONObject(json);
+                                loadTips(obj, cache);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        setAllTips();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle any errors
+                        setAllTips();
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+                setAllTips();
+            }
         }
     }
 

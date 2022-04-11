@@ -41,6 +41,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -398,15 +399,14 @@ public class PersonalStatisticsFragment extends Fragment {
     private void setUpAllBarChartLonger(List<ActivityTime> activityTimes, long from, long to) {
         BarChart chart = binding.allStackedBarChart;
 
-        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
-        long daysBetween = DAYS.between(dateBefore, dateAfter);
+        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
+        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
+        long daysBetween = DAYS.between(dateBefore, dateAfter) + 1;
 
         int MAX_X_VALUE = (int) daysBetween;
         String[] NAMES = new String[MAX_X_VALUE];
 
         chart.getDescription().setEnabled(false);
-        chart.setDrawValueAboveBar(true);
         chart.setDrawGridBackground(false);
         chart.setDrawBarShadow(false);
 
@@ -416,9 +416,9 @@ public class PersonalStatisticsFragment extends Fragment {
         ArrayList<BarEntry> values = new ArrayList<>();
         int i = 0;
 
-        LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
         long millis = to;
-        while (millis != from) {
+        while (millis >= from) {
             float[] list = new float[activities.size()];
             for (int j = 0; j < activities.size(); j++) {
                 list[j] = containsIdAndDate(activityTimes, activities.get(j), millis);
@@ -427,7 +427,7 @@ public class PersonalStatisticsFragment extends Fragment {
             NAMES[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
             i++;
             localDate = localDate.minusDays(1);
-            millis = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            millis = localDate.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant().toEpochMilli();
         }
 
         XAxis xAxis = chart.getXAxis();
@@ -452,6 +452,7 @@ public class PersonalStatisticsFragment extends Fragment {
 
         BarDataSet set1 = new BarDataSet(values, "");
         set1.setColors(colors);
+        set1.setDrawValues(false);
         //set1.setValueFormatter(new HourValueFormatter());
         /*String[] labels = new String[names.size()];
         for (int k = 0; k < names.size(); k++) {
@@ -554,8 +555,8 @@ public class PersonalStatisticsFragment extends Fragment {
     private void setUpOneBarChart(List<ActivityTime> activityTimes, long from, long to) {
         BarChart chart = binding.oneBarChart;
 
-        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
+        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
         long daysBetween = DAYS.between(dateBefore, dateAfter) + 1;
 
         int MAX_X_VALUE = (int) daysBetween;
@@ -572,14 +573,14 @@ public class PersonalStatisticsFragment extends Fragment {
         ArrayList<BarEntry> values = new ArrayList<>();
         int i = 0;
 
-        LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
         long millis = to;
-        while (millis != from) {
+        while (millis >= from) {
             values.add(new BarEntry(i, containsDate(activityTimes, millis)));
             DAYS[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
             i++;
             localDate = localDate.minusDays(1);
-            millis = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            millis = localDate.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant().toEpochMilli();
         }
 
         XAxis xAxis = chart.getXAxis();
@@ -784,15 +785,14 @@ public class PersonalStatisticsFragment extends Fragment {
     private void setUpMoreStackedBarChartLonger(List<ActivityTime> activityTimes, long from, long to) {
         BarChart chart = binding.moreStackedChart;
 
-        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
+        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
         long daysBetween = DAYS.between(dateBefore, dateAfter) + 1;
 
         int MAX_X_VALUE = (int) daysBetween;
         String[] NAMES = new String[MAX_X_VALUE];
 
         chart.getDescription().setEnabled(false);
-        chart.setDrawValueAboveBar(true);
         chart.setDrawGridBackground(false);
         chart.setDrawBarShadow(false);
 
@@ -802,9 +802,9 @@ public class PersonalStatisticsFragment extends Fragment {
         ArrayList<BarEntry> values = new ArrayList<>();
         int i = 0;
 
-        LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
         long millis = to;
-        while (millis != from) {
+        while (millis >= from) {
             float[] list = new float[activities.size()];
             for (int j = 0; j < activities.size(); j++) {
                 list[j] = containsIdAndDate(activityTimes, activities.get(j), millis);
@@ -813,7 +813,7 @@ public class PersonalStatisticsFragment extends Fragment {
             NAMES[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
             i++;
             localDate = localDate.minusDays(1);
-            millis = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            millis = localDate.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant().toEpochMilli();
         }
 
         XAxis xAxis = chart.getXAxis();
@@ -838,7 +838,7 @@ public class PersonalStatisticsFragment extends Fragment {
 
         BarDataSet set1 = new BarDataSet(values, "Time spent in hours");
         set1.setColors(colors);
-        set1.setValueFormatter(new HourValueFormatter());
+        set1.setDrawValues(false);
         /*String[] labels = new String[names.size()];
         for (int k = 0; k < names.size(); k++) {
             labels[k] = names.get(k);
@@ -895,8 +895,8 @@ public class PersonalStatisticsFragment extends Fragment {
     private void setUpMoreGroupBarChartLonger(List<ActivityTime> activityTimes, long from, long to) {
         BarChart chart = binding.moreGroupChart;
 
-        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
+        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
         long daysBetween = DAYS.between(dateBefore, dateAfter) + 1;
 
         int MAX_X_VALUE = (int) daysBetween;
@@ -916,16 +916,16 @@ public class PersonalStatisticsFragment extends Fragment {
         }
         int i = 0;
 
-        LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
         long millis = to;
-        while (millis != from) {
+        while (millis >= from) {
             for (int j = 0; j < activities.size(); j++) {
                 values.get(j).add(new BarEntry(i, containsIdAndDate(activityTimes, activities.get(j), millis)));
             }
             DAYS[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
             i++;
             localDate = localDate.minusDays(1);
-            millis = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            millis = localDate.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant().toEpochMilli();
         }
 
         XAxis xAxis = chart.getXAxis();
@@ -1059,8 +1059,8 @@ public class PersonalStatisticsFragment extends Fragment {
         Legend legend = chart.getLegend();
         legend.setEnabled(false);
 
-        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dateBefore = Instant.ofEpochMilli(from).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
+        LocalDate dateAfter = Instant.ofEpochMilli(to).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
         long daysBetween = DAYS.between(dateBefore, dateAfter) + 1;
 
         ArrayList<Integer> col = new ArrayList<>();

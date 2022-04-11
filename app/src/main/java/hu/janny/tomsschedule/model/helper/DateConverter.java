@@ -46,7 +46,7 @@ public final class DateConverter {
      * @return string for displaying
      */
     public static String longMillisToStringForSimpleDateDialog(long millis) {
-        LocalDate ld = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate ld = Instant.ofEpochMilli(millis).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
         return makeDateStringForSimpleDateDialog(ld.getDayOfMonth(), ld.getMonthValue(), ld.getYear());
     }
 

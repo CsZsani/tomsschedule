@@ -231,8 +231,8 @@ public class EditActivityFragment extends Fragment{
             Toast.makeText(getContext(), getString(R.string.edit_act_end_day_required), Toast.LENGTH_LONG).show();
             return false;
         }
-        Instant sd = ldStartDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
-        Instant ed = ldEndDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant sd = ldStartDay.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
+        Instant ed = ldEndDay.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
         if(sd.toEpochMilli() > ed.toEpochMilli()) {
             Toast.makeText(getContext(), getString(R.string.edit_act_interval_date_error), Toast.LENGTH_LONG).show();
             return false;
@@ -290,7 +290,12 @@ public class EditActivityFragment extends Fragment{
             Toast.makeText(getContext(), getString(R.string.edit_act_format_add_time), Toast.LENGTH_LONG).show();
             return true;
         }
-        customActivity.setDur(DateConverter.durationTimeConverterFromIntToLong(day, hour, minute));
+        long duration = DateConverter.durationTimeConverterFromIntToLong(day, hour, minute);
+        if(duration == 0L) {
+            Toast.makeText(getActivity(), getString(R.string.new_act_must_add_time), Toast.LENGTH_LONG).show();
+            return true;
+        }
+        customActivity.setDur(duration);
         return false;
     }
 
@@ -388,7 +393,7 @@ public class EditActivityFragment extends Fragment{
                     customActivity.settT(3);
                     customActivity.settN(4);
                 }
-                if(!setTimeFromSumTime()) {return true;}
+                return !setTimeFromSumTime();
             }
         } else {
             if(binding.activityCustomTime.isChecked()) {
@@ -446,42 +451,56 @@ public class EditActivityFragment extends Fragment{
             i = setTimeForDay(binding.activityMondayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setMon(i);
+            } else {
+                return false;
             }
         }
         if(binding.tuesday.isChecked()) {
             i = setTimeForDay(binding.activityTuesdayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setTue(i);
+            } else {
+                return false;
             }
         }
         if(binding.wednesday.isChecked()) {
             i = setTimeForDay(binding.activityWednesdayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setWed(i);
+            } else {
+                return false;
             }
         }
         if(binding.thursday.isChecked()) {
             i = setTimeForDay(binding.activityThursdayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setThu(i);
+            } else {
+                return false;
             }
         }
         if(binding.friday.isChecked()) {
             i = setTimeForDay(binding.activityFridayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setFri(i);
+            } else {
+                return false;
             }
         }
         if(binding.saturday.isChecked()) {
             i = setTimeForDay(binding.activitySaturdayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setSat(i);
+            } else {
+                return false;
             }
         }
         if(binding.sunday.isChecked()) {
             i = setTimeForDay(binding.activitySundayPicker);
             if(i != -1L) {
                 customActivity.getCustomWeekTime().setSun(i);
+            } else {
+                return false;
             }
         }
         return true;
@@ -512,7 +531,12 @@ public class EditActivityFragment extends Fragment{
             Toast.makeText(getContext(), getString(R.string.edit_act_format_add_time_for_a_day), Toast.LENGTH_LONG).show();
             return -1L;
         }
-        return DateConverter.durationTimeConverterFromIntToLongForDays(hour, minute);
+        long duration = DateConverter.durationTimeConverterFromIntToLongForDays(hour, minute);
+        if(duration == 0L) {
+            Toast.makeText(getActivity(), getString(R.string.edit_act_must_add_time_for_a_day), Toast.LENGTH_LONG).show();
+            return -1L;
+        }
+        return duration;
     }
 
     /**
@@ -538,7 +562,7 @@ public class EditActivityFragment extends Fragment{
                 Toast.makeText(getContext(), getString(R.string.edit_act_format_add_time), Toast.LENGTH_LONG).show();
                 return false;
             }
-            Instant d = ldEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            Instant d = ldEndDate.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
 //            customActivity.seteD(calEndDate.getTimeInMillis());
             if(d.toEpochMilli() < CustomActivityHelper.todayMillis()) {
                 Toast.makeText(getContext(), getString(R.string.edit_act_end_date_error), Toast.LENGTH_LONG).show();
@@ -984,6 +1008,10 @@ public class EditActivityFragment extends Fragment{
     private void initTodayDate() {
         ldStartDay = LocalDate.now();
         updateLabelStartDay();
+        ldEndDay = LocalDate.now();
+        updateLabelEndDay();
+        ldEndDate = LocalDate.now();
+        updateLabelEndDate();
     }
 
     /**
@@ -1242,7 +1270,7 @@ public class EditActivityFragment extends Fragment{
      */
     private void setStartDayCalendar() {
         if(customActivity.getsD() != 0L) {
-            ldStartDay = Instant.ofEpochMilli(customActivity.getsD()).atZone(ZoneId.systemDefault()).toLocalDate();
+            ldStartDay = Instant.ofEpochMilli(customActivity.getsD()).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
             updateLabelStartDay();
         }
     }
@@ -1252,10 +1280,10 @@ public class EditActivityFragment extends Fragment{
      */
     private void setEndDayCalendar() {
         if(customActivity.getsD() == 0L && customActivity.geteD() != 0L) {
-            ldEndDate = Instant.ofEpochMilli(customActivity.geteD()).atZone(ZoneId.systemDefault()).toLocalDate();
+            ldEndDate = Instant.ofEpochMilli(customActivity.geteD()).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
             updateLabelEndDate();
         } else if(customActivity.getsD() != 0L && customActivity.geteD() != 0L) {
-            ldEndDay = Instant.ofEpochMilli(customActivity.geteD()).atZone(ZoneId.systemDefault()).toLocalDate();
+            ldEndDay = Instant.ofEpochMilli(customActivity.geteD()).atZone(ZoneId.of("Europe/Budapest")).toLocalDate();
             updateLabelEndDay();
         }
     }

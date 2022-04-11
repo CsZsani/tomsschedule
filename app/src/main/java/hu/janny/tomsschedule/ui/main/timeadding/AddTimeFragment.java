@@ -21,6 +21,9 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -57,6 +60,7 @@ public class AddTimeFragment extends Fragment {
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
     private final Calendar calendar = Calendar.getInstance();
+    private LocalDate ld;
     private long dateMillis = 0L;
     private int hour = 0, minute = 0;
 
@@ -194,6 +198,11 @@ public class AddTimeFragment extends Fragment {
                 Toast.makeText(getContext(), getString(R.string.under_zero), Toast.LENGTH_LONG).show();
                 return;
             }
+        } else {
+            if (!checkingAdding(activityTime, activityTime.getD())) {
+                Toast.makeText(getContext(), getString(R.string.above_a_day), Toast.LENGTH_LONG).show();
+                return;
+            }
         }
         System.out.println(customActivity + " " + times);
         mainViewModel.saveIntoDatabase(activityTime, customActivity, currentUser);
@@ -212,17 +221,49 @@ public class AddTimeFragment extends Fragment {
      * Checks whether the given amount of time will not decrease the time amount in database under 0.
      *
      * @param activityTime the time to be updated
-     * @param todayMillis epoch millis of today
+     * @param day epoch millis of the day we want to add
      */
-    private boolean checkingSubtraction(ActivityTime activityTime, long todayMillis) {
-        long alreadySpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(times, todayMillis);
+    private boolean checkingSubtraction(ActivityTime activityTime, long day) {
+        long alreadySpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(times, day);
         return alreadySpentToday + activityTime.getT() >= 0L;
+    }
+
+    /**
+     * Checks whether the given amount of time will not decrease the time amount in database under 0.
+     *
+     * @param activityTime the time to be updated
+     * @param day epoch millis of the day we want to add
+     */
+    private boolean checkingAdding(ActivityTime activityTime, long day) {
+        long alreadySpentToday = CustomActivityHelper.getHowManyTimeWasSpentTodayOnAct(times, day);
+        return alreadySpentToday + activityTime.getT() < 24L * 60L * 60L * 1000L;
     }
 
     /**
      * Initializes date picker dialog for choosing date.
      */
     private void initDatePicker() {
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                // Months counting begins with 0
+                month = month + 1;
+                ld = LocalDate.of(year, month, day);
+                Instant instant = ld.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
+                dateMillis = instant.toEpochMilli();
+                String date = DateConverter.makeDateStringForSimpleDateDialog(day, month, year);
+                binding.date.setText(date);
+            }
+        };
+        ld = LocalDate.now();
+        int style = AlertDialog.THEME_HOLO_LIGHT;
+
+        datePickerDialog = new DatePickerDialog(getActivity(), style, dateSetListener, ld.getYear(),ld.getMonthValue()-1,ld.getDayOfMonth());
+        datePickerDialog.setTitle(R.string.select_date);
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+    }
+
+    /*private void initDatePicker() {
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -246,7 +287,7 @@ public class AddTimeFragment extends Fragment {
         datePickerDialog = new DatePickerDialog(getActivity(), style, dateSetListener, year, month, day);
         datePickerDialog.setTitle(R.string.select_date);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
-    }
+    }*/
 
     /**
      * Initializes time picker dialog.
@@ -266,6 +307,8 @@ public class AddTimeFragment extends Fragment {
         timePickerDialog = new TimePickerDialog(getContext(), style, onTimeSetListener, hour, minute, true);
         timePickerDialog.setTitle(R.string.select_time);
     }
+
+
 
     @Override
     public void onDestroyView() {

@@ -238,7 +238,7 @@ public final class CustomActivityHelper {
      */
     public static long todayMillis() {
         LocalDate localDate = LocalDate.now();
-        Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant instant = localDate.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
         return instant.toEpochMilli();
     }
 
@@ -251,7 +251,7 @@ public final class CustomActivityHelper {
     public static long minusDaysMillis(int days) {
         LocalDate localDate = LocalDate.now();
         LocalDate returnValue = localDate.minusDays(days);
-        Instant instant = returnValue.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant instant = returnValue.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
         return instant.toEpochMilli();
     }
 
@@ -264,7 +264,7 @@ public final class CustomActivityHelper {
     public static long minusWeekMillis(int week) {
         LocalDate localDate = LocalDate.now();
         LocalDate returnValue = localDate.minusWeeks(week);
-        Instant instant = returnValue.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant instant = returnValue.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
         return instant.toEpochMilli();
     }
 
@@ -277,7 +277,7 @@ public final class CustomActivityHelper {
     public static long minusMonthMillis(int month) {
         LocalDate localDate = LocalDate.now();
         LocalDate returnValue = localDate.minusMonths(month);
-        Instant instant = returnValue.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant instant = returnValue.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
         return instant.toEpochMilli();
     }
 
@@ -289,7 +289,7 @@ public final class CustomActivityHelper {
     public static long thisMondayMillis() {
         LocalDate localDate = LocalDate.now();
         LocalDate mon = localDate.with(DayOfWeek.MONDAY);
-        Instant instant = mon.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant instant = mon.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
         return instant.toEpochMilli();
     }
 
@@ -301,7 +301,7 @@ public final class CustomActivityHelper {
     public static long firstDayOfThisMonth() {
         LocalDate localDate = LocalDate.now();
         LocalDate fd = localDate.withDayOfMonth(1);
-        Instant instant = fd.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant instant = fd.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
         return instant.toEpochMilli();
     }
 

@@ -112,6 +112,8 @@ public class CustomActivityRecyclerAdapter
             viewHolder.statusIndicator.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(mainActivity,
                     notificationColor(soFar, remaining, activityList.get(i).customActivity))));
             viewHolder.statusIndicator.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.statusIndicator.setVisibility(View.INVISIBLE);
         }
     }
 

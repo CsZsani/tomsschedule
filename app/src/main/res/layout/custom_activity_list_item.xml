@@ -60,7 +60,7 @@
             android:clickable="false"
             android:contextClickable="false"
             android:defaultFocusHighlightEnabled="false"
-            android:visibility="invisible"
+            android:visibility="visible"
             app:cornerRadius="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/activityBasicInfosInList"

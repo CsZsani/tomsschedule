@@ -306,14 +306,14 @@ public class PersonalFilterFragment extends Fragment {
             // A custom day
             statisticsViewModel.setpPeriodType(6);
             statisticsViewModel.setFromTime(0L);
-            Instant custom = ldCustom.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            Instant custom = ldCustom.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
             statisticsViewModel.setToTime(custom.toEpochMilli());
             statisticsViewModel.filterExactDay(custom.toEpochMilli(), list);
         } else if (binding.pFromToChip.isChecked()) {
             // An interval
             statisticsViewModel.setpPeriodType(7);
-            Instant from = ldFrom.atStartOfDay(ZoneId.systemDefault()).toInstant();
-            Instant to = ldTo.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            Instant from = ldFrom.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
+            Instant to = ldTo.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
             // Checks if the interval is less than one day
             if (from.toEpochMilli() > to.toEpochMilli()) {
                 Toast.makeText(getContext(), getString(R.string.filter_from_to_error), Toast.LENGTH_LONG).show();

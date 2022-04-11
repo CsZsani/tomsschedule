@@ -118,7 +118,7 @@ public class GlobalFilterFragment extends Fragment {
             viewModel.findYesterdayData(activity);
         } else if(binding.gCustomDayChip.isChecked()) {
             viewModel.setFrom(0L);
-            Instant custom = ldDay.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            Instant custom = ldDay.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
             viewModel.setTo(custom.toEpochMilli());
             viewModel.findExactDayData(activity, custom.toEpochMilli());
         } else if(binding.gWeekChip.isChecked()) {

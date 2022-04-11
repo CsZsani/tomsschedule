@@ -192,7 +192,7 @@ public class DetailFragment extends Fragment {
         ArrayList<BarEntry> values = new ArrayList<>();
 
         LocalDate localDate = LocalDate.now();
-        Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant instant = localDate.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant();
         long today = instant.toEpochMilli();
 
         for (int i = MAX_X_VALUE - 1; i >= 0; i--) {
@@ -200,7 +200,7 @@ public class DetailFragment extends Fragment {
             values.add(new BarEntry(x, containsDate(list, today)));
             DAYS[i] = String.format(Locale.getDefault(), "%02d.%02d.", localDate.getMonthValue(), localDate.getDayOfMonth());
             localDate = localDate.minusDays(1);
-            today = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            today = localDate.atStartOfDay(ZoneId.of("Europe/Budapest")).toInstant().toEpochMilli();
         }
 
         XAxis xAxis = chart.getXAxis();

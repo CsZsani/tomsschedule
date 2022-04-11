@@ -121,11 +121,12 @@ public class TipsRecyclerAdapter  extends RecyclerView.Adapter<TipsRecyclerAdapt
 
     @Override
     public int getItemViewType(int position) {
-        return position;
+        return R.layout.custom_activity_list_item;
     }
 
     @Override
     public long getItemId(int position) {
         return position;
     }
+
 }

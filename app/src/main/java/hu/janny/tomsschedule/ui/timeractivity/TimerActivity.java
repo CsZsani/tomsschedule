@@ -421,7 +421,7 @@ public class TimerActivity extends AppCompatActivity {
                     notificationManager.deleteNotificationChannel(channelID);
 
                     if (currentTime > (24L * 60L * 60L * 1000L)) {
-                        currentTime = 24L * 60L * 60L * 1000L;
+                        currentTime = 0L;
                     }
                     // We store just minutes. It rounded up.
                     long fullMinutes = currentTime % 60000L;

@@ -76,8 +76,8 @@
     <string name="new_activity_name_is_required">Name is required!</string>
     <string name="new_act_start_day_required">Start day is required for interval option!</string>
     <string name="new_act_end_day_required">End day is required for interval option!</string>
-    <string name="new_act_must_add_time">You must add days, hours and minutes (however it can be 0)!</string>
-    <string name="new_act_must_add_time_for_a_day">Setting hours and minutes is required (it can be 0)!</string>
+    <string name="new_act_must_add_time">You must add days, hours and minutes!</string>
+    <string name="new_act_must_add_time_for_a_day">Setting hours and minutes is required!</string>
     <string name="new_act_format_add_time"><![CDATA[Hours must be whole number between 0–23, minutes 0–59 and days >=0!]]></string>
     <string name="new_act_format_add_time_for_a_day">Hours must be whole number between 0–23 and minutes 0–59!</string>
     <string name="new_act_must_set_one_day">You must set at least one day!</string>
@@ -144,8 +144,8 @@
     <string name="edit_act_name_required">Name is required!</string>
     <string name="edit_act_start_day_required">Start day is required for interval option!</string>
     <string name="edit_act_end_day_required">End day is required for interval option!</string>
-    <string name="edit_act_must_add_time">You must add days, hours and minutes (however it can be 0)!</string>
-    <string name="edit_act_must_add_time_for_a_day">Setting hours and minutes is required (it can be 0)!</string>
+    <string name="edit_act_must_add_time">You must add days, hours and minutes!</string>
+    <string name="edit_act_must_add_time_for_a_day">Setting hours and minutes is required!</string>
     <string name="edit_act_format_add_time"><![CDATA[Hours must be whole number between 0–23, minutes 0–59 and days >=0!]]></string>
     <string name="edit_act_format_add_time_for_a_day">Hours must be whole number between 0–23 and minutes 0–59!</string>
     <string name="edit_act_must_set_one_day">You must set at least one day!</string>
@@ -230,6 +230,7 @@
     <string name="add_time_date_required">Date is required!</string>
     <string name="add_time_time_required">Time amount is required!</string>
     <string name="under_zero">Time would decrease under zero with this parameters! Give lower time value!</string>
+    <string name="above_a_day">Time would increase above 24 hours with this parameters! Give lower time value!</string>
 
     <!-- Timer activity -->
     <string name="stop">Finish</string>
