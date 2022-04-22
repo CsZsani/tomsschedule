@@ -59,7 +59,6 @@ public class AddTimeFragment extends Fragment {
 
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
-    private final Calendar calendar = Calendar.getInstance();
     private LocalDate ld;
     private long dateMillis = 0L;
     private int hour = 0, minute = 0;
@@ -262,32 +261,6 @@ public class AddTimeFragment extends Fragment {
         datePickerDialog.setTitle(R.string.select_date);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
     }
-
-    /*private void initDatePicker() {
-        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                calendar.clear();
-                calendar.set(year, month, day);
-                dateMillis = calendar.getTimeInMillis();
-                // Months counting begins with 0
-                month = month + 1;
-                String date = DateConverter.makeDateStringForSimpleDateDialog(day, month, year);
-                binding.date.setText(date);
-            }
-        };
-
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-
-        int style = AlertDialog.THEME_HOLO_LIGHT;
-
-        datePickerDialog = new DatePickerDialog(getActivity(), style, dateSetListener, year, month, day);
-        datePickerDialog.setTitle(R.string.select_date);
-        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
-    }*/
 
     /**
      * Initializes time picker dialog.

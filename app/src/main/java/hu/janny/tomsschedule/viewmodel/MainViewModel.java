@@ -53,13 +53,13 @@ public class MainViewModel extends AndroidViewModel {
         user = userRepository.getCurrentUser();
         activityByIdWithTimesEntity = repository.getActivityWithTimesEntity();
         singleActivity = repository.getActivitiesData();
-        activitiesWithTimesList = Transformations.map(repository.getActivitiesWithTimesEntities(), new DeserializerThird());
+        activitiesWithTimesList = Transformations.map(repository.getActivitiesWithTimesEntities(), new DeserializerOfActivities());
     }
 
     /**
      * Filters the activity list ot show just those that belong to the current user.
      */
-    private static class DeserializerThird implements Function<List<ActivityWithTimes>, List<ActivityWithTimes>> {
+    private static class DeserializerOfActivities implements Function<List<ActivityWithTimes>, List<ActivityWithTimes>> {
         @Override
         public List<ActivityWithTimes> apply(List<ActivityWithTimes> liveData) {
             return liveData.stream().filter(ca -> ca.customActivity.getUserId().equals(FirebaseManager.user.getUid())).collect(Collectors.toList());

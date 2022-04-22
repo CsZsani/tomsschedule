@@ -271,7 +271,7 @@ public class Repository {
      *
      * @param threadPool the executor service
      */
-    public void awaitTerminationAfterShutdown(ExecutorService threadPool) {
+    private void awaitTerminationAfterShutdown(ExecutorService threadPool) {
         threadPool.shutdown();
         try {
             if (!threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
@@ -417,7 +417,7 @@ public class Repository {
      * @param list list of activities
      * @param callback called when both the activities and the times are saved
      */
-    public void restoreActivities(List<CustomActivity> list, SuccessCallback callback) {
+    private void restoreActivities(List<CustomActivity> list, SuccessCallback callback) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> customActivityDao.insertAll(list));
         executor.shutdown();
@@ -433,7 +433,7 @@ public class Repository {
      * @param list list of times
      * @param callback called when both the activities and the times are saved
      */
-    public void restoreTimes(List<ActivityTime> list, SuccessCallback callback) {
+    private void restoreTimes(List<ActivityTime> list, SuccessCallback callback) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> activityTimeDao.insertAll(list));
         executor.shutdown();

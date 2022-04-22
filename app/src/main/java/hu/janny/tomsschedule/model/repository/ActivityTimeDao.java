@@ -36,8 +36,8 @@ public abstract class ActivityTimeDao {
      * Returns -1L if we could not insert, because that will not be an unique row. This is how we are
      * able to check if we have to update a row or just insert.
      *
-     * @param activityTime
-     * @return
+     * @param activityTime the time to be inserted or updated
+     * @return if it is -1L, then there is a row for the activity and date in activityTime
      */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract long insertIgnore(ActivityTime activityTime);

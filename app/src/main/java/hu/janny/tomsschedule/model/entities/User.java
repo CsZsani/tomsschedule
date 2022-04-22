@@ -127,31 +127,6 @@ public class User {
     }
 
     /**
-     * Returns the string for age group from age group integer (0-5).
-     *
-     * @return age group string for UI
-     */
-    @Exclude
-    public String ageGroup() {
-        switch (ageGroup) {
-            case 0:
-                return "<20";
-            case 1:
-                return "20-30";
-            case 2:
-                return "30-40";
-            case 3:
-                return "40-50";
-            case 4:
-                return "50-60";
-            case 5:
-                return ">60";
-            default:
-                return "?";
-        }
-    }
-
-    /**
      * Returns the month int from 3 letter string, JAN is 1, and DEC is 12.
      *
      * @param s 3 letter string in capital letters which is short for months
