@@ -352,5 +352,6 @@
     <string name="cancel">Cancel</string>
     <string name="connect_to_stable_internet">Please, connect to stable Internet!</string>
     <string name="custom">custom</string>
+    <string name="press_back_twice">Please click BACK again to exit</string>
 
 </resources>

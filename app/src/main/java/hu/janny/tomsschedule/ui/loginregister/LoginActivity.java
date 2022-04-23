@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
@@ -191,7 +193,9 @@ public class LoginActivity extends AppCompatActivity {
                 // We already have user in database, just need to set logged in
                 viewModel.loginUser(user.getUid());
                 FirebaseManager.setUserLoggedIn(user);
+                progressGone();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
             }
         }
     }
@@ -218,5 +222,26 @@ public class LoginActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         binding = null;
+    }
+
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, getString(R.string.press_back_twice), Toast.LENGTH_SHORT).show();
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 }

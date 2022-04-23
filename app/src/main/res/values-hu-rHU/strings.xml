@@ -308,4 +308,5 @@
     <string name="profil_edit_name_required">Név megadása kötelező!</string>
     <string name="profil_edit_birth_date_required">Születési dátum megadása kötelező!</string>
     <string name="above_a_day">Az időmennyiség 24 óra fölé emelkedne! Adj meg kevesebbet!</string>
+    <string name="press_back_twice">Nyomd meg újra a vissza gombot a kilépéshez</string>
 </resources>

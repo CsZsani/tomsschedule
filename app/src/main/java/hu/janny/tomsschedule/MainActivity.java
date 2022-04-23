@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.core.view.GravityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -87,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements AddCustomActivity
         FirebaseManager.logoutUser();
 
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        finish();
     }
 
     /**
