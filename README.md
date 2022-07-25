@@ -7,26 +7,25 @@ The app uses Firebase and SQLite database.
 
 To use the app you must register and login.
 
-![Registration](screenshots/register.jpg)
-<img src="screenshots/register.jpg" alt="Registration" width="200"/>
-![Login](screenshots/login.jpg)
+<img src="screenshots/register.jpg" alt="Registration" width="300"/>
+<img src="screenshots/login.jpg" alt="Login" width="300"/>
 
 ## Home page
 
 On the home page the user is able to see their activities. They can add new activities and watch their details.
 They may add different settings, and track the time spent on these activities.
 
-![Home page](screenshots/homepage.jpg)
-![Add new](screenshots/addnewactivity.jpg)
-![Details](screenshots/details.jpg)
+<img src="screenshots/homepage.jpg" alt="Home page" width="300"/>
+<img src="screenshots/addnewactivity.jpg" alt="Add new" width="300"/>
+<img src="screenshots/details.jpg" alt="Details" width="300"/>
 
 ## Timer
 
 The user is able to start a timer on a specific activity.
 
-![Timer](screenshots/timer1.jpg)
-![Timer](screenshots/timer2.jpg)
-![Timer](screenshots/timer3.jpg)
+<img src="screenshots/timer1.jpg" alt="Timer" width="300"/>
+<img src="screenshots/timer2.jpg" alt="Timer" width="300"/>
+<img src="screenshots/timer3.jpg" alt="Timer" width="300"/>
 
 ## Statistics
 
@@ -37,23 +36,23 @@ The charts were made with [MPAndroidChart](https://github.com/PhilJay/MPAndroidC
 
 Statistics made from your own data.
 
-![Filter page](screenshots/personalstatistics.jpg)
-![Personal statistics](screenshots/pstatistics1.jpg)
-![Personal statistics](screenshots/pstatistics2.jpg)
+<img src="screenshots/personalstatistics.jpg" alt="Filter page" width="300"/>
+<img src="screenshots/pstatistics1.jpg" alt="Personal statistics" width="300"/>
+<img src="screenshots/pstatistics2.jpg" alt="Personal statistics" width="300"/>
 
 #### Global statistics
 
 Statistics made from all of the users' statistics provided by Firebase. The data cannot be connected to users or devices.
 
-![Filter page](screenshots/globalstatistics.jpg)
-![Global statistics](screenshots/gstatistics1.jpg)
-![Global statistics](screenshots/gstatistics2.jpg)
+<img src="screenshots/globalstatistics.jpg" alt="Fitler page" width="300"/>
+<img src="screenshots/gstatistics1.jpg" alt="Global statistics" width="300"/>
+<img src="screenshots/gstatistics2.jpg" alt="Global statistics" width="300"/>
 
 ## Backup
 
 You are able to create and restore backups.
 
-![Backup](screenshots/backup.jpg)
+<img src="screenshots/backup.jpg" alt="Backup" width="300"/>
 
 ## Other
 
