@@ -8,6 +8,7 @@ The app uses Firebase and SQLite database.
 To use the app you must register and login.
 
 ![Registration](screenshots/register.jpg)
+<img src="screenshots/register.jpg" alt="Registration" width="200"/>
 ![Login](screenshots/login.jpg)
 
 ## Home page
